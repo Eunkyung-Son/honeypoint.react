@@ -1,5 +1,7 @@
 import React from "react";
-import { Breadcrumb, Layout, Menu } from 'antd';
+import { Breadcrumb, Col, Layout, Row } from 'antd';
+import './MainPage.scss';
+import { Link } from "react-router-dom";
 
 type Props = {
 
@@ -13,13 +15,16 @@ export default class MainPage extends React.Component<Props> {
       <>
         <Layout className="layout">
           <Header>
-            <div className="logo" />
-            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
-              {new Array(3).fill(null).map((_, index) => {
-                const key = index + 1;
-                return <Menu.Item key={key}>{`nav ${key}`}</Menu.Item>;
-              })}
-            </Menu>
+            <div className="logo">
+              <h2>HONEYPOINT</h2>
+              </div>
+              <Row justify="end">
+                <Col span={2} className="menu">col-4</Col>
+                <Col span={2} className="menu">col-4</Col>
+                <Col span={2} className="menu"><Link to="/login">Login</Link></Col>
+                <Col span={2} className="menu"><Link to="/signup">Signup</Link></Col>
+              </Row>
+            {/* </Menu> */}
           </Header>
           <Content style={{ padding: '0 50px' }}>
             <Breadcrumb style={{ margin: '16px 0' }}>

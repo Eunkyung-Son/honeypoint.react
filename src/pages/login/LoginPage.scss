@@ -1,0 +1,99 @@
+.LoginPage {
+    .ant-btn-link {
+      color: black;
+    }
+    .ant-btn-primary {
+      background: #323952;
+      border-color: #323952;
+      border-radius: 9px;
+    }
+    .ant-input,
+    .ant-btn {
+      border-radius: 9px;
+    }
+  
+    .login-form {
+      width: 370px;
+    }
+    .login-form-forgot {
+      float: right;
+    }
+    .login-form-button {
+      width: 100%;
+    }
+  
+    .back {
+      transform: scale(0.87);
+      margin-top: 2%;
+    }
+    .backgroundBg {
+      background-position: center 75%;
+      background-size: 1364px;
+    }
+    .cover {
+      .title {
+        font-size: 33px;
+        color: rgba(0, 0, 0, 0.85);
+        margin-bottom: 30px;
+        text-align: center;
+        position: relative;
+        span {
+          margin-left: 20px;
+          position: absolute;
+          top: 50%;
+          transform: translateY(-45%);
+        }
+      }
+      .ant-row {
+        margin-bottom: 24px;
+      }
+      .ant-row:last-child {
+        margin-bottom: 80px;
+      }
+      .ant-input-affix-wrapper {
+        height: 40px;
+      }
+      .ant-row:nth-child(2) {
+        margin-bottom: 15px;
+      }
+      .sub-cover {
+        margin-bottom: 3px;
+      }
+      .ant-btn-link {
+        float: right;
+        border: 0;
+        padding: 0;
+        margin-top: 4px;
+      }
+      .login-form-button {
+        height: 40px;
+        margin-bottom: 10px;
+      }
+  
+      footer {
+        width: 100%;
+        ul {
+          li {
+            float: left;
+            margin: 0 10px 10px;
+            font-size: 14px;
+            .ant-btn-link {
+              color: rgba(0, 0, 0, 0.45);
+              margin: 0;
+            }
+          }
+          &:after {
+            content: "";
+            display: block;
+            clear: both;
+          }
+        }
+        p {
+          text-align: center;
+          font-size: 12px;
+          color: rgba(0, 0, 0, 0.45);
+        }
+      }
+    }
+  }
+  
