@@ -11,10 +11,17 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "antd": "^4.16.7",
+    "axios": "^0.21.1",
+    "mobx": "^5.13.0",
+    "mobx-react": "^6.1.3",
+    "mobx-react-lite": "^3.1.6",
+    "mobx-react-router": "^4.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "sass": "^1.35.2",
+    "sass-loader": "^12.1.0",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1"
   },
@@ -24,6 +31,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "proxy": "http://localhost:8081/",
   "eslintConfig": {
     "extends": [
       "react-app",
