@@ -69,6 +69,14 @@
         height: 40px;
         margin-bottom: 10px;
       }
+      .search-info {
+        color: rgb(117, 117, 197);
+        cursor: pointer;
+      }
+
+      .search-info:hover {
+        color: rgb(81, 81, 145);
+      }
   
       footer {
         width: 100%;
@@ -93,6 +101,7 @@
           font-size: 12px;
           color: rgba(0, 0, 0, 0.45);
         }
+
       }
     }
   }

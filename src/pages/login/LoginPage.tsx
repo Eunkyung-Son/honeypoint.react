@@ -1,15 +1,29 @@
 import React from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { Link } from "react-router-dom";
-import { Button, Col, Form, Input, Layout, Row, Spin } from "antd";
+import { Button, Col, Form, Input, Layout, Row } from "antd";
 import { SERVER_URL } from "../../config/config";
+import { inject, observer } from "mobx-react";
+import { RouterStore } from "mobx-react-router";
 import './LoginPage.scss'
+import Member from "../../models/Member";
+import RootStore from "../../stores/RootStore";
+import AuthStore from "../../stores/AuthStore";
+import LoginPageStore from "./LoginPageStore";
 
 type Props = {
 
+  routing: RouterStore,
+  authStore: AuthStore,
 }
 
+@inject((rootStore: RootStore) => ({
+  routing: rootStore.routing,
+  authStore: rootStore.authStore,
+}))
+@observer
 export default class LoginPage extends React.Component<Props> {
+  loginPageStore: LoginPageStore = new LoginPageStore();
   HEADERS = {
     'Content-Type': 'application/json'
   };
@@ -26,15 +40,36 @@ export default class LoginPage extends React.Component<Props> {
         mId,
         mPwd
       },
+    const memberInfo = await axios
+      .post(URL,
+        {
+          mId,
+          mPwd
+        },
         {
           headers: this.HEADERS,
         })
       .then()
+        }
+      )
+      .then((response: AxiosResponse) => {
+        return response.data as Member;
+      })
+      .catch((error) => {
+      });
+      
+    if (memberInfo) {
+      const { routing, authStore } = this.props;
+      localStorage.setItem('memberId', memberInfo.mId);
+      authStore.setIsLoggedIn(true);
+      routing.history.push('/');
+    }
   };
 
   render() {
     const spinner = <Spin />;
 
+  render() {
     return (
       <Layout className="LoginPage" style={{ minHeight: '100vh' }}>
         <div className="backgroundBg">
