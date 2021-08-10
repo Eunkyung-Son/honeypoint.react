@@ -10,6 +10,8 @@ import Member from "../../models/Member";
 import RootStore from "../../stores/RootStore";
 import AuthStore from "../../stores/AuthStore";
 import LoginPageStore from "./LoginPageStore";
+import IdFindModal from "./find/IdFindModal";
+import { IdFindModalStore } from "./find/IdFindModalStore";
 
 type Props = {
 
@@ -24,6 +26,9 @@ type Props = {
 @observer
 export default class LoginPage extends React.Component<Props> {
   loginPageStore: LoginPageStore = new LoginPageStore();
+  idFindModalStore: IdFindModalStore = new IdFindModalStore();
+  pwdFindModalStore: PwdFindModalStore = new PwdFindModalStore();
+
   HEADERS = {
     'Content-Type': 'application/json'
   };
@@ -68,6 +73,10 @@ export default class LoginPage extends React.Component<Props> {
 
   render() {
     const spinner = <Spin />;
+  showIdSearchModal = () => {
+    this.idFindModalStore.setVisible(true);
+  }
+
 
   render() {
     return (
@@ -90,8 +99,10 @@ export default class LoginPage extends React.Component<Props> {
                     <Form.Item>
                       <Button type="primary" htmlType="submit" className="login-form-button">로그인</Button>
                       <Link to="/signup"><Button type="primary" className="login-form-button">회원가입</Button></Link>
+                      <p className="search-info" onClick={this.showIdSearchModal}>아이디찾기</p>
                     </Form.Item>
                   </Form>
+                  <IdFindModal idFindModalStore={this.idFindModalStore} />
                 </div>
                 <footer>
                   <p>copyright &copy; HoneyPoint 2021 </p>
