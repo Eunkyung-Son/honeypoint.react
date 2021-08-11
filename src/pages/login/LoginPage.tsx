@@ -9,23 +9,25 @@ import './LoginPage.scss'
 import Member from "../../models/Member";
 import RootStore from "../../stores/RootStore";
 import AuthStore from "../../stores/AuthStore";
-import LoginPageStore from "./LoginPageStore";
 import IdFindModal from "./find/IdFindModal";
+import PwdFindModalStore from "./find/PwdFindModalStore";
 import { IdFindModalStore } from "./find/IdFindModalStore";
+import PwdFindModal from "./find/PwdFindModal";
+import LoginStore from "../../stores/LoginStore";
+import { toJS } from "mobx";
 
 type Props = {
-
   routing: RouterStore,
   authStore: AuthStore,
+  loginStore: LoginStore,
 }
-
 @inject((rootStore: RootStore) => ({
   routing: rootStore.routing,
   authStore: rootStore.authStore,
+  loginStore: rootStore.loginStore,
 }))
 @observer
 export default class LoginPage extends React.Component<Props> {
-  loginPageStore: LoginPageStore = new LoginPageStore();
   idFindModalStore: IdFindModalStore = new IdFindModalStore();
   pwdFindModalStore: PwdFindModalStore = new PwdFindModalStore();
 
@@ -37,14 +39,8 @@ export default class LoginPage extends React.Component<Props> {
     mId: string,
     mPwd: string,
   }) => {
-    console.log(values);
     const { mId, mPwd } = values;
     const URL = `${SERVER_URL}/login`;
-    return await axios
-      .post(URL, {
-        mId,
-        mPwd
-      },
     const memberInfo = await axios
       .post(URL,
         {
@@ -53,30 +49,31 @@ export default class LoginPage extends React.Component<Props> {
         },
         {
           headers: this.HEADERS,
-        })
-      .then()
         }
       )
       .then((response: AxiosResponse) => {
+        // TODO:아이디나 비밀번호가 틀릴 때 처리하기
         return response.data as Member;
       })
       .catch((error) => {
       });
       
     if (memberInfo) {
-      const { routing, authStore } = this.props;
+      const { routing, authStore, loginStore } = this.props;
       localStorage.setItem('memberId', memberInfo.mId);
       authStore.setIsLoggedIn(true);
+      loginStore.setMember(memberInfo);
       routing.history.push('/');
     }
   };
 
-  render() {
-    const spinner = <Spin />;
   showIdSearchModal = () => {
     this.idFindModalStore.setVisible(true);
   }
 
+  showPwdSearchModal = () => {
+    this.pwdFindModalStore.setVisible(true);
+  }
 
   render() {
     return (
@@ -100,9 +97,12 @@ export default class LoginPage extends React.Component<Props> {
                       <Button type="primary" htmlType="submit" className="login-form-button">로그인</Button>
                       <Link to="/signup"><Button type="primary" className="login-form-button">회원가입</Button></Link>
                       <p className="search-info" onClick={this.showIdSearchModal}>아이디찾기</p>
+                      <p className="search-info" onClick={this.showPwdSearchModal}>비밀번호찾기</p>
                     </Form.Item>
                   </Form>
+                  {/* TODO: REACT PORTAL 알아보기 */}
                   <IdFindModal idFindModalStore={this.idFindModalStore} />
+                  <PwdFindModal pwdFindModalStore={this.pwdFindModalStore} />
                 </div>
                 <footer>
                   <p>copyright &copy; HoneyPoint 2021 </p>
