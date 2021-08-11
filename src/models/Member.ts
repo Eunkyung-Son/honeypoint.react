@@ -33,30 +33,3 @@ type Member = {
 }
 
 export default Member;
-
-
-
-
-
-/**
- * 
- * 
- * 	private int mNo;
-	private String mId;
-	private String mPwd;
-	private String mName;
-	private String mNickname;
-	private String mBirthday;
-	private String mEmail;
-	private String mPhone;
-	private String mAddress;
-	private Date mEnrollDate;
-	private Date mModifyDate;
-	private String mGrad;
-	private int mPoint;
-	private char mStatus;
-	private int rConf;
-	private String mOriginPf;
-	private String mStrePf;	
-	private int mSortNo;
- */
