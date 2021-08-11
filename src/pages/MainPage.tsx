@@ -1,19 +1,24 @@
 import React from "react";
-import { Breadcrumb, Col, Layout, Row } from 'antd';
+import { Breadcrumb, Col, Dropdown, Layout, Menu, Row } from 'antd';
 import './MainPage.scss';
 import { Link, Switch } from "react-router-dom";
 import RootStore from "../stores/RootStore";
 import { inject, observer } from "mobx-react";
 import AuthStore from "../stores/AuthStore";
 import { RouterStore } from "mobx-react-router";
+import { CaretDownOutlined, SmileTwoTone } from '@ant-design/icons';
+import LoginStore from "../stores/LoginStore";
+
 
 type Props = {
   routing: RouterStore,
   authStore: AuthStore,
+  loginStore: LoginStore,
 }
 @inject((rootStore: RootStore) => ({
   routing: rootStore.routing,
-  authStore: rootStore.authStore
+  authStore: rootStore.authStore,
+  loginStore: rootStore.loginStore,
 }))
 @observer
 export default class MainPage extends React.Component<Props> {
@@ -26,7 +31,18 @@ export default class MainPage extends React.Component<Props> {
 
   render() {
     const { Header, Content, Footer } = Layout;
-    const { authStore } = this.props;
+    const { authStore, loginStore } = this.props;
+    const menu = (
+      <Menu style={{ cursor: 'pointer' }}>
+        <Menu.Item key="0">
+          <Link to="/">마이페이지</Link>
+        </Menu.Item>
+        <Menu.Item key="1">
+          <div><Link to="/" onClick={this.logout}>로그아웃</Link></div>
+        </Menu.Item>
+      </Menu>
+    );
+
     return (
       <Layout className="layout">
         <Header>
@@ -34,15 +50,22 @@ export default class MainPage extends React.Component<Props> {
             <h2><a href="/" className="main-title">HONEYPOINT</a></h2>
           </div>
           <Row justify="end">
-            <Col span={2} className="menu">col-4</Col>
-            <Col span={2} className="menu">col-4</Col>
             {
               authStore.isLoggedIn === true
-                ? <Col span={2} className="menu"><Link to="/" onClick={this.logout}>Logout</Link></Col>
-                : <Col span={2} className="menu"><Link to="/login">Login</Link></Col>
+                ? <Dropdown className="profileDropdown"  trigger={['click']} overlay={menu}>
+                    <div className="ant-dropdown-link" style={{ cursor: 'pointer' }}>
+                      <SmileTwoTone style={{fontSize: "20px"}}/>
+                      <span className="ant-dropdown-username">
+                        {loginStore.member?.mName}({loginStore.member?.mId})님, 환영합니다.
+                      </span>
+                      <CaretDownOutlined style={{fontSize: "20px"}}/>
+                    </div>
+                  </Dropdown>
+                : <>
+                    <Col span={2} className="menu"><Link to="/login">로그인</Link></Col>
+                    <Col span={2} className="menu"><Link to="/signup">회원가입</Link></Col>
+                  </>
             }
-            {/* TODO: 로그인했는데 사인업 필요한가? */}
-            <Col span={2} className="menu"><Link to="/signup">Signup</Link></Col>
           </Row>
         </Header>
         <Content style={{ padding: '0 50px' }}>

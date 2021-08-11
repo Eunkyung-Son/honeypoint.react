@@ -49,3 +49,14 @@
 	color: white;
 }
 
+.profileDropdown {
+	float: right;
+	color: #497ff3;
+
+	.ant-dropdown-username {
+		margin-left: 10px;
+		margin-right: 10px;
+		font-size: 20px;
+	}
+}
+
