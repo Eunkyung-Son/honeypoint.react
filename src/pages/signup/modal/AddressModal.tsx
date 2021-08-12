@@ -9,10 +9,14 @@ type Props = {
 };
 
 @observer
-export default class addressModal extends React.Component<Props> {
+export default class AddressModal extends React.Component<Props> {
 
   handleOpenPost = () => {
+    // TODO: 모달창 중복 켜짐 수정하기
     this.props.addressModalStore.setIsDaumPost(true);
+    console.log("ddd");
+    console.log(this.props.addressModalStore.isDaumPost, "dddd");
+    console.log(this.props.addressModalStore.visible, "ddd")
   };
 
   handleSearchAddress = (data: AddressData) => {
