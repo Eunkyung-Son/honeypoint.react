@@ -6,13 +6,8 @@ export default class RestaurantMemberSignupStore {
   @observable private _inputVisible = false;
   @observable private _inputValue = '';
   @observable private _value = 1;
-  @observable private _restType?: string;
-  @observable private _restPrice?: string;
-  @observable private _restRestday?: any;
-  @observable private _restParkingYn?: string;
   @observable private _restStartTime?: string;
   @observable private _restEndTime?: string;
-  @observable private _restReserveYn?: string;
 
   @action.bound
   setId = (id: string) => {
@@ -45,26 +40,6 @@ export default class RestaurantMemberSignupStore {
   }
 
   @action.bound
-  setRestType = (restType: string) => {
-    this._restType = restType;
-  }
-
-  @action.bound
-  setRestPrice = (restPrice: string) => {
-    this._restPrice = restPrice;
-  }
-
-  @action.bound
-  setRestRestday = (restRestday: any) => {
-    this._restRestday = restRestday;
-  }
-
-  @action.bound
-  setRestParkingYn = (restParkingYn: string) => {
-    this._restParkingYn = restParkingYn;
-  }
-
-  @action.bound
   setRestStartTime = (restStartTime: string) => {
     this._restStartTime = restStartTime;
   }
@@ -72,16 +47,6 @@ export default class RestaurantMemberSignupStore {
   @action.bound
   setRestEndTime = (restEndTime: string) => {
     this._restEndTime = restEndTime;
-  }
-
-  @action.bound
-  setRestReserveYn = (restReserveYn: string) => {
-    this._restReserveYn = restReserveYn;
-  }
-
-  @computed
-  get restReserveYn() {
-    return this._restReserveYn;
   }
 
   @computed
@@ -92,26 +57,6 @@ export default class RestaurantMemberSignupStore {
   @computed
   get restEndTime() {
     return this._restEndTime;
-  }
-
-  @computed
-  get restParkingYn() {
-    return this._restParkingYn;
-  }
-
-  @computed
-  get restRestday() {
-    return this._restRestday;
-  }
-
-  @computed
-  get restPrice() {
-    return this._restPrice;
-  }
-
-  @computed
-  get restType() {
-    return this._restType;
   }
 
   @computed

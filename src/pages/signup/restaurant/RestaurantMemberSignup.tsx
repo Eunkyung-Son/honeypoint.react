@@ -1,5 +1,5 @@
 import React, { createRef } from "react";
-import { Button, Checkbox, Col, Form, FormInstance, Input, Radio, RadioChangeEvent, Row, Select, Tag, TimePicker } from "antd";
+import { Button, Checkbox, Col, Form, FormInstance, Input, Radio, Row, Select, Tag, TimePicker } from "antd";
 import { SERVER_URL } from "../../../config/config";
 import axios, { AxiosResponse } from "axios";
 import RestaurantMemberSignupStore from "./RestaurantMemberSignupStore";
@@ -462,7 +462,7 @@ export default class RestaurantMemberSignup extends React.Component <Props, Stat
               }
             ]}
           >
-            <Radio.Group value={this.restaurantMemberSignupStore.restParkingYn}>
+            <Radio.Group>
               <Radio value={'Y'}>주차가능</Radio>
               <Radio value={'N'}>주차불가</Radio>
             </Radio.Group>
@@ -552,7 +552,7 @@ export default class RestaurantMemberSignup extends React.Component <Props, Stat
               }
             ]}
           >
-            <Radio.Group value={this.restaurantMemberSignupStore.restReserveYn}>
+            <Radio.Group>
               <Radio value={'Y'}>예약가능</Radio>
               <Radio value={'N'}>예약불가</Radio>
             </Radio.Group>

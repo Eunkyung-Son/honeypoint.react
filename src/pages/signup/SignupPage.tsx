@@ -21,7 +21,6 @@ type Props = {
 export default class SignupPage extends React.Component<Props> {
 
   render() {
-    //FIXME: onChange?, Tab 컴포넌트화 하기
     return (
       <Tabs defaultActiveKey="1" centered >
         <TabPane tab="일반 회원 가입" key="1">

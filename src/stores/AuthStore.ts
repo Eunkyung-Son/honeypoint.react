@@ -18,7 +18,7 @@ export default class AuthStore {
   }
 
   @action.bound
-  setIsLoggedIn(isLoggedIn: boolean) {
+  setIsLoggedIn = (isLoggedIn: boolean) => {
     this.isLoggedIn = isLoggedIn;
   }
 
