@@ -1,29 +1,45 @@
 import React from "react";
-import { Button, DatePicker, Form, Input, Tabs } from "antd";
+import { Button, DatePicker, Form, FormInstance, Input } from "antd";
 import { SERVER_URL } from "../../../config/config";
 import axios, { AxiosResponse } from "axios";
 import GeneralMemberSignupStore from "./GeneralMemberSignupStore";
 import AddressModal from "../modal/AddressModal";
-import AddressModalStore from "../modal/AddressModalStore";
 import { Moment } from "moment";
+import { inject, observer } from "mobx-react";
+import RootStore from "../../../stores/RootStore";
+import ModalStore from "../../../stores/ModalStore";
+import { AddressData } from "react-daum-postcode";
 
 type Props = {
-  onFormSubmit: (name: string, { values, forms }: any) => void;
+  modalStore: ModalStore,
 }
-
+@observer
+@inject((rootStore: RootStore) => ({
+  rootStore: rootStore.routing,
+  modalStore: rootStore.modalStore,
+}))
 export default class GeneralMemberSignup extends React.Component<Props> {
   generalMemberSignupStore: GeneralMemberSignupStore = new GeneralMemberSignupStore();
-  addressModalStore: AddressModalStore = new AddressModalStore();
+  ref = React.createRef<FormInstance>();
+  HEADERS = {
+    'Content-Type': 'application/json'
+  };
 
-  onIdChange = (e: any) => {
+  onIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.generalMemberSignupStore.setId(e.target.value);
+  }
+
+  onDateChange = (momentDate: Moment | null, dateString: string) => {
+    if (momentDate === null) return;
+    this.generalMemberSignupStore.setBirthday(Number(momentDate.format('YYYYMMDD')));
   }
 
   onIdValidation = async () => {
     const { generalMemberSignupStore } = this;
+    const { id, setIsDuplicated } = generalMemberSignupStore;
     const URL = `${SERVER_URL}/idCheck`;
     const params = {
-      id: generalMemberSignupStore.id,
+      id: id,
     }
     await axios
       .get(URL, {
@@ -34,26 +50,70 @@ export default class GeneralMemberSignup extends React.Component<Props> {
       .then((response: AxiosResponse) => {
         if (response.data) {
           alert('사용 가능한 아이디 입니다.')
-          generalMemberSignupStore.setIsDuplicated(false);
+          setIsDuplicated(false);
           return;
         }
         alert('중복된 아이디가 존재합니다.')
-        generalMemberSignupStore.setIsDuplicated(true);
+        setIsDuplicated(true);
       })
   }
 
   onOk = () => {   
-    this.addressModalStore.setVisible(false);
+    this.props.modalStore.setVisible(false);
   }
 
   showModal = () => {
-    this.addressModalStore.setVisible(true, this.onOk);
+    this.props.modalStore.setVisible(true, this.onOk);
   }
 
-  onDateChange = (momentDate: Moment | null, dateString: string) => {
-    if (momentDate === null) return;
-    this.generalMemberSignupStore.setBirthday(Number(momentDate.format('YYYYMMDD')));
+  setAddressData = (data: AddressData) => {
+    let allAddress = data.address;
+    let extraAddress = "";
+
+    if (data.addressType === "R") {
+      if (data.bname !== "") {
+        extraAddress += data.bname;
+      }
+      if (data.buildingName !== "") {
+        extraAddress += extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
+      }
+      allAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
+    }
+
+    if (!this.ref.current) return;
+    this.ref.current.setFieldsValue({
+      mPostNumber: data.zonecode,
+      mRoadAddress: allAddress,
+    })
   }
+
+  onFormFinish = async (values: any) => {
+    await this.onSignup(values);
+  }
+
+  onSignup = async (values:any) => {
+    // FIXME: values type 선언
+    console.log(values, "signup values");
+    const URL = `${SERVER_URL}/memberInsert`;
+    await axios
+      .post(URL,
+        {
+          mId: values.mId,
+          mName: values.mName,
+          mEmail: values.mEmail,
+          mNickname: values.mNickname,
+          mBirthday: this.generalMemberSignupStore.birthday,
+          mPhone: values.mPhone,
+          mAddress: `${values.mPostNumber}, ${values.mRoadAddress}, ${values.mDetailAddress}`,
+          mPwd: values.mPwd
+        },
+        {
+          headers: this.HEADERS,
+        }
+      )
+      .then((response: AxiosResponse) => {
+      })
+  } 
 
   render () {
     const formItemLayout = {
@@ -82,14 +142,14 @@ export default class GeneralMemberSignup extends React.Component<Props> {
 
     const { generalMemberSignupStore } = this;
     
-    const { onFormSubmit } = this.props;
-
     return (      
-      <Form.Provider onFormFinish={onFormSubmit}>
-        <Form 
+      <>
+        <Form
+          ref={this.ref}
           name="basicForm"
           {...formItemLayout}
           validateMessages={validateMessages}
+          onFinish={this.onFormFinish}
         >
           <Form.Item
             name={['mId']}
@@ -218,8 +278,8 @@ export default class GeneralMemberSignup extends React.Component<Props> {
             <Input />
           </Form.Item>
           <Form.Item
-            name={['mAddress']}
-            label="주소"
+            name={['mPostNumber']}
+            label="우편번호"
             rules={[
               {
                 required: true,
@@ -232,14 +292,38 @@ export default class GeneralMemberSignup extends React.Component<Props> {
           <Button onClick={this.showModal}>
             주소 검색
           </Button>
+          <Form.Item
+            name={['mRoadAddress']}
+            label="도로명주소"
+            rules={[
+              {
+                required: true,
+                message: '도로명주소를 입력해주세요.'
+              }
+            ]}
+          >
+            <Input readOnly/>
+          </Form.Item>
+          <Form.Item
+            name={['mDetailAddress']}
+            label="상세주소"
+            rules={[
+              {
+                required: true,
+                message: '상세주소를 입력해주세요.'
+              }
+            ]}
+          >
+            <Input />
+          </Form.Item>
           <Form.Item wrapperCol={{ ...formItemLayout.wrapperCol, offset: 8 }}>
             <Button type="primary" htmlType="submit">
               회원가입
             </Button>
           </Form.Item>
         </Form>
-        <AddressModal addressModalStore={this.addressModalStore} />
-      </Form.Provider>
+        <AddressModal modalStore={this.props.modalStore} handleAddressData={this.setAddressData}/>
+      </>
     )
   }
 }

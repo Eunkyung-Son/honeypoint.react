@@ -1,61 +1,39 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { Input, Modal, Form } from "antd";
+import { Modal } from "antd";
 import DaumPostcode, { AddressData } from "react-daum-postcode";
-import AddressModalStore from "./AddressModalStore";
+import ModalStore from "../../../stores/ModalStore";
 
 type Props = {
-  addressModalStore: AddressModalStore;
+  modalStore: ModalStore;
+  handleAddressData: (data: AddressData) => void;
 };
 
+// FIXME: routerstore props
 @observer
 export default class AddressModal extends React.Component<Props> {
 
-  handleOpenPost = () => {
-    // TODO: 모달창 중복 켜짐 수정하기
-    this.props.addressModalStore.setIsDaumPost(true);
-    console.log("ddd");
-    console.log(this.props.addressModalStore.isDaumPost, "dddd");
-    console.log(this.props.addressModalStore.visible, "ddd")
-  };
-
   handleSearchAddress = (data: AddressData) => {
-    const { addressModalStore } = this.props;
+    const { modalStore } = this.props;
 
-    let AllAddress = data.address;
-    let extraAddress = "";
-    const zoneCodes = data.zonecode;
-
-    if (data.addressType === "R") {
-      if (data.bname !== "") {
-        extraAddress += data.bname;
-      }
-      if (data.buildingName !== "") {
-        extraAddress += extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
-      }
-      AllAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
-    }
-
-    addressModalStore.setFullAddress(`${zoneCodes}, ${AllAddress}`);
-    addressModalStore.formRef?.setFieldsValue({
-      postNumber: zoneCodes,
-      mainAddress: data.address,
-    });
-    addressModalStore.setIsDaumPost(false);
+    this.onSubmitClick();
+    this.props.handleAddressData(data);
+    modalStore.setVisible(false);
   };
 
   handleCancel = () => {
-    this.props.addressModalStore.setVisible(false);
+    this.props.modalStore?.setVisible(false);
   }
 
-  handleOk = () => {
-    const { addressModalStore } = this.props;
-    const { onOk } = addressModalStore;
-    addressModalStore.formRef?.submit();
-    
-    if (onOk instanceof Function) {
-      onOk();
+  handleOk = () => {    
+    if (this.props.modalStore?.onOk instanceof Function) {
+      this.props.modalStore?.onOk();
     }
+  }
+
+  onSubmitClick = () => {
+    const submitButton = document.getElementById('submit-button');
+    submitButton?.click();
   }
 
   render() {
@@ -69,42 +47,22 @@ export default class AddressModal extends React.Component<Props> {
       border: "1px solid #000000",
       overflow: "hidden",
     };
-    const { addressModalStore } = this.props;
+    const { modalStore } = this.props;
     return (
       <Modal 
-        visible={addressModalStore.visible} 
+        visible={modalStore?.isVisible} 
         width={width} 
         onOk={this.handleOk}
         onCancel={this.handleCancel}
       >
-      <Form 
-        ref={(instance) => addressModalStore.setFormRef(instance)} 
-        name="addressForm"
-      >
-        <div className="modalCell">
-          <div className="cellFirst">
-            <button type="button" onClick={this.handleOpenPost}>
-              <span>우편번호 찾기</span>
-            </button>
-          </div>
-          <DaumPostcode 
-            width={width} 
-            height={height} 
-            style={modalStyle} 
-            autoClose 
-            onComplete={this.handleSearchAddress} 
-          />
-          <Form.Item name="postNumber" label="우편번호">         
-            <Input readOnly/>
-          </Form.Item>
-          <Form.Item name="mainAddress" label="기본주소">         
-            <Input readOnly/>
-          </Form.Item>
-          <Form.Item name="extraAddress" label="상세주소">
-            <Input />
-          </Form.Item>
-        </div>
-        </Form>
+        <button type="submit" id="submit-button" style={{ width: "none", height: "none"}} onClick={this.onSubmitClick}/>
+        <DaumPostcode 
+          width={width} 
+          height={height} 
+          style={modalStyle} 
+          autoClose 
+          onComplete={this.handleSearchAddress}
+        />
       </Modal>
     );
   }
