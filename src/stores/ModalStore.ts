@@ -1,24 +1,22 @@
-import { action, observable } from "mobx";
-import RootStore from "./RootStore";
+import { action, observable, computed } from "mobx";
 
 export default class ModalStore {
-  root: RootStore;
-
-  constructor(root: RootStore) {
-    this.root = root;
-  }
-  @observable isVisible = false;
-  @observable onOk?: () => void;
-
+  @observable private _isVisible = false;
+  // @observable onOk?: () => void;
+  
   @action.bound
-  setVisible(visible: boolean, onOk?: () => void) {
-    this.isVisible = visible;
-    this.onOk = onOk;
+  setVisible = (visible: boolean) => {
+    this._isVisible = visible;
   }
 
   @action.bound
-  onCancel() {
-    this.isVisible = false;
+  onCancel = () => {
+    this._isVisible = false;
+  }
+
+  @computed
+  get isVisible() {
+    return this._isVisible;
   }
 
 }

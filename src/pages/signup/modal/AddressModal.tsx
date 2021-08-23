@@ -2,38 +2,45 @@ import React from "react";
 import { observer } from "mobx-react";
 import { Modal } from "antd";
 import DaumPostcode, { AddressData } from "react-daum-postcode";
-import ModalStore from "../../../stores/ModalStore";
+import AddressModalStore from "./AddressModalStore";
 
 type Props = {
-  modalStore: ModalStore;
-  handleAddressData: (data: AddressData) => void;
+  modalStore: AddressModalStore;
+  handleAddressData: (data: AddressResponse) => void;
 };
 
-// FIXME: routerstore props
+// 필요한 프로퍼티만 return
+export type AddressResponse = {
+  zoneCode: string,
+  address: string,
+}
+
 @observer
 export default class AddressModal extends React.Component<Props> {
-
-  handleSearchAddress = (data: AddressData) => {
-    const { modalStore } = this.props;
-
-    this.onSubmitClick();
-    this.props.handleAddressData(data);
+  onClose = (data: AddressData) => {
+    const { modalStore, handleAddressData } = this.props;
+    handleAddressData(this.parsingAddressData(data));
     modalStore.setVisible(false);
-  };
-
-  handleCancel = () => {
-    this.props.modalStore?.setVisible(false);
   }
 
-  handleOk = () => {    
-    if (this.props.modalStore?.onOk instanceof Function) {
-      this.props.modalStore?.onOk();
+  parsingAddressData = (data: AddressData) => {
+    let address = data.address;
+    let extraAddress = "";
+
+    if (data.addressType === "R") {
+      if (data.bname !== "") {
+        extraAddress += data.bname;
+      }
+      if (data.buildingName !== "") {
+        extraAddress += extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
+      }
+      address += extraAddress !== "" ? ` (${extraAddress})` : "";
     }
-  }
 
-  onSubmitClick = () => {
-    const submitButton = document.getElementById('submit-button');
-    submitButton?.click();
+    return {
+      address,
+      zoneCode: data.zonecode
+    }
   }
 
   render() {
@@ -48,20 +55,20 @@ export default class AddressModal extends React.Component<Props> {
       overflow: "hidden",
     };
     const { modalStore } = this.props;
+    const { isVisible, onCancel } = modalStore;
+
     return (
-      <Modal 
-        visible={modalStore?.isVisible} 
-        width={width} 
-        onOk={this.handleOk}
-        onCancel={this.handleCancel}
+      <Modal
+        visible={isVisible}
+        width={width}
+        onCancel={onCancel}
       >
-        <button type="submit" id="submit-button" style={{ width: "none", height: "none"}} onClick={this.onSubmitClick}/>
-        <DaumPostcode 
-          width={width} 
-          height={height} 
-          style={modalStyle} 
-          autoClose 
-          onComplete={this.handleSearchAddress}
+        <DaumPostcode
+          width={width}
+          height={height}
+          style={modalStyle}
+          autoClose
+          onComplete={this.onClose}
         />
       </Modal>
     );
