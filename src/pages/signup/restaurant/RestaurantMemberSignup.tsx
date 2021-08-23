@@ -69,13 +69,57 @@ export default class RestaurantMemberSignup extends React.Component <Props, Stat
       })
   }
 
-  onOk = () => {   
-    this.addressModalStore.setVisible(false);
-  }
-  
   onIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.restaurantMemberSignupStore.setId(e.target.value);
   }
+
+  showModal = () => {
+    this.addressModalStore.setVisible(true);
+  }
+  
+  setAddressData = (data: AddressResponse) => {
+    const { zoneCode, address } = data;
+    this.formRef.current?.setFieldsValue({
+      rPostNumber: zoneCode,
+      rAddress: address,
+    })
+  }
+
+  onSignup = async (values:RestaurantSignupData) => {
+    // FIXME: rNo => 0으로 넘어오는 것 수정
+    console.log(values, "signup values");
+    const { restaurantMemberSignupStore } = this;
+    const { tags } = restaurantMemberSignupStore;
+    const URL = `${SERVER_URL}/restaurantInsert`;
+    await axios
+      .post(URL,
+        {
+          mId: values.mId,
+          mPwd: values.mPwd,
+          mEmail: values.mEmail,
+          rName: values.rName,
+          rAddress: `${values.rPostNumber}, ${values.rAddress}`,
+          rOAddress: values.rOAddress,
+          rTel: values.rTel,
+          rType: values.rType,
+          rTag: tags.join(', '),
+          rPrice: values.rPrice,
+          rParking: values.rParking,
+          rStartTime: (values.rStartTime as Moment).format(this.timeFormat),
+          rEndTime: (values.rEndTime as Moment).format(this.timeFormat),
+          rRestDay: (values.rRestDay as string[]).join(', '),
+          rIntro: values.rIntro,
+          resveYn: values.resveYn,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        }
+      )
+      .then((response: AxiosResponse) => {
+      })
+  } 
 
   handleClose = (removedTag: any) => {
     // FIXME: removedTag 타입 잡기

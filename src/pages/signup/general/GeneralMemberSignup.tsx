@@ -58,43 +58,24 @@ export default class GeneralMemberSignup extends React.Component<Props> {
       })
   }
 
-  onOk = () => {   
-    this.props.modalStore.setVisible(false);
-  }
-
   showModal = () => {
-    this.props.modalStore.setVisible(true, this.onOk);
+    this.addressModalStore.setVisible(true);
   }
 
-  setAddressData = (data: AddressData) => {
-    let allAddress = data.address;
-    let extraAddress = "";
-
-    if (data.addressType === "R") {
-      if (data.bname !== "") {
-        extraAddress += data.bname;
-      }
-      if (data.buildingName !== "") {
-        extraAddress += extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
-      }
-      allAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
-    }
-
-    if (!this.ref.current) return;
-    this.ref.current.setFieldsValue({
-      mPostNumber: data.zonecode,
-      mRoadAddress: allAddress,
+  setAddressData = (data: AddressResponse) => {
+    const { zoneCode, address } = data;
+    this.formRef.current?.setFieldsValue({
+      mPostNumber: zoneCode,
+      mRoadAddress: address,
     })
   }
 
-  onFormFinish = async (values: any) => {
-    await this.onSignup(values);
-  }
-
-  onSignup = async (values:any) => {
-    // FIXME: values type 선언
+  onSignup = async (values: GeneralSignupData) => {
+    // FIXME: 회원가입 시 아이디 / 비밀번호 오류 에러코드로 에러 캐치하기
     console.log(values, "signup values");
     const URL = `${SERVER_URL}/memberInsert`;
+    console.log(`${values.mPostNumber}, ${values.mRoadAddress}, ${values.mDetailAddress}`);
+    console.log((values.mBirthday as Moment).format(this.dateFormat));
     await axios
       .post(URL,
         {
