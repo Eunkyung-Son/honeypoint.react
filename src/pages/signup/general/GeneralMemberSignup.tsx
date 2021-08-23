@@ -1,37 +1,31 @@
 import React from "react";
-import { Button, DatePicker, Form, FormInstance, Input } from "antd";
-import { SERVER_URL } from "../../../config/config";
 import axios, { AxiosResponse } from "axios";
-import GeneralMemberSignupStore from "./GeneralMemberSignupStore";
-import AddressModal from "../modal/AddressModal";
 import { Moment } from "moment";
+import { Button, DatePicker, Form, FormInstance, Input } from "antd";
 import { inject, observer } from "mobx-react";
+import { SERVER_URL } from "../../../config/config";
+import AddressModal, { AddressResponse } from "../modal/AddressModal";
 import RootStore from "../../../stores/RootStore";
-import ModalStore from "../../../stores/ModalStore";
-import { AddressData } from "react-daum-postcode";
+import GeneralMemberSignupStore from "./GeneralMemberSignupStore";
+import AddressModalStore from "../modal/AddressModalStore";
+import GeneralSignupData from "../../../models/GeneralSignupData";
 
 type Props = {
-  modalStore: ModalStore,
 }
 @observer
 @inject((rootStore: RootStore) => ({
   rootStore: rootStore.routing,
-  modalStore: rootStore.modalStore,
 }))
 export default class GeneralMemberSignup extends React.Component<Props> {
-  generalMemberSignupStore: GeneralMemberSignupStore = new GeneralMemberSignupStore();
-  ref = React.createRef<FormInstance>();
-  HEADERS = {
-    'Content-Type': 'application/json'
-  };
+  addressModalStore = new AddressModalStore();
+  generalMemberSignupStore = new GeneralMemberSignupStore();
+
+  formRef = React.createRef<FormInstance>();
+
+  dateFormat = 'YYYY/MM/DD';
 
   onIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.generalMemberSignupStore.setId(e.target.value);
-  }
-
-  onDateChange = (momentDate: Moment | null, dateString: string) => {
-    if (momentDate === null) return;
-    this.generalMemberSignupStore.setBirthday(Number(momentDate.format('YYYYMMDD')));
   }
 
   onIdValidation = async () => {
@@ -83,13 +77,15 @@ export default class GeneralMemberSignup extends React.Component<Props> {
           mName: values.mName,
           mEmail: values.mEmail,
           mNickname: values.mNickname,
-          mBirthday: this.generalMemberSignupStore.birthday,
+          mBirthday: (values.mBirthday as Moment).format(this.dateFormat),
           mPhone: values.mPhone,
           mAddress: `${values.mPostNumber}, ${values.mRoadAddress}, ${values.mDetailAddress}`,
           mPwd: values.mPwd
         },
         {
-          headers: this.HEADERS,
+          headers: {
+            'Content-Type': 'application/json'
+          },
         }
       )
       .then((response: AxiosResponse) => {
@@ -119,18 +115,16 @@ export default class GeneralMemberSignup extends React.Component<Props> {
       },
     };
 
-    const dateFormat = 'YYYY/MM/DD';
-
     const { generalMemberSignupStore } = this;
     
     return (      
       <>
         <Form
-          ref={this.ref}
+          ref={this.formRef}
           name="basicForm"
           {...formItemLayout}
           validateMessages={validateMessages}
-          onFinish={this.onFormFinish}
+          onFinish={this.onSignup}
         >
           <Form.Item
             name={['mId']}
@@ -224,8 +218,7 @@ export default class GeneralMemberSignup extends React.Component<Props> {
             ]}
           >
             <DatePicker
-              format={dateFormat}
-              onChange={this.onDateChange}
+              format={this.dateFormat}
             />
           </Form.Item>
           <Form.Item
@@ -303,7 +296,9 @@ export default class GeneralMemberSignup extends React.Component<Props> {
             </Button>
           </Form.Item>
         </Form>
-        <AddressModal modalStore={this.props.modalStore} handleAddressData={this.setAddressData}/>
+        <AddressModal
+          modalStore={this.addressModalStore}
+          handleAddressData={this.setAddressData}/>
       </>
     )
   }

@@ -1,48 +1,35 @@
 import React, { createRef } from "react";
-import { Button, Checkbox, Col, Form, FormInstance, Input, Radio, Row, Select, Tag, TimePicker } from "antd";
-import { SERVER_URL } from "../../../config/config";
 import axios, { AxiosResponse } from "axios";
-import RestaurantMemberSignupStore from "./RestaurantMemberSignupStore";
-import AddressModalStore from "../modal/AddressModalStore";
+import { inject, observer } from "mobx-react";
+import { Button, Checkbox, Col, Form, FormInstance, Input, Radio, Row, Select, Tag, TimePicker } from "antd";
 import { PlusOutlined } from '@ant-design/icons';
 import { TweenOneGroup } from 'rc-tween-one';
 import TextArea from "antd/lib/input/TextArea";
-import AddressModal from "../modal/AddressModal";
-import moment from "moment";
-import { inject, observer } from "mobx-react";
-import ModalStore from "../../../stores/ModalStore";
+import { Moment } from "moment";
+import { SERVER_URL } from "../../../config/config";
+import AddressModal, { AddressResponse } from "../modal/AddressModal";
 import RootStore from "../../../stores/RootStore";
-import { AddressData } from "react-daum-postcode";
+import AddressModalStore from "../modal/AddressModalStore";
+import RestaurantMemberSignupStore from "./RestaurantMemberSignupStore";
+import RestaurantSignupData from "../../../models/RestaurantSignupData";
 
 type Props = {
-  modalStore: ModalStore
-}
-
-type State = {
-  [x: string] : any;
-  tags: string[];
+  
 }
 @inject((rootStore: RootStore) => ({
   rootStore: rootStore.routing,
-  modalStore: rootStore.modalStore,
 }))
 @observer
-export default class RestaurantMemberSignup extends React.Component <Props, State> {
+export default class RestaurantMemberSignup extends React.Component<Props> {
   addressModalStore: AddressModalStore = new AddressModalStore();
   restaurantMemberSignupStore: RestaurantMemberSignupStore = new RestaurantMemberSignupStore();
   input: React.RefObject<Input>;
-  ref = React.createRef<FormInstance>();
-  HEADERS = {
-    'Content-Type': 'application/json'
-  };
+  formRef = React.createRef<FormInstance>();
+  timeFormat = 'hh:mm';
 
   constructor(props: Props){
     super(props);
     this.input = createRef();
-  }
-
-  showModal = () => {
-    this.props.modalStore.setVisible(true, this.onOk);
   }
   
   onIdValidation = async () => {
@@ -130,10 +117,12 @@ export default class RestaurantMemberSignup extends React.Component <Props, Stat
     setTags(tags)
   };
 
+  // FIXME: input ref 지정한게 null로 되는 이유 찾아봐야함
   showInput = () => {
     const { restaurantMemberSignupStore, input } = this;
     restaurantMemberSignupStore.setInputVisible(true);
-    input.current?.focus();
+    console.log(input);
+    (input.current as any)?.focus();
   }
   
   handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,15 +130,12 @@ export default class RestaurantMemberSignup extends React.Component <Props, Stat
   }
 
   handleInputConfirm = () => {
-    // FIXME: 값이 1개씩 밀려서 저장됨
     const { restaurantMemberSignupStore } = this;
     const { inputValue, tags, setTags, setInputValue, setInputVisible } = restaurantMemberSignupStore;
-    
+
     if (inputValue && tags.indexOf(inputValue) === -1) {
       setTags([...tags, inputValue]);
     }
-    console.log(tags);
-
     setInputVisible(false);
     setInputValue('');
   }
@@ -176,75 +162,6 @@ export default class RestaurantMemberSignup extends React.Component <Props, Stat
       </span>
     );
   };
-
-  onStartTimeChange = (time:moment.Moment | null, timeString: string) => {
-    console.log(time, timeString);
-    this.restaurantMemberSignupStore.setRestStartTime(timeString);
-  }
-
-  onEndTimeChange = (time:moment.Moment | null, timeString: string) => {
-    console.log(time, timeString);
-    this.restaurantMemberSignupStore.setRestEndTime(timeString);
-  }
-
-  setAddressData = (data: AddressData) => {
-    let allAddress = data.address;
-    let extraAddress = "";
-
-    if (data.addressType === "R") {
-      if (data.bname !== "") {
-        extraAddress += data.bname;
-      }
-      if (data.buildingName !== "") {
-        extraAddress += extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
-      }
-      allAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
-    }
-
-    this.ref.current?.setFieldsValue({
-      rPostNumber: data.zonecode,
-      rAddress: allAddress,
-    })
-  }
-
-  onFormFinish = (values: any) => {
-    this.onSignup(values);
-  }
-
-  onSignup = async (values:any) => {
-    // FIXME: values type 선언
-    console.log(values, "signup values");
-    const { restaurantMemberSignupStore } = this;
-    const { tags, restStartTime, restEndTime } = restaurantMemberSignupStore;
-    const URL = `${SERVER_URL}/restaurantInsert`;
-    await axios
-      .post(URL,
-        {
-          mId: values.mId,
-          mPwd: values.mPwd,
-          mEmail: values.mEmail,
-          rName: values.rName,
-          rAddress: `${values.rPostNumber}, ${values.rAddress}`,
-          rOAddress: values.rOAddress,
-          rTel: values.rTel,
-          rType: values.rType,
-          rTag: tags, // FIXME: undefiend 해결하기
-          rPrice: values.rPrice,
-          rParking: values.rParking,
-          rStartTime: restStartTime,
-          rEndTime: restEndTime,
-          rRestDay: values.rRestDay, // FIXME: 배열 형태 -> string 형태로 처리
-          rIntro: values.rIntro,
-          resveYn: values.resveYn,
-        },
-        {
-          headers: this.HEADERS,
-        }
-      )
-      .then((response: AxiosResponse) => {
-      })
-  } 
-
 
   render () {
     const validateMessages = {
@@ -278,8 +195,8 @@ export default class RestaurantMemberSignup extends React.Component <Props, Stat
           name="restaurantSignupForm"
           {...formItemLayout}
           validateMessages={validateMessages}
-          ref={this.ref}
-          onFinish={this.onFormFinish}
+          ref={this.formRef}
+          onFinish={this.onSignup}
         >
           <Form.Item
             name={['mId']}
@@ -521,7 +438,7 @@ export default class RestaurantMemberSignup extends React.Component <Props, Stat
               }
             ]}
           >
-            <TimePicker format="hh:mm" onChange={this.onStartTimeChange} />
+            <TimePicker format="hh:mm" />
           </Form.Item>
           <Form.Item
             name={['rEndTime']}
@@ -533,7 +450,7 @@ export default class RestaurantMemberSignup extends React.Component <Props, Stat
               }
             ]}
           >
-            <TimePicker format="hh:mm" onChange={this.onEndTimeChange} />
+            <TimePicker format="hh:mm" />
           </Form.Item>
           <Form.Item 
             name={['rRestDay']}
@@ -607,7 +524,10 @@ export default class RestaurantMemberSignup extends React.Component <Props, Stat
             </Button>
           </Form.Item>
         </Form>
-        <AddressModal modalStore={this.props.modalStore} handleAddressData={this.setAddressData} />
+        <AddressModal 
+          modalStore={this.addressModalStore}
+          handleAddressData={this.setAddressData}
+        />
       </>
     )
   }

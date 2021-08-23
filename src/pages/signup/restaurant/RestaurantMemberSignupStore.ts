@@ -5,9 +5,6 @@ export default class RestaurantMemberSignupStore {
   @observable private _tags: string[] = [];
   @observable private _inputVisible = false;
   @observable private _inputValue = '';
-  @observable private _value = 1;
-  @observable private _restStartTime?: string;
-  @observable private _restEndTime?: string;
 
   @action.bound
   setId = (id: string) => {
@@ -34,31 +31,6 @@ export default class RestaurantMemberSignupStore {
     this._inputValue = inputValue;
   }
 
-  @action.bound
-  setValue = (value: number) => {
-    this._value = value;
-  }
-
-  @action.bound
-  setRestStartTime = (restStartTime: string) => {
-    this._restStartTime = restStartTime;
-  }
-
-  @action.bound
-  setRestEndTime = (restEndTime: string) => {
-    this._restEndTime = restEndTime;
-  }
-
-  @computed
-  get restStartTime() {
-    return this._restStartTime;
-  }
-
-  @computed
-  get restEndTime() {
-    return this._restEndTime;
-  }
-
   @computed
   get tags() {
     return this._tags;
@@ -72,11 +44,6 @@ export default class RestaurantMemberSignupStore {
   @computed
   get inputValue() {
     return this._inputValue;
-  }
-
-  @computed
-  get value() {
-    return this._value;
   }
 
   @computed
