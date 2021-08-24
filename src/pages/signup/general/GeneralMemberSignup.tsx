@@ -9,12 +9,14 @@ import RootStore from "../../../stores/RootStore";
 import GeneralMemberSignupStore from "./GeneralMemberSignupStore";
 import AddressModalStore from "../modal/AddressModalStore";
 import GeneralSignupData from "../../../models/GeneralSignupData";
+import { RouterStore } from "mobx-react-router";
 
 type Props = {
+  routing?: RouterStore
 }
 @observer
 @inject((rootStore: RootStore) => ({
-  rootStore: rootStore.routing,
+  routing: rootStore.routing,
 }))
 export default class GeneralMemberSignup extends React.Component<Props> {
   addressModalStore = new AddressModalStore();
@@ -77,7 +79,7 @@ export default class GeneralMemberSignup extends React.Component<Props> {
           mName: values.mName,
           mEmail: values.mEmail,
           mNickname: values.mNickname,
-          mBirthday: (values.mBirthday as Moment).format(this.dateFormat),
+          mBirthday: (values.mBirthday as Moment).format("YYYYMMDD"),
           mPhone: values.mPhone,
           mAddress: `${values.mPostNumber}, ${values.mRoadAddress}, ${values.mDetailAddress}`,
           mPwd: values.mPwd
@@ -89,6 +91,9 @@ export default class GeneralMemberSignup extends React.Component<Props> {
         }
       )
       .then((response: AxiosResponse) => {
+        // FIXME: 회원 가입 완료 후 모달이나 alert 창 띄워 준 후
+        // 라우팅 변경하도록 하기
+        this.props.routing?.push('/login');
       })
   } 
 
