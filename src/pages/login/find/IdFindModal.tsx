@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from "axios";
 import { observer } from "mobx-react";
 import React from "react";
 import { SERVER_URL } from "../../../config/config";
-import { IdFindModalStore } from "./IdFindModalStore";
+import IdFindModalStore from "./IdFindModalStore";
 
 type Props = {
   idFindModalStore: IdFindModalStore,

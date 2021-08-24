@@ -12,12 +12,13 @@ import RootStore from "../../../stores/RootStore";
 import AddressModalStore from "../modal/AddressModalStore";
 import RestaurantMemberSignupStore from "./RestaurantMemberSignupStore";
 import RestaurantSignupData from "../../../models/RestaurantSignupData";
+import { RouterStore } from "mobx-react-router";
 
 type Props = {
-  
+  routing?: RouterStore,
 }
 @inject((rootStore: RootStore) => ({
-  rootStore: rootStore.routing,
+  routing: rootStore.routing,
 }))
 @observer
 export default class RestaurantMemberSignup extends React.Component<Props> {
@@ -105,6 +106,8 @@ export default class RestaurantMemberSignup extends React.Component<Props> {
         }
       )
       .then((response: AxiosResponse) => {
+        // FIXME: 회원가입 완료 시 alert or modal 추가해준 후 routing 걸기
+        this.props.routing?.push('/login');
       })
   } 
 

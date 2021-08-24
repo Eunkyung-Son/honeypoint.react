@@ -6,7 +6,7 @@ type GeneralSignupData = {
   confirm: string,
   mName: string,
   mNickname: string,
-  mBirthday: Moment,
+  mBirthday: Moment | string,
   mEmail: string,
   mPhone: string,
   mPostNumber: string,

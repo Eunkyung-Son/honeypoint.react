@@ -1,6 +1,6 @@
 import { action, computed, observable } from "mobx";
 
-export class IdFindModalStore {
+export default class IdFindModalStore {
   @observable isVisible: boolean = false;
 
   @action.bound
