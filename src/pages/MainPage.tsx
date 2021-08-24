@@ -7,18 +7,15 @@ import { inject, observer } from "mobx-react";
 import AuthStore from "../stores/AuthStore";
 import { RouterStore } from "mobx-react-router";
 import { CaretDownOutlined, SmileTwoTone } from '@ant-design/icons';
-import LoginStore from "../stores/LoginStore";
 
 
 type Props = {
   routing: RouterStore,
   authStore: AuthStore,
-  loginStore: LoginStore,
 }
 @inject((rootStore: RootStore) => ({
   routing: rootStore.routing,
   authStore: rootStore.authStore,
-  loginStore: rootStore.loginStore,
 }))
 @observer
 export default class MainPage extends React.Component<Props> {
@@ -31,7 +28,7 @@ export default class MainPage extends React.Component<Props> {
 
   render() {
     const { Header, Content, Footer } = Layout;
-    const { authStore, loginStore } = this.props;
+    const { authStore } = this.props;
     const menu = (
       <Menu style={{ cursor: 'pointer' }}>
         <Menu.Item key="0">
@@ -56,7 +53,7 @@ export default class MainPage extends React.Component<Props> {
                     <div className="ant-dropdown-link" style={{ cursor: 'pointer' }}>
                       <SmileTwoTone style={{fontSize: "20px"}}/>
                       <span className="ant-dropdown-username">
-                        {loginStore.member?.mName}({loginStore.member?.mId})님, 환영합니다.
+                        {authStore.member?.mName}({authStore.member?.mId})님, 환영합니다.
                       </span>
                       <CaretDownOutlined style={{fontSize: "20px"}}/>
                     </div>

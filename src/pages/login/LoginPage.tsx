@@ -1,70 +1,28 @@
 import React from "react";
-import axios, { AxiosResponse } from "axios";
 import { Link } from "react-router-dom";
 import { Button, Col, Form, Input, Layout, Row } from "antd";
-import { SERVER_URL } from "../../config/config";
 import { inject, observer } from "mobx-react";
 import { RouterStore } from "mobx-react-router";
-import './LoginPage.scss'
-import Member from "../../models/Member";
-import RootStore from "../../stores/RootStore";
 import AuthStore from "../../stores/AuthStore";
+import RootStore from "../../stores/RootStore";
 import IdFindModal from "./find/IdFindModal";
-import PwdFindModalStore from "./find/PwdFindModalStore";
-import { IdFindModalStore } from "./find/IdFindModalStore";
 import PwdFindModal from "./find/PwdFindModal";
-import LoginStore from "../../stores/LoginStore";
+import PwdFindModalStore from "./find/PwdFindModalStore";
+import IdFindModalStore from "./find/IdFindModalStore";
+import './LoginPage.scss'
 
 type Props = {
   routing: RouterStore,
   authStore: AuthStore,
-  loginStore: LoginStore,
 }
 @inject((rootStore: RootStore) => ({
   routing: rootStore.routing,
   authStore: rootStore.authStore,
-  loginStore: rootStore.loginStore,
 }))
 @observer
 export default class LoginPage extends React.Component<Props> {
   idFindModalStore: IdFindModalStore = new IdFindModalStore();
-  pwdFindModalStore: PwdFindModalStore = new PwdFindModalStore();
-
-  HEADERS = {
-    'Content-Type': 'application/json'
-  };
-
-  onLogin = async (values: {
-    mId: string,
-    mPwd: string,
-  }) => {
-    const { mId, mPwd } = values;
-    const URL = `${SERVER_URL}/login`;
-    const memberInfo = await axios
-      .post(URL,
-        {
-          mId,
-          mPwd
-        },
-        {
-          headers: this.HEADERS,
-        }
-      )
-      .then((response: AxiosResponse) => {
-        // TODO:아이디나 비밀번호가 틀릴 때 처리하기
-        return response.data as Member;
-      })
-      .catch((error) => {
-      });
-      
-    if (memberInfo) {
-      const { routing, authStore, loginStore } = this.props;
-      localStorage.setItem('memberId', memberInfo.mId);
-      authStore.setIsLoggedIn(true);
-      loginStore.setMember(memberInfo);
-      routing.history.push('/');
-    }
-  };
+  pwdFindModalStore: PwdFindModalStore = new PwdFindModalStore();  
 
   showIdSearchModal = () => {
     this.idFindModalStore.setVisible(true);
@@ -85,7 +43,7 @@ export default class LoginPage extends React.Component<Props> {
                   HoneyPoint
                 </div>
                 <div className="form-cover">
-                  <Form className="login-form" onFinish={this.onLogin}>
+                  <Form className="login-form" onFinish={this.props.authStore.onLogin}>
                     <Form.Item name="mId" rules={[{ required: true }]}>
                       <Input />
                     </Form.Item>
