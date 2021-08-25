@@ -1,13 +1,21 @@
 import React from "react";
 import { Breadcrumb, Col, Dropdown, Layout, Menu, Row } from 'antd';
 import './MainPage.scss';
+import { RouterStore } from "mobx-react-router";
 import { Link, Switch } from "react-router-dom";
 import RootStore from "../stores/RootStore";
 import { inject, observer } from "mobx-react";
 import AuthStore from "../stores/AuthStore";
 import { RouterStore } from "mobx-react-router";
+import axios, { AxiosResponse } from "axios";
+import Search from "antd/lib/transfer/search";
 import { CaretDownOutlined, SmileTwoTone } from '@ant-design/icons';
 
+import { Col, Divider, Dropdown, Layout, Menu, Row } from 'antd';
+import { SERVER_URL } from "../config/config";
+import RootStore from "../stores/RootStore";
+import AuthStore from "../stores/AuthStore";
+import './MainPage.scss';
 
 type Props = {
   routing: RouterStore,
@@ -71,11 +79,21 @@ export default class MainPage extends React.Component<Props> {
             <Breadcrumb.Item>List</Breadcrumb.Item>
             <Breadcrumb.Item>App</Breadcrumb.Item>
           </Breadcrumb>
+        <Content>
           <Switch>
             { /** 추 후 메인 content routing 작업 */}
           </Switch>
+          <Row justify="center" align="top">
+            <Col span={24}>
+              <div className="search-image-area">
+                <Search placeholder="input search text" />
+              </div>
+            </Col>
+            
+          </Row>
         </Content>
         <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+        <Footer style={{ textAlign: 'center' }}>HoneyPoint ©2021 Created by Eunkyung Son</Footer>
       </Layout>
     )
   }
