@@ -2,6 +2,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import './App.css';
+import './styles.css';
 import './pages/MainPage'
 import MainPage from './pages/MainPage';
 import LoginPage from './pages/login/LoginPage'

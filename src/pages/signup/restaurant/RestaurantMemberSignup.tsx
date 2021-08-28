@@ -1,7 +1,7 @@
 import React, { createRef } from "react";
 import axios, { AxiosResponse } from "axios";
 import { inject, observer } from "mobx-react";
-import { Button, Checkbox, Col, Form, FormInstance, Input, Radio, Row, Select, Tag, TimePicker } from "antd";
+import { Button, Checkbox, Col, Form, FormInstance, Input, Radio, Row, Select, Space, Tag, TimePicker } from "antd";
 import { PlusOutlined } from '@ant-design/icons';
 import { TweenOneGroup } from 'rc-tween-one';
 import TextArea from "antd/lib/input/TextArea";
@@ -220,9 +220,11 @@ export default class RestaurantMemberSignup extends React.Component<Props> {
               }),
             ]}
           >
-            <Input onChange={this.onIdChange} />
+            <Space>
+              <Input onChange={this.onIdChange} />
+              <Button onClick={this.onIdValidation}>중복확인</Button>
+            </Space>
           </Form.Item>
-          <Button onClick={this.onIdValidation}>중복확인</Button>
           <Form.Item
             name="mPwd"
             label="비밀번호"
@@ -295,11 +297,13 @@ export default class RestaurantMemberSignup extends React.Component<Props> {
               }
             ]}
           >
-            <Input />
+            <Space>
+              <Input readOnly/>
+              <Button onClick={this.showModal}>
+                주소 검색
+              </Button>
+            </Space>
           </Form.Item>
-          <Button onClick={this.showModal}>
-            주소 검색
-          </Button>
           <Form.Item
             name={['rAddress']}
             label="주소"
@@ -310,7 +314,7 @@ export default class RestaurantMemberSignup extends React.Component<Props> {
               }
             ]}
           >
-            <Input />
+            <Input readOnly/>
           </Form.Item>
           <Form.Item
             name={['rOAddress']}

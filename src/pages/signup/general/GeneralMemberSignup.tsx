@@ -1,7 +1,7 @@
 import React from "react";
 import axios, { AxiosResponse } from "axios";
 import { Moment } from "moment";
-import { Button, DatePicker, Form, FormInstance, Input } from "antd";
+import { Button, DatePicker, Form, FormInstance, Input, Space } from "antd";
 import { inject, observer } from "mobx-react";
 import { SERVER_URL } from "../../../config/config";
 import AddressModal, { AddressResponse } from "../modal/AddressModal";
@@ -150,9 +150,11 @@ export default class GeneralMemberSignup extends React.Component<Props> {
               }),
             ]}
           >
-            <Input onChange={this.onIdChange} />
+            <Space>
+              <Input onChange={this.onIdChange} />
+              <Button onClick={this.onIdValidation}>중복확인</Button>
+            </Space>
           </Form.Item>
-          <Button onClick={this.onIdValidation}>중복확인</Button>
           <Form.Item
             name="mPwd"
             label="비밀번호"
@@ -266,11 +268,13 @@ export default class GeneralMemberSignup extends React.Component<Props> {
               }
             ]}
           >
-            <Input readOnly/>
+            <Space>
+              <Input readOnly/>
+              <Button onClick={this.showModal}>
+                주소 검색
+              </Button>
+            </Space>
           </Form.Item>
-          <Button onClick={this.showModal}>
-            주소 검색
-          </Button>
           <Form.Item
             name={['mRoadAddress']}
             label="도로명주소"
