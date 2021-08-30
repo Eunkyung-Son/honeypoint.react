@@ -1,15 +1,16 @@
 import React from "react";
 import { RouterStore } from "mobx-react-router";
-import { Link, Switch } from "react-router-dom";
+import { Link, Route, Switch } from "react-router-dom";
 import { inject, observer } from "mobx-react";
 import axios, { AxiosResponse } from "axios";
 import { CaretDownOutlined, SmileTwoTone } from '@ant-design/icons';
-import { Col, Dropdown, Layout, Menu, Row, Input, Divider } from 'antd';
+import { Col, Dropdown, Layout, Menu, Row } from 'antd';
 import { SERVER_URL } from "../config/config";
+import SearchPage from "./search/SearchPage";
+import MainContentPage from "./main/MainContentPage";
 import RootStore from "../stores/RootStore";
 import AuthStore from "../stores/AuthStore";
 import './MainPage.scss';
-import CustomArrows from "../components/Carousel";
 
 type Props = {
   routing: RouterStore,
@@ -46,7 +47,6 @@ export default class MainPage extends React.Component<Props> {
 
   render() {
     const { Header, Content, Footer } = Layout;
-    const { Search } = Input;
 
     const { authStore } = this.props;
     const menu = (
@@ -84,21 +84,13 @@ export default class MainPage extends React.Component<Props> {
             }
           </Row>
         </Header>
-        <Content>
+        <Content
+
+        >
           <Switch>
-            { /** 추 후 메인 content routing 작업 */}
-          </Switch>
-          <Row justify="center" align="top">
-            <Col span={24}>
-              <div className="search-image-area">
-                <div>
-                  <Search placeholder="검색해서 맛집을 찾아보세요!" size="large" enterButton style={{ display: 'inline-flex', justifyContent: 'center', alignItems: 'center'}}/>
-                </div>
-              </div>
-            </Col>
-          </Row>
-          <Divider orientation="left">#요즘 뜨는 카페</Divider>
-          <CustomArrows/>
+            <Route path='/' exact component={MainContentPage} />
+            <Route path='/search' component={SearchPage} />
+          </Switch>          
         </Content>
         <Footer style={{ textAlign: 'center' }}>HoneyPoint ©2021 Created by Eunkyung Son</Footer>
       </Layout>
