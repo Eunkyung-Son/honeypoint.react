@@ -11,54 +11,54 @@ export default class SearchPage extends React.Component<Props> {
   render() {
     return (
       <div className="content-area">
-      <Space>
-      <Card
-      style={{ width: 300 }}
-      cover={
-        <img
-          alt="example"
-          src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-        />
-      }
-    >
-      <Meta
-        avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-        title="Card title"
-        description="This is the description"
-      />
-    </Card>
+        <Space>
           <Card
-          style={{ width: 300 }}
-          cover={
-            <img
-              alt="example"
-              src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-            />
-          }
-        >
-          <Meta
-            avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-            title="Card title"
-            description="This is the description"
-          />
-        </Card>
-              <Card
-              style={{ width: 300 }}
-              cover={
-                <img
-                  alt="example"
-                  src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-                />
-              }
-            >
-              <Meta
-                avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-                title="Card title"
-                description="This is the description"
+            style={{ width: 300 }}
+            cover={
+              <img
+                alt="example"
+                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
               />
-            </Card>
-            </Space>    
-            </div>
-          )
+            }
+          >
+            <Meta
+              avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+              title="Card title"
+              description="This is the description"
+            />
+          </Card>
+          <Card
+            style={{ width: 300 }}
+            cover={
+              <img
+                alt="example"
+                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+              />
+            }
+          >
+            <Meta
+              avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+              title="Card title"
+              description="This is the description"
+            />
+          </Card>
+          <Card
+            style={{ width: 300 }}
+            cover={
+              <img
+                alt="example"
+                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+              />
+            }
+          >
+            <Meta
+              avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+              title="Card title"
+              description="This is the description"
+            />
+          </Card>
+        </Space>    
+      </div>
+    )
   }
 }

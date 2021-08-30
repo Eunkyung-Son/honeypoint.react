@@ -6,12 +6,12 @@ import axios, { AxiosResponse } from "axios";
 import { CaretDownOutlined, SmileTwoTone } from '@ant-design/icons';
 import { Col, Dropdown, Layout, Menu, Row } from 'antd';
 import { SERVER_URL } from "../config/config";
+import MyInfoPage from "./mypage/MyInfoPage";
 import SearchPage from "./search/SearchPage";
 import MainContentPage from "./main/MainContentPage";
-import RootStore from "../stores/RootStore";
 import AuthStore from "../stores/AuthStore";
+import RootStore from "../stores/RootStore";
 import './MainPage.scss';
-import MyInfoPage from "./mypage/MyInfoPage";
 
 type Props = {
   routing: RouterStore,

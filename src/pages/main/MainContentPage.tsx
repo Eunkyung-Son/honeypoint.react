@@ -4,7 +4,6 @@ import CustomCarousel from "../../components/CustomCarousel";
 type Props = {
 
 }
-
 export default class MainContentPage extends React.Component<Props> {
   render() {
     const { Search } = Input;

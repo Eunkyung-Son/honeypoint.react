@@ -1,7 +1,4 @@
-import { Card, Menu, Space } from "antd";
-import { Content } from "antd/lib/layout/layout";
-import Sider from "antd/lib/layout/Sider";
-import SubMenu from "antd/lib/menu/SubMenu";
+import { Card, Space } from "antd";
 import React from "react";
 
 type Props = {
