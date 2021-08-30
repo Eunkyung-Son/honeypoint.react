@@ -12,6 +12,7 @@ import MainContentPage from "./main/MainContentPage";
 import AuthStore from "../stores/AuthStore";
 import RootStore from "../stores/RootStore";
 import './MainPage.scss';
+import ProtectedRoute from "../components/ProtectedRoute";
 
 type Props = {
   routing: RouterStore,
@@ -86,9 +87,10 @@ export default class MainPage extends React.Component<Props> {
           </Row>
         </Header>
         <Content>
-          <Switch>
+          {/* { FIXME: routing 수정하기} */}
             <Route path='/' exact component={MainContentPage} />
-            <Route path='/mypage' component={MyInfoPage} />
+          <Switch>
+            <ProtectedRoute path='/mypage' component={MyInfoPage} />
             <Route path='/search' component={SearchPage} />
           </Switch>          
         </Content>

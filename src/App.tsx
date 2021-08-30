@@ -10,11 +10,13 @@ import SignupPage from './pages/signup/SignupPage';
 
 const App: React.FC = () => {
   return (
-    <Switch>
-      <Route path='/' component={MainPage} />
+    <>
       <Route path='/login' component={LoginPage} />
       <Route path='/signup' component={SignupPage} />
-    </Switch>
+      <Switch>
+        <Route path='/' component={MainPage} />
+      </Switch>
+    </>
   );
 }
 
