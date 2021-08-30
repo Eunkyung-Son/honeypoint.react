@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { CustomArrowProps, Settings } from "react-slick";
-import './Carousel.scss';
+import './CustomCarousel.scss';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Carousel } from "antd";
+import food from '../images/food1.jpg';
 
 type Props = {
 }
@@ -39,7 +40,7 @@ const PrevArrow = (props: CustomArrowProps) => {
   );
 }
 
-export default class Responsive extends Component<Props>{
+export default class ResponseCarousel extends Component<Props>{
 
   render() {
     var settings: Settings = {
@@ -84,7 +85,7 @@ export default class Responsive extends Component<Props>{
           arrows={true}
         >
           <div className="carousel-div">
-            <h3>1</h3>
+            <img src={food} style={{width: '100%', height: '100%'}} />
           </div>
           <div className="carousel-div">
             <h3>2</h3>
