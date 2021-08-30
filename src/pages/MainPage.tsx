@@ -11,6 +11,7 @@ import MainContentPage from "./main/MainContentPage";
 import RootStore from "../stores/RootStore";
 import AuthStore from "../stores/AuthStore";
 import './MainPage.scss';
+import MyInfoPage from "./mypage/MyInfoPage";
 
 type Props = {
   routing: RouterStore,
@@ -52,7 +53,7 @@ export default class MainPage extends React.Component<Props> {
     const menu = (
       <Menu style={{ cursor: 'pointer' }}>
         <Menu.Item key="0">
-          <Link to="/">마이페이지</Link>
+          <Link to="/mypage">마이페이지</Link>
         </Menu.Item>
         <Menu.Item key="1">
           <div><Link to="/" onClick={this.logout}>로그아웃</Link></div>
@@ -84,11 +85,10 @@ export default class MainPage extends React.Component<Props> {
             }
           </Row>
         </Header>
-        <Content
-
-        >
+        <Content>
           <Switch>
             <Route path='/' exact component={MainContentPage} />
+            <Route path='/mypage' component={MyInfoPage} />
             <Route path='/search' component={SearchPage} />
           </Switch>          
         </Content>
