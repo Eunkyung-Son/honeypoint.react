@@ -34,8 +34,9 @@
 }
 
 .menu {
-	color: white;
+	color: white !important;
 	font-size: 20px;
+	text-align: right;
 }
 
 .logo-name {
@@ -84,4 +85,15 @@
 	margin: 0 0 0 0;
 	padding: 24;
 	min-height: 280;
+}
+a.main-title:hover {
+  color: #F4E700 !important;
+}
+
+.profileDropdown {
+	color: white;
+}
+
+.menu-a {
+	color: white !important;
 }

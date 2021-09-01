@@ -57,7 +57,7 @@ export default class MainPage extends React.Component<Props> {
           <Link to="/mypage">마이페이지</Link>
         </Menu.Item>
         <Menu.Item key="1">
-          <div><Link to="/" onClick={this.logout}>로그아웃</Link></div>
+          <Link to="/" onClick={this.logout}>로그아웃</Link>
         </Menu.Item>
       </Menu>
     );
@@ -80,8 +80,9 @@ export default class MainPage extends React.Component<Props> {
                   </div>
                 </Dropdown>
               : <>
-                  <Col span={2} className="menu"><Link to="/login">로그인</Link></Col>
-                  <Col span={2} className="menu"><Link to="/signup">회원가입</Link></Col>
+                  <Col span={12}></Col>
+                  <Col span={2} className="menu"><Link to="/login" className="menu-a">로그인</Link></Col>
+                  <Col span={2} className="menu"><Link to="/signup" className="menu-a">회원가입</Link></Col>
                 </>
             }
           </Row>

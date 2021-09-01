@@ -2,22 +2,6 @@
   background-color: #F4E700 !important;
 }
 
-.ant-btn-primary {
-  border-color: #F4E700 !important;
-}
-
-a:active {
-  color: #F4E700 !important;
-}
-
-a:hover {
-  color: #F4E700 !important;
-}
-
-a:focus {
-  color: #F4E700 !important;
-}
-
-a {
-  color: white !important;
+.ant-btn.ant-btn-primary.ant-input-search-button {
+  border: white !important;
 }
