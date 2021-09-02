@@ -49,7 +49,6 @@ export default class MainPage extends React.Component<Props> {
 
   render() {
     const { Header, Content, Footer } = Layout;
-
     const { authStore } = this.props;
     const menu = (
       <Menu style={{ cursor: 'pointer' }}>
@@ -80,8 +79,7 @@ export default class MainPage extends React.Component<Props> {
                   </div>
                 </Dropdown>
               : <>
-                  <Col span={12}></Col>
-                  <Col span={2} className="menu"><Link to="/login" className="menu-a">로그인</Link></Col>
+                  <Col span={2} offset={12} className="menu"><Link to="/login" className="menu-a">로그인</Link></Col>
                   <Col span={2} className="menu"><Link to="/signup" className="menu-a">회원가입</Link></Col>
                 </>
             }
@@ -89,10 +87,10 @@ export default class MainPage extends React.Component<Props> {
         </Header>
         <Content>
           {/* { FIXME: routing 수정하기} */}
-            <Route path='/' exact component={MainContentPage} />
           <Switch>
-            <ProtectedRoute path='/mypage' component={MyInfoPage} />
-            <Route path='/search' component={SearchPage} />
+            <Route path='/' exact component={MainContentPage} />
+            <ProtectedRoute exact path='/mypage' component={MyInfoPage} />
+            <Route exact path='/search' component={SearchPage} />
           </Switch>          
         </Content>
         <Footer style={{ textAlign: 'center' }}>HoneyPoint ©2021 Created by Eunkyung Son</Footer>
