@@ -2,10 +2,10 @@ import React from "react";
 import { Carousel } from "antd";
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { CustomArrowProps, Settings } from "react-slick";
-import food from '../images/food1.jpg';
 import './CustomCarousel.scss';
 
 type Props = {
+  children?: React.ReactChild | React.ReactChild[],
 }
 
 const NextArrow = (props: CustomArrowProps) => {
@@ -84,30 +84,7 @@ export default class ResponseCarousel extends React.Component<Props>{
           {...settings}
           arrows={true}
         >
-          <div className="carousel-div">
-            <img src={food} style={{width: '100%', height: '100%'}} />
-          </div>
-          <div className="carousel-div">
-            <img src={food} style={{width: '100%', height: '100%'}} />
-          </div>
-          <div className="carousel-div">
-            <img src={food} style={{width: '100%', height: '100%'}} />
-          </div>
-          <div className="carousel-div">
-            <h3>4</h3>
-          </div>
-          <div className="carousel-div">
-            <h3>5</h3>
-          </div>
-          <div className="carousel-div">
-            <h3>6</h3>
-          </div>
-          <div className="carousel-div">
-            <h3>7</h3>
-          </div>
-          <div className="carousel-div">
-            <h3>8</h3>
-          </div>
+          {this.props.children}
         </Carousel>
       </div>
     );
