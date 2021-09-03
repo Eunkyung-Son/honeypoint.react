@@ -9,12 +9,10 @@ type Props = {
   handleAddressData: (data: AddressResponse) => void;
 };
 
-// 필요한 프로퍼티만 return
 export type AddressResponse = {
   zoneCode: string,
   address: string,
 }
-
 @observer
 export default class AddressModal extends React.Component<Props> {
   onClose = (data: AddressData) => {

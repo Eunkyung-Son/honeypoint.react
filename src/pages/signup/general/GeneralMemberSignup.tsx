@@ -307,7 +307,8 @@ export default class GeneralMemberSignup extends React.Component<Props> {
         </Form>
         <AddressModal
           modalStore={this.addressModalStore}
-          handleAddressData={this.setAddressData}/>
+          handleAddressData={this.setAddressData}
+        />
       </>
     )
   }

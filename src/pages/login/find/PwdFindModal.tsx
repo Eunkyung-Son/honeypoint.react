@@ -11,9 +11,6 @@ type Props = {
 
 @observer
 export default class PwdFindModal extends React.Component<Props> {
-  HEADERS = {
-    'Content-Type': 'application/x-www-form-urlencoded'
-  };
 
   handleOk = () => {
     this.props.pwdFindModalStore.setVisible(false);
@@ -38,7 +35,9 @@ export default class PwdFindModal extends React.Component<Props> {
         params: {
           ...params
         },
-        headers: this.HEADERS
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
       })
       .then((response: AxiosResponse) => {
         console.log(response);

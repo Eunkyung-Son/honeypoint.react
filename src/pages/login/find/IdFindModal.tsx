@@ -11,9 +11,6 @@ type Props = {
 
 @observer
 export default class IdFindModal extends React.Component<Props> {
-  HEADERS = {
-    'Content-Type': 'application/json'
-  };
 
   handleOk = () => {
     this.props.idFindModalStore.setVisible(false);
@@ -26,17 +23,21 @@ export default class IdFindModal extends React.Component<Props> {
   onFinish = async (values: {
     email: string
   }) => {
+    // FIXME: 같은 이메일이 여러개 있는 경우를 처리 하거나,
+    // 회원 가입 할 때 막기.
     const { email } = values;
     const URL = `${SERVER_URL}/findId`;
     const params = {
       email: email
-    };
+    }
     await axios
       .post(URL, {}, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
         params: {
           ...params
-        },
-        headers: this.HEADERS
+        }
       })
       .then((response: AxiosResponse) => {
         if (response.data) {
@@ -48,6 +49,8 @@ export default class IdFindModal extends React.Component<Props> {
   }
 
   render() {
+    // FIXME: onOK에서 비밀번호 찾는 함수를 호출할 지,
+    // 버튼을 따로 만들어서 그 버튼에서 호출할 지 고민
     return (
       <Modal
         title="아이디 찾기"

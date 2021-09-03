@@ -2,17 +2,15 @@ import React from "react";
 import { RouterStore } from "mobx-react-router";
 import { Link, Route, Switch } from "react-router-dom";
 import { inject, observer } from "mobx-react";
-import axios, { AxiosResponse } from "axios";
 import { CaretDownOutlined, SmileTwoTone } from '@ant-design/icons';
 import { Col, Dropdown, Layout, Menu, Row } from 'antd';
-import { SERVER_URL } from "../config/config";
 import MyInfoPage from "./mypage/MyInfoPage";
 import SearchPage from "./search/SearchPage";
 import MainContentPage from "./main/MainContentPage";
+import ProtectedRoute from "../components/ProtectedRoute";
 import AuthStore from "../stores/AuthStore";
 import RootStore from "../stores/RootStore";
 import './MainPage.scss';
-import ProtectedRoute from "../components/ProtectedRoute";
 
 type Props = {
   routing: RouterStore,
@@ -25,26 +23,10 @@ type Props = {
 @observer
 export default class MainPage extends React.Component<Props> {
 
-  componentDidMount() {
-    this.getRestaurantInfo();
-  }
-
   logout = () => {
     const { authStore } = this.props;
     authStore.setIsLoggedIn(false);
     localStorage.removeItem('memberId');
-  }
-
-  getRestaurantInfo = async () => {
-    const URL = `${SERVER_URL}/api/restaurant/185`;
-
-    await axios
-      .get(URL, {
-        
-      })
-      .then((response: AxiosResponse) => {
-        console.log(response);
-      })
   }
 
   render() {
@@ -86,7 +68,6 @@ export default class MainPage extends React.Component<Props> {
           </Row>
         </Header>
         <Content>
-          {/* { FIXME: routing 수정하기} */}
           <Switch>
             <Route path='/' exact component={MainContentPage} />
             <ProtectedRoute exact path='/mypage' component={MyInfoPage} />
