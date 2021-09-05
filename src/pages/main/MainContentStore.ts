@@ -2,12 +2,13 @@ import { action, computed, observable } from "mobx";
 import RestaurantMember from "../../models/RestaurantMember";
 
 export default class MainContentPage {
-  @observable private _restaurantData?: RestaurantMember;
+  @observable private _restaurantData?: Array<RestaurantMember>;
   @observable private _restName?: string;
   @observable private _restAddress?: string;
+  @observable private _total = 0;
 
   @action.bound
-  setRestaurantData = (restaurantData: RestaurantMember) => {
+  setRestaurantData = (restaurantData: Array<RestaurantMember>) => {
     this._restaurantData = restaurantData;
   }
 
@@ -19,6 +20,16 @@ export default class MainContentPage {
   @action.bound
   setRestAddress = (restAddress: string) => {
     this._restAddress = restAddress;
+  }
+
+  @action.bound
+  setTotal = (total: number) => {
+    this._total = total;
+  }
+
+  @computed
+  get total() {
+    return this._total;
   }
 
   @computed

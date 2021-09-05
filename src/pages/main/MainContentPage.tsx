@@ -1,17 +1,15 @@
 import React from "react";
-import { Col, Row, Divider, Input } from 'antd';
-import CustomCarousel from "../../components/CustomCarousel";
-import food from '../../images/food1.jpg';
-import CustomCard from "../../components/CustomCard";
-import { SERVER_URL } from "../../config/config";
 import axios, { AxiosResponse } from "axios";
-import RestaurantMember from "../../models/RestaurantMember";
-import MainContentStore from "./MainContentStore";
 import { observer } from "mobx-react";
-import { toJS } from "mobx";
+import { Col, Row, Divider, Input, Button } from 'antd';
+import CustomCard from "../../components/CustomCard";
+import CustomCarousel from "../../components/CustomCarousel";
+import { SERVER_URL } from "../../config/config";
+import food from '../../images/food1.jpg';
+import MainContentStore from "./MainContentStore";
+import './MainContentPage.scss';
 
 type Props = {
-
 }
 
 @observer
@@ -23,28 +21,33 @@ export default class MainContentPage extends React.Component<Props> {
   }
 
   getRestaurantInfo = async () => {
-    const URL = `${SERVER_URL}/api/restaurant/185`;
+    const URL = `${SERVER_URL}/api/restaurants`;
 
-    // const params = {
-    //   restaurantType: "카페"
-    // }
+    const params = {
+      restaurantType: "한식"
+    }
 
     await axios
       .get(URL, {
-        // params: {
-        //   ...params
-        // }
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        params: {
+          ...params
+        }
       })
       .then((response: AxiosResponse) => {
-        const restaurantData = response.data.restaurant;
-        
-        this.mainContentStore.setRestAddress(restaurantData.rname);
-        this.mainContentStore.setRestName(restaurantData.raddress);
+        console.log(response);
+        const { setRestaurantData, setTotal } = this.mainContentStore;
+        setRestaurantData(response.data.restaurants);
+        setTotal(response.data.total);
       })
   }
 
   render() {
     const { Search } = Input;
+    const { restaurantData } = this.mainContentStore;
+
     return (
       <>
         <Row justify="center" align="top">
@@ -83,11 +86,23 @@ export default class MainContentPage extends React.Component<Props> {
             <h3>8</h3>
           </div>
         </CustomCarousel>
-        <Divider orientation="left">#요즘 뜨는 한식</Divider>
-        <CustomCard
-          title={this.mainContentStore.restName!}
-          description={this.mainContentStore.restAddress!}
-        />
+        <hr className="main-hr" />
+        <div className="content-div">
+          <p className="div-in-p">#요즘 뜨는 한식</p>
+          <Button className="div-in-button" shape="round">더보기</Button>
+        </div>
+        <Row justify="space-around" align="top">
+          {restaurantData?.length && restaurantData?.reduce((total, data, idx) => {
+            if (idx > 3) return total;
+            const el = (
+              <CustomCard
+                title={data.rName}
+                description={data.rAddress}
+              />
+            )
+            return [...total,el];
+          }, [] as React.ReactNode[])}
+        </Row>
       </>
     )
   }
