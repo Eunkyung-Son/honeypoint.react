@@ -1,25 +1,17 @@
-import { action, computed, observable } from "mobx";
+import { action, computed, makeObservable, observable } from "mobx";
 import RestaurantMember from "../../models/RestaurantMember";
 
-export default class MainContentPage {
+export default class MainContentStore {
   @observable private _restaurantData?: Array<RestaurantMember>;
-  @observable private _restName?: string;
-  @observable private _restAddress?: string;
   @observable private _total = 0;
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action.bound
   setRestaurantData = (restaurantData: Array<RestaurantMember>) => {
     this._restaurantData = restaurantData;
-  }
-
-  @action.bound
-  setRestName = (restName: string) => {
-    this._restName = restName;
-  }
-
-  @action.bound
-  setRestAddress = (restAddress: string) => {
-    this._restAddress = restAddress;
   }
 
   @action.bound
@@ -30,16 +22,6 @@ export default class MainContentPage {
   @computed
   get total() {
     return this._total;
-  }
-
-  @computed
-  get restName() {
-    return this._restName;
-  }
-
-  @computed
-  get restAddress() {
-    return this._restAddress;
   }
 
   @computed

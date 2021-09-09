@@ -1,15 +1,19 @@
-import { action, computed, observable } from "mobx";
+import { action, computed, makeObservable, observable } from "mobx";
 
 export default class IdFindModalStore {
-  @observable isVisible: boolean = false;
+  @observable private _isVisible: boolean = false;
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action.bound
   setVisible = (isVisible: boolean) => {
-    this.isVisible = isVisible
+    this._isVisible = isVisible
   }
 
   @computed
   get visible() {
-    return this.isVisible;
+    return this._isVisible;
   }
 }

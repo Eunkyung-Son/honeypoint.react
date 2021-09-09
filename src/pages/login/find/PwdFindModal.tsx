@@ -9,18 +9,17 @@ type Props = {
   pwdFindModalStore: PwdFindModalStore
 }
 
-@observer
-export default class PwdFindModal extends React.Component<Props> {
+const PwdFindModal: React.FC<Props> = observer(({pwdFindModalStore}: Props) => {
 
-  handleOk = () => {
-    this.props.pwdFindModalStore.setVisible(false);
+  const handleOk = () => {
+    pwdFindModalStore.setVisible(false);
   }
 
-  handleCancel = () => {
-    this.props.pwdFindModalStore.setVisible(false);
+  const handleCancel = () => {
+    pwdFindModalStore.setVisible(false);
   }
 
-  onFinish = async (values: {
+  const onFinish = async (values: {
     id: string,
     email: string
   }) => {
@@ -49,42 +48,42 @@ export default class PwdFindModal extends React.Component<Props> {
       })
   }
 
-  render() {
-    return (
-      <Modal
-        title="비밀번호 찾기"
-        visible={this.props.pwdFindModalStore.visible}
-        onOk={this.handleOk}
-        onCancel={this.handleCancel}
+  return (
+    <Modal
+      title="비밀번호 찾기"
+      visible={pwdFindModalStore.visible}
+      onOk={handleOk}
+      onCancel={handleCancel}
+    >
+      <Form
+        name="basic"
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
       >
-        <Form
-          name="basic"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          initialValues={{ remember: true }}
-          onFinish={this.onFinish}
+        <Form.Item
+          label="아이디"
+          name="id"
+          rules={[{ required: true, message: '등록하신 아이디를 입력해주세요.' }]}
         >
-          <Form.Item
-            label="아이디"
-            name="id"
-            rules={[{ required: true, message: '등록하신 아이디를 입력해주세요.' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="이메일"
-            name="email"
-            rules={[{ required: true, message: '등록하신 이메일을 입력해주세요.' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
-              비밀번호찾기
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
-    )
-  }
-}
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="이메일"
+          name="email"
+          rules={[{ required: true, message: '등록하신 이메일을 입력해주세요.' }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Button type="primary" htmlType="submit">
+            비밀번호찾기
+          </Button>
+        </Form.Item>
+      </Form>
+    </Modal>
+  )
+})
+
+export default PwdFindModal

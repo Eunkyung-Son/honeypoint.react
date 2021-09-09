@@ -9,18 +9,17 @@ type Props = {
   idFindModalStore: IdFindModalStore,
 }
 
-@observer
-export default class IdFindModal extends React.Component<Props> {
+const IdFindModal: React.FC<Props> = observer(({ idFindModalStore }: Props) => {
 
-  handleOk = () => {
-    this.props.idFindModalStore.setVisible(false);
+  const handleOk = () => {
+    idFindModalStore.setVisible(false);
   }
 
-  handleCancel = () => {
-    this.props.idFindModalStore.setVisible(false);
+  const handleCancel = () => {
+    idFindModalStore.setVisible(false);
   }
 
-  onFinish = async (values: {
+  const onFinish = async (values: {
     email: string
   }) => {
     // FIXME: 같은 이메일이 여러개 있는 경우를 처리 하거나,
@@ -48,37 +47,36 @@ export default class IdFindModal extends React.Component<Props> {
       })
   }
 
-  render() {
-    // FIXME: onOK에서 비밀번호 찾는 함수를 호출할 지,
-    // 버튼을 따로 만들어서 그 버튼에서 호출할 지 고민
-    return (
-      <Modal
-        title="아이디 찾기"
-        visible={this.props.idFindModalStore.visible}
-        onOk={this.handleOk}
-        onCancel={this.handleCancel}
+
+  return (
+    <Modal
+      title="아이디 찾기"
+      visible={idFindModalStore.visible}
+      onOk={handleOk}
+      onCancel={handleCancel}
+    >
+      <Form
+        name="basic"
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
       >
-        <Form
-          name="basic"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          initialValues={{ remember: true }}
-          onFinish={this.onFinish}
+        <Form.Item
+          label="이메일"
+          name="email"
+          rules={[{ required: true, message: '등록하신 이메일을 입력해주세요.' }]}
         >
-          <Form.Item
-            label="이메일"
-            name="email"
-            rules={[{ required: true, message: '등록하신 이메일을 입력해주세요.' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
-              아이디찾기
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
-    )
-  }
-}
+          <Input />
+        </Form.Item>
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Button type="primary" htmlType="submit">
+            아이디찾기
+          </Button>
+        </Form.Item>
+      </Form>
+    </Modal>
+  )
+})
+
+export default IdFindModal

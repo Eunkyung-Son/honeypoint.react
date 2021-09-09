@@ -1,9 +1,12 @@
-import { action, observable, computed } from "mobx";
+import { action, observable, computed, makeObservable } from "mobx";
 
 export default class ModalStore {
   @observable private _isVisible = false;
-  // @observable onOk?: () => void;
   
+  constructor() {
+    makeObservable(this);
+  }
+
   @action.bound
   setVisible = (visible: boolean) => {
     this._isVisible = visible;

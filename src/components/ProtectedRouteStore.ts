@@ -1,7 +1,11 @@
-import { computed, observable } from "mobx";
+import { computed, makeObservable, observable } from "mobx";
 
 export default class ProtectedRouteStore {
   @observable private _isAuthenticated = false;
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @computed
   get isAuthenticated() {

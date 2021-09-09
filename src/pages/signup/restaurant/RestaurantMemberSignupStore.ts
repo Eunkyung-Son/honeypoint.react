@@ -1,10 +1,14 @@
-import { action, computed, observable } from "mobx";
+import { action, computed, makeObservable, observable } from "mobx";
 export default class RestaurantMemberSignupStore {
   @observable private _id = '';
   @observable private _isDuplicated = false;
   @observable private _tags: string[] = [];
   @observable private _inputVisible = false;
   @observable private _inputValue = '';
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action.bound
   setId = (id: string) => {

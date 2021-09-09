@@ -1,8 +1,12 @@
-import { action, computed, observable } from "mobx";
+import { action, computed, makeObservable, observable } from "mobx";
 
 export default class GerneralMemberSignupStore {
   @observable private _id = '';
   @observable private _isDuplicated = false;
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action.bound
   setId = (id: string) => {

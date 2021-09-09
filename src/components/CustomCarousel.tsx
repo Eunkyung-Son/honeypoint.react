@@ -3,6 +3,7 @@ import { Carousel } from "antd";
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { CustomArrowProps, Settings } from "react-slick";
 import './CustomCarousel.scss';
+import { observer } from "mobx-react";
 
 type Props = {
   children?: React.ReactChild | React.ReactChild[],
@@ -40,53 +41,52 @@ const PrevArrow = (props: CustomArrowProps) => {
   );
 }
 
-export default class ResponseCarousel extends React.Component<Props>{
-
-  render() {
-    var settings: Settings = {
-      dots: true,
-      infinite: false,
-      speed: 500,
-      slidesToShow: 3,
-      slidesToScroll: 3,
-      initialSlide: 0,
-      nextArrow: <NextArrow/>,
-      prevArrow: <PrevArrow/>,
-      responsive: [
-        {
-          breakpoint: 1024,
-          settings: {
-            slidesToShow: 3,
-            slidesToScroll: 3,
-            infinite: true,
-          }
-        },
-        {
-          breakpoint: 600,
-          settings: {
-            slidesToShow: 2,
-            slidesToScroll: 2,
-            initialSlide: 2
-          }
-        },
-        {
-          breakpoint: 480,
-          settings: {
-            slidesToShow: 1,
-            slidesToScroll: 1
-          }
+const ResponseCarousel: React.FC<Props> = observer(({children}: Props) => {
+  var settings: Settings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 3,
+    initialSlide: 0,
+    nextArrow: <NextArrow/>,
+    prevArrow: <PrevArrow/>,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3,
+          infinite: true,
         }
-      ]
-    };
-    return (
-      <div className='hp-carousel'>
-        <Carousel
-          {...settings}
-          arrows={true}
-        >
-          {this.props.children}
-        </Carousel>
-      </div>
-    );
-  }
-}
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+          initialSlide: 2
+        }
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1
+        }
+      }
+    ]
+  };
+  return (
+    <div className='hp-carousel'>
+      <Carousel
+        {...settings}
+        arrows={true}
+      >
+        {children}
+      </Carousel>
+    </div>
+  );
+})
+
+export default ResponseCarousel
