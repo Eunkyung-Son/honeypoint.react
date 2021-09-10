@@ -5,8 +5,7 @@ import { observer } from "mobx-react";
 import { CaretDownOutlined, SmileTwoTone } from '@ant-design/icons';
 import { Col, Dropdown, Layout, Menu, Row } from 'antd';
 import MyInfoPage from "./mypage/MyInfoPage";
-import SearchPage from "./search/SearchPage";
-import MainContentPage from "./main/MainContentPage";
+import MainContent from "./main/MainContent";
 import ProtectedRoute from "../components/ProtectedRoute";
 import AuthStore from "../stores/AuthStore";
 import { useRootStore } from "../hooks/StoreContextProvider";
@@ -63,9 +62,8 @@ const MainPage: React.FC<Props> = observer((props: Props) => {
       </Header>
       <Content>
         <Switch>
-          <Route path='/' exact component={MainContentPage} />
+          <Route path='/' component={MainContent} />
           <ProtectedRoute exact path='/mypage' component={MyInfoPage} />
-          <Route exact path='/search' component={SearchPage} />
         </Switch>          
       </Content>
       <Footer style={{ textAlign: 'center' }}>HoneyPoint ©2021 Created by Eunkyung Son</Footer>

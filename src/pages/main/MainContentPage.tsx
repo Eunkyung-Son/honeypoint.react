@@ -17,7 +17,7 @@ type Props = {
 
 const MainContentPage: React.FC<Props> = observer((props: Props) => {
   const { routing } = useRootStore();
-  const [mainContentStore] = useState(() => new MainContentStore())
+  const [mainContentStore] = useState(() => new MainContentStore());
 
   const getRestaurantInfo = async () => {
     const URL = `${SERVER_URL}/api/restaurants`;
@@ -52,6 +52,10 @@ const MainContentPage: React.FC<Props> = observer((props: Props) => {
     }
     console.log(value);
     routing.push(`/search/${value}`)
+  }
+
+  const handleClick = (rNo: number) => {
+    routing.push(`/detail/${rNo}`);
   }
 
   const { Search } = Input;
@@ -116,6 +120,8 @@ const MainContentPage: React.FC<Props> = observer((props: Props) => {
           if (idx > 3) return total;
           const el = (
             <CustomCard
+              onClick={() => handleClick(data.rNo)}
+              key={data.rNo}
               title={data.rName}
               description={data.rAddress}
             />

@@ -5,14 +5,16 @@ import { observer } from "mobx-react";
 type Props = {
   title: string,
   description: string,
+  onClick: () => void,
 }
 
-const CustomCard: React.FC<Props> = observer(({title, description}: Props) => {
+const CustomCard: React.FC<Props> = observer(({title, description, onClick}: Props) => {
   const { Meta } = Card;
 
   return (
     <Card
     hoverable
+    onClick={onClick}
     style={{ width: 300 }}
     cover={
       <img
