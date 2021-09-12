@@ -1,8 +1,12 @@
-import { action, computed, observable } from "mobx";
+import { action, computed, makeObservable, observable } from "mobx";
 import RestaurantData from "../../models/RestaurantData";
 
 export default class RestaurantDetailStore {
   @observable private _restaurantData?:RestaurantData;
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action.bound
   setRestaurantData = (restaurantData: RestaurantData) => {

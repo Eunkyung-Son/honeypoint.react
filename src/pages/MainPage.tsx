@@ -5,7 +5,7 @@ import { observer } from "mobx-react";
 import { CaretDownOutlined, SmileTwoTone } from '@ant-design/icons';
 import { Col, Dropdown, Layout, Menu, Row } from 'antd';
 import MyInfoPage from "./mypage/MyInfoPage";
-import MainContent from "./main/MainContent";
+import MainContent from "./content/MainContent";
 import ProtectedRoute from "../components/ProtectedRoute";
 import AuthStore from "../stores/AuthStore";
 import { useRootStore } from "../hooks/StoreContextProvider";
@@ -54,8 +54,16 @@ const MainPage: React.FC<Props> = observer((props: Props) => {
                 </div>
               </Dropdown>
             : <>
-                <Col span={2} offset={12} className="menu"><Link to="/login" className="menu-a">로그인</Link></Col>
-                <Col span={2} className="menu"><Link to="/signup" className="menu-a">회원가입</Link></Col>
+                <Col span={2} offset={12} className="menu">
+                  <Link to="/login" className="menu-a">
+                    로그인
+                  </Link>
+                </Col>
+                <Col span={2} className="menu">
+                  <Link to="/signup" className="menu-a">
+                    회원가입
+                  </Link>
+                </Col>
               </>
           }
         </Row>

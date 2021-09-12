@@ -1,35 +1,32 @@
-import React, { createRef, useRef } from "react";
+import React, { useRef, useState } from "react";
 import axios, { AxiosResponse } from "axios";
-import { inject, observer } from "mobx-react";
+import { observer } from "mobx-react";
 import { Button, Checkbox, Col, Form, FormInstance, Input, Radio, Row, Select, Space, Tag, TimePicker } from "antd";
 import { PlusOutlined } from '@ant-design/icons';
-import { TweenOneGroup } from 'rc-tween-one';
 import TextArea from "antd/lib/input/TextArea";
+import { TweenOneGroup } from 'rc-tween-one';
+import { RouterStore } from "mobx-react-router";
 import { Moment } from "moment";
 import { SERVER_URL } from "../../../config/config";
+import RestaurantSignupData from "../../../models/RestaurantSignupData";
 import AddressModal, { AddressResponse } from "../modal/AddressModal";
 import AddressModalStore from "../modal/AddressModalStore";
 import RestaurantMemberSignupStore from "./RestaurantMemberSignupStore";
-import RestaurantSignupData from "../../../models/RestaurantSignupData";
-import { RouterStore } from "mobx-react-router";
+// import { useForm } from "react-hook-form";
 
 type Props = {
   routing?: RouterStore,
 }
 
 const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
-
   const addressModalStore = new AddressModalStore();
-  const restaurantMemberSignupStore = new RestaurantMemberSignupStore();
-  // input: React.RefObject<Input>;
-  const input: React.RefObject<Input> = useRef(null);
+  const [restaurantMemberSignupStore] = useState(() => new RestaurantMemberSignupStore());
+  // const { } = useForm();
+
+  const input = useRef<Input | null>(null);
+  // FIXME: useForm로 바꾸기
   const formRef = React.createRef<FormInstance>();
   const timeFormat = 'hh:mm';
-
-  // constructor(props: Props){
-  //   super(props);
-  //   this.input = createRef();
-  // }
   
   const onIdValidation = async () => {
     const { setIsDuplicated, id } = restaurantMemberSignupStore;
@@ -118,8 +115,7 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
   // FIXME: input ref 지정한게 null로 되는 이유 찾아봐야함
   const showInput = () => {
     restaurantMemberSignupStore.setInputVisible(true);
-    console.log(input);
-    (input.current as any)?.focus();
+    input.current?.focus();
   }
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -388,6 +384,8 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
                 onPressEnter={handleInputConfirm}
               />
             )}
+            {console.log(inputVisible)}
+
             {!inputVisible && (
               <Tag onClick={showInput} className="site-tag-plus">
                 <PlusOutlined /> 태그 추가

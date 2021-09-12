@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, useParams } from "react-router-dom";
 import { SERVER_URL } from "../../config/config";
 import RestaurantDetailStore from "./RestaurantDetailStore";
 
@@ -15,9 +15,12 @@ interface Props extends RouteComponentProps<RouteProps> {
 
 const RestaurantDetailPage: React.FC<Props> = observer((props: Props) => {
   const [restaurantDetailStore] = useState(() => new RestaurantDetailStore());
+  const { rNo } = useParams<RouteProps>();
+
+  const URL = `${SERVER_URL}/api/restaurant/${rNo}`;
 
   const restDetailInfo = async () => {
-    const URL = `${SERVER_URL}/api/restaurant/${props.match.params.rNo}`;
+    console.log(rNo);
     // const params = {
     //   restaurantType: "한식"
     // }
@@ -32,12 +35,7 @@ const RestaurantDetailPage: React.FC<Props> = observer((props: Props) => {
         // }
       })
       .then((response: AxiosResponse) => {
-        console.log(response);
-        console.log(response.data.restaurant);
-        // const { restaurantData, setRestaurantData } = restaurantDetailStore;
         restaurantDetailStore.setRestaurantData(response.data.restaurant);
-        console.log(restaurantDetailStore.restaurantData);
-
     })
   }
 
@@ -46,10 +44,9 @@ const RestaurantDetailPage: React.FC<Props> = observer((props: Props) => {
   }, [])
 
   return (
-    <div style={{color: "black"}}>
-      {restaurantDetailStore.restaurantData?.rRating}
-      dff
-    </div>
+    <>
+      {restaurantDetailStore.restaurantData?.rNo}
+    </>
   )
 })
 
