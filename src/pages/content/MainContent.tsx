@@ -6,8 +6,8 @@ import MainContentPage from "./MainContentPage";
 const MainContent: React.FC = () => {
   return (
     <Switch>
-      <Route exact path='/' component={MainContentPage}></Route>
-      <Route exact path='/detail/:rNo' component={RestaurantDetailPage}></Route>
+      <Route exact path='/' component={MainContentPage} />
+      <Route exact path='/detail/:rNo' component={RestaurantDetailPage} />
       <Route exact path='/search/:keyword' component={SearchPage} />
     </Switch>
   )

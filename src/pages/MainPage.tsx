@@ -70,8 +70,8 @@ const MainPage: React.FC<Props> = observer((props: Props) => {
       </Header>
       <Content>
         <Switch>
-          <Route path='/' component={MainContent} />
           <ProtectedRoute exact path='/mypage' component={MyInfoPage} />
+          <Route path='/' component={MainContent} />
         </Switch>          
       </Content>
       <Footer style={{ textAlign: 'center' }}>HoneyPoint ©2021 Created by Eunkyung Son</Footer>

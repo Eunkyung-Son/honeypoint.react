@@ -58,6 +58,7 @@ const AddressModal: React.FC<Props> = observer(({modalStore, handleAddressData}:
       visible={isVisible}
       width={width}
       onCancel={onCancel}
+      destroyOnClose={true}
     >
       <DaumPostcode
         width={width}

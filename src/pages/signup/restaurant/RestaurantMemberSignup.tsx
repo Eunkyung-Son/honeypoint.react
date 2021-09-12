@@ -276,18 +276,25 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
           <Input />
         </Form.Item>
         <Form.Item
-          name={['rPostNumber']}
           label="우편번호"
-          rules={[
-            {
-              required: true,
-              message: '우편번호를 입력해주세요.'
-            }
-          ]}
         >
-          <Space>
-            <Input readOnly/>
-            <Button onClick={showModal}>
+          <Space
+            align="baseline"
+            onClick={showModal}
+          >
+            <Form.Item
+              name={['rPostNumber']}
+              rules={[
+                {
+                  required: true,
+                  message: '우편번호를 입력해주세요.'
+                }
+              ]}
+              style={{margin: 0}}
+            >
+              <Input readOnly/>
+            </Form.Item>
+            <Button>
               주소 검색
             </Button>
           </Space>

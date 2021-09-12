@@ -253,18 +253,25 @@ const GeneralMemberSignup: React.FC = observer(() => {
           <Input />
         </Form.Item>
         <Form.Item
-          name={['mPostNumber']}
           label="우편번호"
-          rules={[
-            {
-              required: true,
-              message: '주소를 입력해주세요.'
-            }
-          ]}
         >
-          <Space>
-            <Input readOnly/>
-            <Button onClick={showModal}>
+          <Space 
+            align="baseline"
+            onClick={showModal}
+          >
+            <Form.Item
+              name={['mPostNumber']}
+              rules={[
+                {
+                  required: true,
+                  message: '주소를 입력해주세요.'
+                }
+              ]}
+              style={{margin: 0}}
+            >
+              <Input readOnly/>
+            </Form.Item>
+            <Button>
               주소 검색
             </Button>
           </Space>
