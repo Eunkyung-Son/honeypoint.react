@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { action, observable } from "mobx";
+import { action, makeObservable, observable } from "mobx";
 import { SERVER_URL } from "../config/config";
 import Member from "../models/Member";
 import RootStore from "./RootStore";
@@ -10,6 +10,7 @@ export default class AuthStore {
   @observable member?: Member;
   
   constructor(root: RootStore) {
+    makeObservable(this);
     this.root = root;
     this.init();
   }
@@ -43,6 +44,7 @@ export default class AuthStore {
       )
       .then((response: AxiosResponse) => {
         // TODO:아이디나 비밀번호가 틀릴 때 처리하기
+        console.log(response)
         return response.data as Member;
       })
       .catch((error) => {

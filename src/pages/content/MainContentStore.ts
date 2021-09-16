@@ -2,7 +2,8 @@ import { action, computed, makeObservable, observable } from "mobx";
 import RestaurantData from "../../models/RestaurantData";
 
 export default class MainContentStore {
-  @observable private _restaurantData?: Array<RestaurantData>;
+  @observable private _restaurantCafeData?: Array<RestaurantData>;
+  @observable private _restaurantKoreanData?: Array<RestaurantData>;
   @observable private _total = 0;
 
   constructor() {
@@ -10,8 +11,13 @@ export default class MainContentStore {
   }
 
   @action.bound
-  setRestaurantData = (restaurantData: Array<RestaurantData>) => {
-    this._restaurantData = restaurantData;
+  setRestaurantCafeData = (_restaurantCafeData: Array<RestaurantData>) => {
+    this._restaurantCafeData = _restaurantCafeData;
+  }
+
+  @action.bound
+  setRestaurantKoreanData = (_restaurantKoreanData: Array<RestaurantData>) => {
+    this._restaurantKoreanData = _restaurantKoreanData;
   }
 
   @action.bound
@@ -25,8 +31,13 @@ export default class MainContentStore {
   }
 
   @computed
-  get restaurantData() {
-    return this._restaurantData;
+  get restaurantCafeData() {
+    return this._restaurantCafeData;
+  }
+
+  @computed
+  get restaurantKoreanData() {
+    return this._restaurantKoreanData;
   }
   
 }

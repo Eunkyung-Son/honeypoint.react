@@ -10,6 +10,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import AuthStore from "../stores/AuthStore";
 import { useRootStore } from "../hooks/StoreContextProvider";
 import './MainPage.scss';
+import RestaurantDetailPage from "./detail/RestaurantDetailPage";
 
 type Props = {
   routing?: RouterStore,
