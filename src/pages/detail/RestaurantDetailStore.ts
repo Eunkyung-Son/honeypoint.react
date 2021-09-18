@@ -1,11 +1,12 @@
 import { action, computed, makeObservable, observable } from "mobx";
+import Menu from "../../models/Menu";
 import RestaurantData from "../../models/RestaurantData";
 import Review from "../../models/Review";
 
 export default class RestaurantDetailStore {
   @observable private _restaurantData?:RestaurantData;
   @observable private _favorCount = 0;
-  @observable private _menuList: any;
+  @observable private _menuList?: Array<Menu>;
   @observable private _reviewCount = 0;
   @observable private _reviewList?: Array<Review>;
 
@@ -24,7 +25,7 @@ export default class RestaurantDetailStore {
   }
 
   @action.bound
-  setMenuList = (menuList: any) => {
+  setMenuList = (menuList: Array<Menu>) => {
     this._menuList = menuList;
   }
 

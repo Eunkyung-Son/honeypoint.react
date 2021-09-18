@@ -1,5 +1,5 @@
 type Review = {
-  gnrlMember: null,
+  gnrlMember: any,
   mNo: number,
   member: null,
   rNo: number,

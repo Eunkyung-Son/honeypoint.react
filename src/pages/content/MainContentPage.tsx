@@ -102,7 +102,7 @@ const MainContentPage: React.FC<Props> = observer((props: Props) => {
       <hr className="main-hr" />
       <div className="content-div">
         <p className="div-in-p">#요즘 뜨는 한식</p>
-        <Button className="div-in-button" shape="round"><Link to="/more">더보기</Link></Button>
+        <Button className="div-in-button" shape="round"><Link to="/more/한식">더보기</Link></Button>
       </div>
       <Row justify="space-around" align="top">
         {mainContentStore.restaurantKoreanData?.length && mainContentStore.restaurantKoreanData?.reduce((total, data, idx) => {
@@ -121,7 +121,7 @@ const MainContentPage: React.FC<Props> = observer((props: Props) => {
       <hr className="main-hr" />
       <div className="content-div">
         <p className="div-in-p">#요즘 뜨는 카페</p>
-        <Button className="div-in-button" shape="round"><Link to="/more">더보기</Link></Button>
+        <Button className="div-in-button" shape="round"><Link to="/more/카페">더보기</Link></Button>
       </div>
       <Row justify="space-around" align="top">
         {mainContentStore.restaurantCafeData?.length && mainContentStore.restaurantCafeData?.reduce((total, data, idx) => {

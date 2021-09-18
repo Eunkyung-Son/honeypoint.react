@@ -8,7 +8,7 @@ const MainContent: React.FC = () => {
   return (
     <Switch>
       <Route exact path='/' component={MainContentPage} />
-      <Route exact path='/more' component={RestaurantMorePage} />
+      <Route exact path='/more/:type' component={RestaurantMorePage} />
       <Route exact path='/detail/:rNo' component={RestaurantDetailPage} />
       <Route exact path='/search/:keyword' component={SearchPage} />
     </Switch>

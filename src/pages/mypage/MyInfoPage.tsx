@@ -7,6 +7,7 @@ import './MyInfoPage.scss';
 
 const MyInfoPage: React.FC = observer(() => {
   const { authStore } = useRootStore();
+  console.log(authStore.member)
 
   return (
     <div className="content-area">
