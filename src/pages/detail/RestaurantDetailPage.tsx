@@ -2,8 +2,8 @@ import axios, { AxiosResponse } from "axios";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { HeartOutlined, EditOutlined, ShareAltOutlined, HeartFilled, EditFilled } from '@ant-design/icons';
-import { Avatar, Col, Descriptions, List, Row, Spin } from "antd";
+import { HeartOutlined, EditOutlined, ShareAltOutlined, HeartFilled, EditFilled, FrownOutlined, MehOutlined, SmileOutlined } from '@ant-design/icons';
+import { Avatar, Button, Col, Descriptions, List, Row, Space, Spin } from "antd";
 import { SERVER_URL } from "../../config/config";
 import food from '../../images/food1.jpg';
 import Menu from "../../models/Menu";
@@ -14,6 +14,7 @@ import ReviewAddModalStore from './modal/ReviewAddModalStore';
 import RestaurantDetailStore from "./RestaurantDetailStore";
 import { useRootStore } from "../../hooks/StoreContextProvider";
 import './RestaurantDetailPage.scss';
+import RestaurantReview from "./review/RestaurantReview";
 
 declare global {
   interface Window {
@@ -31,7 +32,7 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
   const [restaurantDetailStore] = useState(() => new RestaurantDetailStore());
   const reviewAddModalStore = new ReviewAddModalStore(); // 위의 타이머 정의를 참고하세요.
   const [loading, setLoading] = useState(false);
-  const [restAddress, setRestAddress] = useState('');
+  // const [restAddress, setRestAddress] = useState('');
 
   const URL = `${SERVER_URL}/api/restaurant/${rNo}`;
 
@@ -68,47 +69,44 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
   }
 
   useEffect(() => {
-    restDetailInfo();
+    async function initialize() {
+      await restDetailInfo();
 
-    let container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
-    var geocoder = new window.kakao.maps.services.Geocoder();
+      var geocoder = new window.kakao.maps.services.Geocoder();
 
-    if (!restaurantDetailStore.restaurantData?.rAddress) return;
-    setRestAddress(restaurantDetailStore.restaurantData.rAddress.substr(6));
+      if (!restaurantDetailStore.restaurantData) return;
+      const geoAddress = restaurantDetailStore.restaurantData.rAddress.substr(6);
+      geocoder.addressSearch(geoAddress, (result: any, status: any) => {
+        // console.log(restAddress);
+        // 정상적으로 검색이 완료됐으면 
+        if (status === window.kakao.maps.services.Status.OK) {
+          var coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
+          let options = { //지도를 생성할 때 필요한 기본 옵션
+            center: coords,
+            level: 3 //지도의 레벨(확대, 축소 정도)
+          };
+          let container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+          let map = new window.kakao.maps.Map(container, options);
+          // 결과값으로 받은 위치를 마커로 표시합니다
+          var marker = new window.kakao.maps.Marker({
+            map: map,
+            position: coords
+          });
 
+          // 인포윈도우로 장소에 대한 설명을 표시합니다
+          var infowindow = new window.kakao.maps.InfoWindow({
+            content: `<div style="width:150px;text-align:center;padding:6px 0;">${restaurantDetailStore.restaurantData?.rName}</div>`
+          });
+          infowindow.open(map, marker);
 
-    geocoder.addressSearch(restAddress, (result: any, status: any) => {
-      console.log(restAddress);
-      // 정상적으로 검색이 완료됐으면 
-      if (status === window.kakao.maps.services.Status.OK) {
+          // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+          console.log(coords);
+          map.setCenter(coords);
+        }
+      })
+    }
 
-
-        var coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
-        let options = { //지도를 생성할 때 필요한 기본 옵션
-          center: coords,
-          level: 3 //지도의 레벨(확대, 축소 정도)
-        };
-
-        let map = new window.kakao.maps.Map(container, options);
-
-        // 결과값으로 받은 위치를 마커로 표시합니다
-        var marker = new window.kakao.maps.Marker({
-          map: map,
-          position: coords
-        });
-
-        // 인포윈도우로 장소에 대한 설명을 표시합니다
-        var infowindow = new window.kakao.maps.InfoWindow({
-          content: `<div style="width:150px;text-align:center;padding:6px 0;">${restaurantDetailStore.restaurantData?.rName}</div>`
-        });
-        infowindow.open(map, marker);
-
-        // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
-        console.log(coords);
-        map.setCenter(coords);
-      }
-    })
-
+    initialize();
   }, [])
 
   const menuData: { title: string; content: string; }[] | undefined = [];
@@ -121,7 +119,7 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
   ))
 
 
-  const reviewData: any[] | undefined = [];
+  const reviewData: { mnickname: string; revDate: string; revCn: string, score: number }[] | undefined = [];
 
   restaurantDetailStore.reviewList?.map((data: Review) => (
     reviewData.push({
@@ -192,12 +190,12 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
             </Col>
           </Row>
 
-          <HeartFilled style={{ fontSize: '15px' }} />{restaurantDetailStore.favorCount}&nbsp;
+          <HeartFilled style={{ fontSize: '15px' }} />{restaurantDetailStore.favorCount}
           <EditFilled style={{ fontSize: '15px' }} />{restaurantDetailStore.reviewCount}
           <hr className="detail-hr" />
           <Row justify="space-between">
             <Col span={8}>
-              <Descriptions 
+              <Descriptions
                 className="rest-info"
                 labelStyle={{ width: '35%', alignItems: "baseline" }}
                 size="small"
@@ -212,18 +210,18 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
                   {restaurantDetailStore.restaurantData?.rPrice.toLocaleString()}
                 </Descriptions.Item>
                 <Descriptions.Item label="영업시간" span={3}>
-                  {restaurantDetailStore.restaurantData?.rStartTime ?? ''} ~ ${restaurantDetailStore.restaurantData?.rEndTime}
+                  {restaurantDetailStore.restaurantData?.rStartTime ?? ''} ~ {restaurantDetailStore.restaurantData?.rEndTime}
                 </Descriptions.Item>
                 <Descriptions.Item label="휴일" span={3}>
                   {restaurantDetailStore.restaurantData?.rRestDay}
                 </Descriptions.Item>
                 <Descriptions.Item label="메뉴" span={3}>
-                  <Descriptions 
-                    labelStyle={{ width: '50%'}} 
+                  <Descriptions
+                    labelStyle={{ width: '50%' }}
                     size="small"
                   >
                     {menuData.map((menu) => (
-                      <Descriptions.Item 
+                      <Descriptions.Item
                         className="menu-item"
                         label={menu.title}
                         span={3}
@@ -249,36 +247,7 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
           <div style={{ marginBottom: "10px" }} />
           <hr className="detail-hr" />
           <div style={{ marginBottom: "20px" }} />
-          <Row>
-            <Col span={16}>
-              <span className="restname">
-                리뷰
-              </span>
-            </Col>
-            <Col span={2}>{`전체(${restaurantDetailStore.reviewCount})`}</Col>
-            <Col span={2}>맛있다</Col>
-            <Col span={2}>보통</Col>
-            <Col span={2}>별로</Col>
-          </Row>
-          <List
-            className="demo-loadmore-list"
-            itemLayout="horizontal"
-            dataSource={reviewData}
-            renderItem={item => (
-              <List.Item
-                actions={[<a key="list-loadmore-edit">edit</a>, <a key="list-loadmore-more">delete</a>]}
-              >
-                <List.Item.Meta
-                  avatar={
-                    <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-                  }
-                  title={<a href="https://ant.design">{`${item.mnickname} | ${item.revDate}`}</a>}
-                  description={item.revCn}
-                />
-                <div>{item.score}</div>
-              </List.Item>
-            )}
-          />
+          <RestaurantReview restaurantDetailStore={restaurantDetailStore} />
         </div>
       </Spin>
       <ReviewAddModal

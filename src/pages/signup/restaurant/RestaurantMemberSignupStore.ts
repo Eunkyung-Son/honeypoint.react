@@ -3,7 +3,7 @@ export default class RestaurantMemberSignupStore {
   @observable private _id = '';
   @observable private _isDuplicated = false;
   @observable private _tags: string[] = [];
-  @observable private _inputVisible = false;
+  // @observable private _inputVisible = false;
   @observable private _inputValue = '';
 
   constructor() {
@@ -25,10 +25,10 @@ export default class RestaurantMemberSignupStore {
     this._tags = tags;
   }
 
-  @action.bound
-  setInputVisible = (inputVisible: boolean) => {
-    this._inputVisible = inputVisible;
-  }
+  // @action.bound
+  // setInputVisible = (inputVisible: boolean) => {
+  //   this._inputVisible = inputVisible;
+  // }
 
   @action.bound
   setInputValue = (inputValue: string) => {
@@ -40,10 +40,10 @@ export default class RestaurantMemberSignupStore {
     return this._tags;
   }
 
-  @computed
-  get inputVisible() {
-    return this._inputVisible;
-  }
+  // @computed
+  // get inputVisible() {
+  //   return this._inputVisible;
+  // }
 
   @computed
   get inputValue() {

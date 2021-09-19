@@ -38,12 +38,15 @@ const MainContentPage: React.FC<Props> = observer((props: Props) => {
   }
 
   useEffect(() => {
-    const { setRestaurantCafeData, setRestaurantKoreanData } = mainContentStore;
+    const { setRestaurantCafeData, setRestaurantKoreanData, setRestaurantWesternData } = mainContentStore;
     getRestaurantInfo("한식").then((response: AxiosResponse) => {
       setRestaurantKoreanData((response.data.restaurants));
     });
     getRestaurantInfo("카페").then((response: AxiosResponse) => {
       setRestaurantCafeData((response.data.restaurants));
+    });
+    getRestaurantInfo("양식").then((response: AxiosResponse) => {
+      setRestaurantWesternData((response.data.restaurants));
     });
   }, [])
 
@@ -125,6 +128,25 @@ const MainContentPage: React.FC<Props> = observer((props: Props) => {
       </div>
       <Row justify="space-around" align="top">
         {mainContentStore.restaurantCafeData?.length && mainContentStore.restaurantCafeData?.reduce((total, data, idx) => {
+          if (idx > 3) return total;
+          const el = (
+            <CustomCard
+              onClick={() => handleClick(data.rNo)}
+              key={data.rNo}
+              title={data.rName}
+              description={data.rAddress}
+            />
+          )
+          return [...total, el];
+        }, [] as React.ReactNode[])}
+      </Row>
+      <hr className="main-hr" />
+      <div className="content-div">
+        <p className="div-in-p">#요즘 뜨는 양식</p>
+        <Button className="div-in-button" shape="round"><Link to="/more/양식">더보기</Link></Button>
+      </div>
+      <Row justify="space-around" align="top">
+        {mainContentStore.restaurantWesternData?.length && mainContentStore.restaurantWesternData?.reduce((total, data, idx) => {
           if (idx > 3) return total;
           const el = (
             <CustomCard

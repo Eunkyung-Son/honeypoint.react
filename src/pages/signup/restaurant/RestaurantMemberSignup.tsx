@@ -22,6 +22,7 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
   const addressModalStore = new AddressModalStore();
   const [restaurantMemberSignupStore] = useState(() => new RestaurantMemberSignupStore());
   // const { } = useForm();
+  const [isShowTagInput, setIsShowTagInput] = useState(false);
 
   const input = useRef<Input | null>(null);
   // FIXME: useForm로 바꾸기
@@ -113,8 +114,9 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
   };
 
   // FIXME: input ref 지정한게 null로 되는 이유 찾아봐야함
-  const showInput = () => {
-    restaurantMemberSignupStore.setInputVisible(true);
+  const showTagInput = () => {
+    setIsShowTagInput(true);
+    // restaurantMemberSignupStore.setInputVisible(true);
     input.current?.focus();
   }
   
@@ -123,12 +125,12 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
   }
 
   const handleInputConfirm = () => {
-    const { inputValue, tags, setTags, setInputValue, setInputVisible } = restaurantMemberSignupStore;
+    const { inputValue, tags, setTags, setInputValue } = restaurantMemberSignupStore;
 
     if (inputValue && tags.indexOf(inputValue) === -1) {
       setTags([...tags, inputValue]);
     }
-    setInputVisible(false);
+    setIsShowTagInput(false);
     setInputValue('');
   }
 
@@ -177,7 +179,7 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
     },
   };
 
-  const { tags, inputVisible, inputValue } = restaurantMemberSignupStore;
+  const { tags, inputValue } = restaurantMemberSignupStore;
   const tagChild = tags.map(forMap);
   
   return (
@@ -379,7 +381,7 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
                 {tagChild}
               </TweenOneGroup>
             </div>
-            {inputVisible && (
+            {isShowTagInput ? (
               <Input
                 ref={input}
                 type="text"
@@ -390,11 +392,8 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
                 onBlur={handleInputConfirm}
                 onPressEnter={handleInputConfirm}
               />
-            )}
-            {console.log(inputVisible)}
-
-            {!inputVisible && (
-              <Tag onClick={showInput} className="site-tag-plus">
+            ) : (
+              <Tag onClick={showTagInput} className="site-tag-plus">
                 <PlusOutlined /> 태그 추가
               </Tag>
             )}

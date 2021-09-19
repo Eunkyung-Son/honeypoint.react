@@ -7,4 +7,5 @@ export default class ReviewAddModalStore extends ModalStore{
     super();
     makeObservable(this);
   }
+  
 }

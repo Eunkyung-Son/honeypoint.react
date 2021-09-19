@@ -4,6 +4,7 @@ import RestaurantData from "../../models/RestaurantData";
 export default class MainContentStore {
   @observable private _restaurantCafeData?: Array<RestaurantData>;
   @observable private _restaurantKoreanData?: Array<RestaurantData>;
+  @observable private _restaurantWesternData?: Array<RestaurantData>;
   @observable private _total = 0;
 
   constructor() {
@@ -11,18 +12,28 @@ export default class MainContentStore {
   }
 
   @action.bound
-  setRestaurantCafeData = (_restaurantCafeData: Array<RestaurantData>) => {
-    this._restaurantCafeData = _restaurantCafeData;
+  setRestaurantWesternData = (restaurantWesternData: Array<RestaurantData>) => {
+    this._restaurantWesternData = restaurantWesternData;
   }
 
   @action.bound
-  setRestaurantKoreanData = (_restaurantKoreanData: Array<RestaurantData>) => {
-    this._restaurantKoreanData = _restaurantKoreanData;
+  setRestaurantCafeData = (restaurantCafeData: Array<RestaurantData>) => {
+    this._restaurantCafeData = restaurantCafeData;
+  }
+
+  @action.bound
+  setRestaurantKoreanData = (restaurantKoreanData: Array<RestaurantData>) => {
+    this._restaurantKoreanData = restaurantKoreanData;
   }
 
   @action.bound
   setTotal = (total: number) => {
     this._total = total;
+  }
+
+  @computed
+  get restaurantWesternData() {
+    return this._restaurantWesternData;
   }
 
   @computed

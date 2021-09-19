@@ -54,6 +54,7 @@ const RestaurantMorePage: React.FC<Props> = observer((props: Props) => {
       <h2 style={{textAlign: "left", color: "#1890ff", marginLeft: "23px"}}>{`"${type}" 카테고리 전체`}</h2>
       <Row justify="space-around" align="top">
         {restaurantMoreStore.restaurantData?.length && restaurantMoreStore.restaurantData?.reduce((total, data, idx) => {
+          // TODO: map으로 변경
           // if (idx > 3) return total
           const el = (
             <CustomCard

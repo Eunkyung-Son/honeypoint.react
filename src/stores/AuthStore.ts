@@ -52,7 +52,7 @@ export default class AuthStore {
       
     if (memberInfo) {
       localStorage.setItem('memberId', memberInfo.mId);
-
+      localStorage.setItem('member', JSON.stringify(memberInfo))
       this.setIsLoggedIn(true);
       this.setMember(memberInfo);
       this.root.routing.history.push('/');

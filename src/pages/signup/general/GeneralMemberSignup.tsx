@@ -10,8 +10,7 @@ import AddressModalStore from "../modal/AddressModalStore";
 import GeneralSignupData from "../../../models/GeneralSignupData";
 import { useRootStore } from "../../../hooks/StoreContextProvider";
 
-
-const GeneralMemberSignup: React.FC = observer(() => {
+const GeneralMemberSignup: React.FC = () => {
   const { routing } = useRootStore();
   const [addressModalStore] = useState(() => new AddressModalStore()) // 위의 타이머 정의를 참고하세요.
   const generalMemberSignupStore = new GeneralMemberSignupStore();
@@ -60,35 +59,16 @@ const GeneralMemberSignup: React.FC = observer(() => {
 
   }
 
-  const onSignup = async (values: GeneralSignupData) => {
+  const handleSignup = async (values: GeneralSignupData) => {
     // FIXME: 회원가입 시 아이디 / 비밀번호 오류 에러코드로 에러 캐치하기
-    console.log(values, "signup values");
-    const URL = `${SERVER_URL}/memberInsert`;
-    console.log(`${values.mPostNumber}, ${values.mRoadAddress}, ${values.mDetailAddress}`);
-    console.log((values.mBirthday as Moment).format(dateFormat));
-    await axios
-      .post(URL,
-        {
-          mId: values.mId,
-          mName: values.mName,
-          mEmail: values.mEmail,
-          mNickname: values.mNickname,
-          mBirthday: (values.mBirthday as Moment).format("YYYYMMDD"),
-          mPhone: values.mPhone,
-          mAddress: `${values.mPostNumber}, ${values.mRoadAddress}, ${values.mDetailAddress}`,
-          mPwd: values.mPwd
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        }
-      )
-      .then((response: AxiosResponse) => {
-        // FIXME: 회원 가입 완료 후 모달이나 alert 창 띄워 준 후
-        // 라우팅 변경하도록 하기
-        routing.push('/login');
-      })
+    // FIXME: 스토어로 로직 분리
+    try {
+      await generalMemberSignupStore.onSignup(values);
+    } catch (e) {
+
+    } finally {
+      routing.push('/login');
+    }
   }
 
   const formItemLayout = {
@@ -118,10 +98,9 @@ const GeneralMemberSignup: React.FC = observer(() => {
     <>
       <Form
         ref={formRef}
-        name="basicForm"
         {...formItemLayout}
         validateMessages={validateMessages}
-        onFinish={onSignup}
+        onFinish={handleSignup}
       >
         <Form.Item
           name={['mId']}
@@ -148,7 +127,7 @@ const GeneralMemberSignup: React.FC = observer(() => {
           </Space>
         </Form.Item>
         <Form.Item
-          name="mPwd"
+          name={["mPwd"]}
           label="비밀번호"
           rules={[
             {
@@ -161,7 +140,7 @@ const GeneralMemberSignup: React.FC = observer(() => {
           <Input.Password />
         </Form.Item>
         <Form.Item
-          name="confirm"
+          name={["confirm"]}
           label="비밀번호 확인"
           dependencies={['mPwd']}
           hasFeedback
@@ -310,6 +289,6 @@ const GeneralMemberSignup: React.FC = observer(() => {
       />
     </>
   )
-})
+}
 
-export default GeneralMemberSignup
+export default observer(GeneralMemberSignup)

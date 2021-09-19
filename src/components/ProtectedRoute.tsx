@@ -22,7 +22,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = observer(({ component, ren
         } 
 
         if(component) {
-            return React.createElement(component);
+            return React.createElement(component, props);
         } 
 
         if(render) {

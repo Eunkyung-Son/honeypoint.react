@@ -1,20 +1,19 @@
 import React from "react";
-import { RouterStore } from "mobx-react-router";
 import { Link, Route, Switch } from "react-router-dom";
 import { observer } from "mobx-react";
 import { CaretDownOutlined, SmileTwoTone } from '@ant-design/icons';
 import { Col, Dropdown, Layout, Menu, Row } from 'antd';
 import MyInfoPage from "./mypage/MyInfoPage";
-import MainContent from "./content/MainContent";
 import ProtectedRoute from "../components/ProtectedRoute";
-import AuthStore from "../stores/AuthStore";
 import { useRootStore } from "../hooks/StoreContextProvider";
 import './MainPage.scss';
+import MainContentPage from "./content/MainContentPage";
+import RestaurantMorePage from "./more/RestaurantMorePage";
 import RestaurantDetailPage from "./detail/RestaurantDetailPage";
+import SearchPage from "./search/SearchPage";
 
 type Props = {
-  routing?: RouterStore,
-  authStore?: AuthStore,
+
 }
 
 const MainPage: React.FC<Props> = observer((props: Props) => {
@@ -72,7 +71,10 @@ const MainPage: React.FC<Props> = observer((props: Props) => {
       <Content>
         <Switch>
           <ProtectedRoute exact path='/mypage' component={MyInfoPage} />
-          <Route path='/' component={MainContent} />
+          <Route exact path='/' component={MainContentPage} />
+          <Route exact path='/more/:type' component={RestaurantMorePage} />
+          <Route exact path='/detail/:rNo' component={RestaurantDetailPage} />
+          <Route exact path='/search/:keyword' component={SearchPage} />
         </Switch>
       </Content>
       <Footer style={{ textAlign: 'center' }}>HoneyPoint ©2021 Created by Eunkyung Son</Footer>
