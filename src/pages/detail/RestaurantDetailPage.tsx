@@ -10,11 +10,11 @@ import Menu from "../../models/Menu";
 import Review from "../../models/Review";
 import CustomCarousel from "../../components/CustomCarousel";
 import ReviewAddModal from './modal/ReviewAddModal';
+import RestaurantReview from "./review/RestaurantReview";
 import ReviewAddModalStore from './modal/ReviewAddModalStore';
 import RestaurantDetailStore from "./RestaurantDetailStore";
 import { useRootStore } from "../../hooks/StoreContextProvider";
 import './RestaurantDetailPage.scss';
-import RestaurantReview from "./review/RestaurantReview";
 
 declare global {
   interface Window {
@@ -32,12 +32,11 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
   const [restaurantDetailStore] = useState(() => new RestaurantDetailStore());
   const reviewAddModalStore = new ReviewAddModalStore(); // 위의 타이머 정의를 참고하세요.
   const [loading, setLoading] = useState(false);
-  // const [restAddress, setRestAddress] = useState('');
+  const [isFavor, setIsFavor] = useState(null);
 
-  const URL = `${SERVER_URL}/api/restaurant/${rNo}`;
-
+  
   const restDetailInfo = async () => {
-    console.log(rNo);
+    const URL = `${SERVER_URL}/api/restaurant/${rNo}`;
     const params = {
       fetchReviewList: true,
       fetchReviewCount: true,
@@ -68,9 +67,31 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
       })
   }
 
+  const restLikeInfo = async () => {
+    const URL = `${SERVER_URL}/api/favor/check`;
+    const params = {
+      restaurantId: rNo,
+      memberId: JSON.parse(localStorage.getItem('member')!).mNo,
+    }
+
+    await axios
+      .get(URL, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        params: {
+          ...params
+        }
+      })
+      .then((response: AxiosResponse) => {
+        setIsFavor(response.data.isFavor);
+      })
+  }
+
   useEffect(() => {
     async function initialize() {
       await restDetailInfo();
+      await restLikeInfo();
 
       var geocoder = new window.kakao.maps.services.Geocoder();
 
@@ -118,18 +139,6 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
     })
   ))
 
-
-  const reviewData: { mnickname: string; revDate: string; revCn: string, score: number }[] | undefined = [];
-
-  restaurantDetailStore.reviewList?.map((data: Review) => (
-    reviewData.push({
-      mnickname: data.gnrlMember.mnickname,
-      revDate: data.revDate,
-      revCn: data.revCn,
-      score: data.score
-    })
-  ))
-
   const handleWriteClick = () => {
     if (!authStore.isLoggedIn) {
       alert('로그인 후 이용해주세요.');
@@ -138,11 +147,54 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
     reviewAddModalStore.setVisible(true);
   }
 
-  const handleLikeClick = () => {
+  const handleLikeClick = async () => {
     if (!authStore.isLoggedIn) {
       alert('로그인 후 이용해주세요');
       return;
     }
+
+    const URL = `${SERVER_URL}/api/favor`;
+    const params = {
+      restaurantId: rNo,
+      memberId: JSON.parse(localStorage.getItem('member')!).mNo,
+    }
+    await axios
+      .post(URL, {}, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        params: {
+          ...params
+        }
+      })
+      .then((response: AxiosResponse) => {
+        restLikeInfo();
+      })
+  }
+
+  const handleUnlikeClick = async () => {
+    if (!authStore.isLoggedIn) {
+      alert('로그인 후 이용해주세요');
+      return;
+    }
+
+    const URL = `${SERVER_URL}/api/unFavor`;
+    const params = {
+      restaurantId: rNo,
+      memberId: JSON.parse(localStorage.getItem('member')!).mNo,
+    }
+    await axios
+      .post(URL, {}, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        params: {
+          ...params
+        }
+      })
+      .then((response: AxiosResponse) => {
+        restLikeInfo();
+      })
   }
 
   return (
@@ -183,10 +235,15 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
               </div>
             </Col>
             <Col span={2}>
-              <div className="like" onClick={handleLikeClick}>
+              {isFavor === false 
+              ? (<div className="like" onClick={handleLikeClick}>
                 <HeartOutlined style={{ fontSize: '40px' }} />
                 <p>가고싶다</p>
-              </div>
+              </div>)
+              : (<div className="like" onClick={handleUnlikeClick}>
+                <HeartFilled style={{ fontSize: '40px'}}/>
+                <p>가고싶다</p>
+              </div>)}
             </Col>
           </Row>
 

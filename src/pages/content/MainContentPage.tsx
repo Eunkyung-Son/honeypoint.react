@@ -109,7 +109,7 @@ const MainContentPage: React.FC<Props> = observer((props: Props) => {
       </div>
       <Row justify="space-around" align="top">
         {mainContentStore.restaurantKoreanData?.length && mainContentStore.restaurantKoreanData?.reduce((total, data, idx) => {
-          if (idx > 3) return total;
+          if (idx > 2) return total;
           const el = (
             <CustomCard
               onClick={() => handleClick(data.rNo)}
@@ -128,7 +128,7 @@ const MainContentPage: React.FC<Props> = observer((props: Props) => {
       </div>
       <Row justify="space-around" align="top">
         {mainContentStore.restaurantCafeData?.length && mainContentStore.restaurantCafeData?.reduce((total, data, idx) => {
-          if (idx > 3) return total;
+          if (idx > 2) return total;
           const el = (
             <CustomCard
               onClick={() => handleClick(data.rNo)}
@@ -147,7 +147,7 @@ const MainContentPage: React.FC<Props> = observer((props: Props) => {
       </div>
       <Row justify="space-around" align="top">
         {mainContentStore.restaurantWesternData?.length && mainContentStore.restaurantWesternData?.reduce((total, data, idx) => {
-          if (idx > 3) return total;
+          if (idx > 2) return total;
           const el = (
             <CustomCard
               onClick={() => handleClick(data.rNo)}

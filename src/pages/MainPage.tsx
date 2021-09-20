@@ -22,6 +22,7 @@ const MainPage: React.FC<Props> = observer((props: Props) => {
   const logout = () => {
     authStore.setIsLoggedIn(false);
     localStorage.removeItem('memberId');
+    localStorage.removeItem('member');
   }
   
   const menu = (
