@@ -3,11 +3,10 @@ import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { HeartOutlined, EditOutlined, ShareAltOutlined, HeartFilled, EditFilled, FrownOutlined, MehOutlined, SmileOutlined } from '@ant-design/icons';
-import { Avatar, Button, Col, Descriptions, List, Row, Space, Spin } from "antd";
+import { Col, Descriptions, Row, Spin } from "antd";
 import { SERVER_URL } from "../../config/config";
 import food from '../../images/food1.jpg';
 import Menu from "../../models/Menu";
-import Review from "../../models/Review";
 import CustomCarousel from "../../components/CustomCarousel";
 import ReviewAddModal from './modal/ReviewAddModal';
 import RestaurantReview from "./review/RestaurantReview";
@@ -15,6 +14,7 @@ import ReviewAddModalStore from './modal/ReviewAddModalStore';
 import RestaurantDetailStore from "./RestaurantDetailStore";
 import { useRootStore } from "../../hooks/StoreContextProvider";
 import './RestaurantDetailPage.scss';
+import { isNamedExportBindings } from "typescript";
 
 declare global {
   interface Window {
@@ -57,7 +57,7 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
       .then((response: AxiosResponse) => {
         setLoading(true);
         const { setRestaurantData, setFavorCount, setMenuList, setReviewCount, setReviewList } = restaurantDetailStore;
-        console.log(response);
+        console.log(response.data);
         setRestaurantData(response.data.restaurant);
         setFavorCount(response.data.favorCount);
         setMenuList(response.data.menus)
@@ -277,11 +277,12 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
                     labelStyle={{ width: '50%' }}
                     size="small"
                   >
-                    {menuData.map((menu) => (
+                    {menuData.map((menu, idx) => (
                       <Descriptions.Item
                         className="menu-item"
                         label={menu.title}
                         span={3}
+                        key={idx}
                       >
                         {menu.content}
                       </Descriptions.Item>
@@ -304,7 +305,10 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
           <div style={{ marginBottom: "10px" }} />
           <hr className="detail-hr" />
           <div style={{ marginBottom: "20px" }} />
-          <RestaurantReview restaurantDetailStore={restaurantDetailStore} />
+          <RestaurantReview 
+            restaurantDetailStore={restaurantDetailStore}
+            rNo={rNo}
+          />
         </div>
       </Spin>
       <ReviewAddModal

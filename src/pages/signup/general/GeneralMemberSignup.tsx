@@ -12,7 +12,7 @@ import { useRootStore } from "../../../hooks/StoreContextProvider";
 
 const GeneralMemberSignup: React.FC = () => {
   const { routing } = useRootStore();
-  const [addressModalStore] = useState(() => new AddressModalStore()) // 위의 타이머 정의를 참고하세요.
+  const [addressModalStore] = useState(() => new AddressModalStore());
   const generalMemberSignupStore = new GeneralMemberSignupStore();
   const formRef = React.createRef<FormInstance>();
   const dateFormat = 'YYYY/MM/DD';
