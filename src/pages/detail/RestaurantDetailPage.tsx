@@ -90,38 +90,33 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
 
   useEffect(() => {
     async function initialize() {
+      restLikeInfo();
       await restDetailInfo();
-      await restLikeInfo();
 
       var geocoder = new window.kakao.maps.services.Geocoder();
 
       if (!restaurantDetailStore.restaurantData) return;
       const geoAddress = restaurantDetailStore.restaurantData.rAddress.substr(6);
       geocoder.addressSearch(geoAddress, (result: any, status: any) => {
-        // console.log(restAddress);
-        // 정상적으로 검색이 완료됐으면 
+
         if (status === window.kakao.maps.services.Status.OK) {
           var coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
-          let options = { //지도를 생성할 때 필요한 기본 옵션
+          let options = { 
             center: coords,
-            level: 3 //지도의 레벨(확대, 축소 정도)
+            level: 3 
           };
-          let container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+          let container = document.getElementById('map'); 
           let map = new window.kakao.maps.Map(container, options);
-          // 결과값으로 받은 위치를 마커로 표시합니다
           var marker = new window.kakao.maps.Marker({
             map: map,
             position: coords
           });
 
-          // 인포윈도우로 장소에 대한 설명을 표시합니다
           var infowindow = new window.kakao.maps.InfoWindow({
             content: `<div style="width:150px;text-align:center;padding:6px 0;">${restaurantDetailStore.restaurantData?.rName}</div>`
           });
           infowindow.open(map, marker);
 
-          // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
-          console.log(coords);
           map.setCenter(coords);
         }
       })
@@ -139,7 +134,7 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
     })
   ))
 
-  const handleWriteClick = () => {
+  const handleReviewWriteClick = () => {
     if (!authStore.isLoggedIn) {
       alert('로그인 후 이용해주세요.');
       return;
@@ -195,6 +190,11 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
       .then((response: AxiosResponse) => {
         restLikeInfo();
       })
+  }
+
+  const handleShareClick = async () => {
+    restaurantShareModalStore.setVisible(true);
+
   }
 
   return (
@@ -306,14 +306,12 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
           <hr className="detail-hr" />
           <div style={{ marginBottom: "20px" }} />
           <RestaurantReview 
-            restaurantDetailStore={restaurantDetailStore}
             rNo={rNo}
           />
         </div>
       </Spin>
-      <ReviewAddModal
-        modalStore={reviewAddModalStore}
-      />
+      <ReviewAddModal modalStore={reviewAddModalStore} />
+      <RestaurantShareModal modalStore={restaurantShareModalStore} />
     </>
   )
 };

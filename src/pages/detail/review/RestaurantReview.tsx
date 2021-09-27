@@ -1,78 +1,52 @@
 import React, { useState, useEffect } from "react";
 import { observer } from "mobx-react";
-import { Avatar, Button, Col, List, Row, Space } from "antd";
+import { Avatar, Button, Col, List, message, Row, Space, Spin } from "antd";
 import { FrownOutlined, MehOutlined, SmileOutlined } from '@ant-design/icons';
-import axios, { AxiosResponse } from "axios";
-import { SERVER_URL } from "../../../config/config";
+import InfiniteScroll from 'react-infinite-scroller';
 import Review from "../../../models/Review";
-import RestaurantDetailStore from "../RestaurantDetailStore";
 import RestaurantReviewStore from "./RestaurantReviewStore";
 import './RestaurantReview.scss';
 
 type Props = {
-  restaurantDetailStore: RestaurantDetailStore,
   rNo: string
 }
 
-const RestaurantReview: React.FC<Props> = observer(({restaurantDetailStore, rNo}: Props) => {
+const RestaurantReview: React.FC<Props> = observer(({rNo}: Props) => {
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [restaurantReviewStore] = useState(() => new RestaurantReviewStore());
 
-  const handleReviewFilter = async (score: number) => {
-    const URL = `${SERVER_URL}/api/reviews/${rNo}`;
-    const params = {
-      filterType: score,
+  const fetchReview = async (score?: number) => {
+    try {
+      await restaurantReviewStore.fetch(rNo, score);
+    } catch (error) {
+      alert(error);
     }
-
-    await axios
-      .get(URL, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        params: {
-          ...params
-        }
-      }).then((response: AxiosResponse) => {
-        const { setReviewAllCount, setReviewList, setReviewGoodCount, setReviewSosoCount, setReviewBadCount } = restaurantReviewStore; 
-
-        if (score === 0) {
-          setReviewList(response.data.reviews);
-          setReviewAllCount(response.data.total);
-        }
-        if (score === 1) {
-          setReviewList(response.data.reviews);
-          setReviewGoodCount(response.data.total);
-        }
-        if (score === 2) {
-          setReviewList(response.data.reviews);
-          setReviewSosoCount(response.data.total);
-        }
-        if (score === 3) {
-          setReviewList(response.data.reviews);
-          setReviewBadCount(response.data.total);
-        }
-      })
   }
 
   const handleReviewDelete = async (reviewId: number) => {
-    const URL =`${SERVER_URL}/api/review/${reviewId}`
-    await axios
-      .delete(URL).then((response: AxiosResponse) => {
-        console.log(response);
-      })
-    await handleReviewFilter(1);
-    await handleReviewFilter(2);
-    await handleReviewFilter(3);
-    await handleReviewFilter(0);
+    const { deleteReview } = restaurantReviewStore;
+    await deleteReview(reviewId);
+    await restaurantReviewStore.fetch(rNo);
+  }
+
+  const handleInfiniteOnload = () => {
+    const { setReviewList, fetch } = restaurantReviewStore;
+    let { reviewList } = restaurantReviewStore;
+    setLoading(true);
+    if (reviewList.length > 14) {
+      message.warning('Infinite List loaded all.')
+      setLoading(false);
+      setHasMore(false);
+      return;
+    }
+    reviewList = reviewList.concat();
+    setReviewList(reviewList);
+    setLoading(false);
   }
 
   useEffect(() => {
-    async function initialize() {
-      await handleReviewFilter(1);
-      await handleReviewFilter(2);
-      await handleReviewFilter(3);
-      await handleReviewFilter(0);
-    }
-    initialize();
+    fetchReview();
   }, [])
 
   return (
@@ -83,61 +57,77 @@ const RestaurantReview: React.FC<Props> = observer(({restaurantDetailStore, rNo}
             리뷰
           </span>
         </Col>
-        <Col span={2}><div className="review-filter" onClick={() => handleReviewFilter(0)}>{`전체(${restaurantReviewStore.reviewAllCount})`}</div></Col>
-        <Col span={2}><div className="review-filter" onClick={() => handleReviewFilter(1)}>{`맛있다(${restaurantReviewStore.reviewGoodCount})`}</div></Col>
-        <Col span={2}><div className="review-filter" onClick={() => handleReviewFilter(2)}>{`보통(${restaurantReviewStore.reviewSosoCount})`}</div></Col>
-        <Col span={2}><div className="review-filter" onClick={() => handleReviewFilter(3)}>{`별로(${restaurantReviewStore.reviewBadCount})`}</div></Col>
+        <Col span={2}><div className="review-filter" onClick={() => fetchReview(0)}>{`전체(${restaurantReviewStore.reviewAllCount})`}</div></Col>
+        <Col span={2}><div className="review-filter" onClick={() => fetchReview(1)}>{`맛있다(${restaurantReviewStore.reviewGoodCount})`}</div></Col>
+        <Col span={2}><div className="review-filter" onClick={() => fetchReview(2)}>{`보통(${restaurantReviewStore.reviewSosoCount})`}</div></Col>
+        <Col span={2}><div className="review-filter" onClick={() => fetchReview(3)}>{`별로(${restaurantReviewStore.reviewBadCount})`}</div></Col>
       </Row>
-      <List<Review>
-        className="demo-loadmore-list"
-        itemLayout="horizontal"
-        dataSource={restaurantReviewStore.reviewList}
-        renderItem={item => (
-          <List.Item
-            className="review-list"
-            style={{
-              cursor: 'pointer'
-            }}
-          >
-            <List.Item.Meta
-              avatar={
-                <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-              }
-              title={(
-                <Space>
-                  {`${item.gnrlMember.mnickname} | ${item.revDate}`}
-                  {JSON.parse(localStorage.getItem('member')!).mNo === item.mNo && (
-                    <>
-                      <Button>수정</Button>
-                      <Button onClick={() => handleReviewDelete(item.revNo)}>삭제</Button>
-                    </>
+      <div className="demo-infinite-container">
+        <InfiniteScroll
+          initialLoad={false}
+          pageStart={0}
+          loadMore={handleInfiniteOnload}
+          hasMore={!loading && hasMore}
+          useWindow={false}
+        >
+          <List<Review>
+            className="demo-loadmore-list"
+            itemLayout="horizontal"
+            dataSource={restaurantReviewStore.reviewList}
+            renderItem={item => (
+              <List.Item
+                className="review-list"
+                style={{
+                  cursor: 'pointer'
+                }}
+              >
+                <List.Item.Meta
+                  avatar={
+                    <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                  }
+                  title={(
+                    <Space>
+                      {`${item.gnrlMember.mnickname} | ${item.revDate}`}
+                      {JSON.parse(localStorage.getItem('member')!).mNo === item.mNo && (
+                        <>
+                          <Button>수정</Button>
+                          <Button onClick={() => handleReviewDelete(item.revNo)}>삭제</Button>
+                        </>
+                      )}
+                    </Space>
                   )}
-                </Space>
-              )}
-              description={item.revCn}
-              key={item.revNo}
-            />
-            <div>
-              {item.score === 1
-                ? (<div style={{ color: '#ff7100', textAlign: "center" }}>
-                  <SmileOutlined style={{ fontSize: '40px' }} />
-                  <p>맛있다</p>
-                </div>)
-                : (item.score === 2 ?
-                  <div style={{ color: '#ff7100', textAlign: "center" }}>
-                    <MehOutlined style={{ fontSize: '40px' }} />
-                    <p>보통</p>
-                  </div>
-                  : <div style={{ color: '#ff7100', textAlign: "center" }}>
-                    <FrownOutlined style={{ fontSize: '40px' }} />
-                    <p>별로</p>
-                  </div>
-                )
-              }
-            </div>
-          </List.Item>
-        )}
-      />
+                  description={item.revCn}
+                  key={item.revNo}
+                />
+                <div>
+                  {item.score === 1
+                    ? (<div style={{ color: '#ff7100', textAlign: "center" }}>
+                      <SmileOutlined style={{ fontSize: '40px' }} />
+                      <p>맛있다</p>
+                    </div>)
+                    : (item.score === 2 ?
+                      <div style={{ color: '#ff7100', textAlign: "center" }}>
+                        <MehOutlined style={{ fontSize: '40px' }} />
+                        <p>보통</p>
+                      </div>
+                      : <div style={{ color: '#ff7100', textAlign: "center" }}>
+                        <FrownOutlined style={{ fontSize: '40px' }} />
+                        <p>별로</p>
+                      </div>
+                    )
+                  }
+                </div>
+              </List.Item>
+            )}
+          >
+            {loading && hasMore && (
+              <div className="demo-loading-container">
+                <Spin />
+              </div>
+            )}
+          </List>
+        </InfiniteScroll>
+      </div>
     </>
   )
 });
