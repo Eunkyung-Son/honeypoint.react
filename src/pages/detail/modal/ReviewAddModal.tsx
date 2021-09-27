@@ -9,7 +9,7 @@ type Props = {
   modalStore: ReviewAddModalStore;
 }
 
-const ReviewAddModal: React.FC<Props> = observer(({modalStore}: Props) => {
+const ReviewAddModal: React.FC<Props> = ({modalStore}: Props) => {
   const { isVisible, onCancel } = modalStore;
 
   return (
@@ -29,6 +29,6 @@ const ReviewAddModal: React.FC<Props> = observer(({modalStore}: Props) => {
       />
     </Modal>
   )
-})
+}
 
-export default ReviewAddModal
+export default observer(ReviewAddModal)

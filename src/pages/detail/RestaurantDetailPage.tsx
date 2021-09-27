@@ -2,19 +2,20 @@ import axios, { AxiosResponse } from "axios";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { HeartOutlined, EditOutlined, ShareAltOutlined, HeartFilled, EditFilled, FrownOutlined, MehOutlined, SmileOutlined } from '@ant-design/icons';
+import { HeartOutlined, EditOutlined, ShareAltOutlined, HeartFilled, EditFilled } from '@ant-design/icons';
 import { Col, Descriptions, Row, Spin } from "antd";
 import { SERVER_URL } from "../../config/config";
 import food from '../../images/food1.jpg';
 import Menu from "../../models/Menu";
 import CustomCarousel from "../../components/CustomCarousel";
 import ReviewAddModal from './modal/ReviewAddModal';
+import RestaurantShareModal from './modal/RestaurantShareModal';
 import RestaurantReview from "./review/RestaurantReview";
 import ReviewAddModalStore from './modal/ReviewAddModalStore';
 import RestaurantDetailStore from "./RestaurantDetailStore";
+import RestaurantShareModalStore from './modal/RestaurantShareModalStore';
 import { useRootStore } from "../../hooks/StoreContextProvider";
 import './RestaurantDetailPage.scss';
-import { isNamedExportBindings } from "typescript";
 
 declare global {
   interface Window {
@@ -30,10 +31,11 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
   const { rNo } = useParams<RouteProps>();
   const { authStore } = useRootStore();
   const [restaurantDetailStore] = useState(() => new RestaurantDetailStore());
-  const reviewAddModalStore = new ReviewAddModalStore(); // 위의 타이머 정의를 참고하세요.
+  const reviewAddModalStore = new ReviewAddModalStore();
+  const restaurantShareModalStore = new RestaurantShareModalStore();
+  // FIXME: useState 확인
   const [loading, setLoading] = useState(false);
   const [isFavor, setIsFavor] = useState(null);
-
   
   const restDetailInfo = async () => {
     const URL = `${SERVER_URL}/api/restaurant/${rNo}`;
@@ -56,18 +58,18 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
       })
       .then((response: AxiosResponse) => {
         setLoading(true);
-        const { setRestaurantData, setFavorCount, setMenuList, setReviewCount, setReviewList } = restaurantDetailStore;
+        const { setRestaurantData, setFavorCount, setMenuList, setReviewCount } = restaurantDetailStore;
         console.log(response.data);
         setRestaurantData(response.data.restaurant);
         setFavorCount(response.data.favorCount);
         setMenuList(response.data.menus)
         setReviewCount(response.data.reviewCount);
-        setReviewList(response.data.reviews);
         setLoading(false);
       })
   }
 
   const restLikeInfo = async () => {
+    if (!localStorage.getItem('member')) return;
     const URL = `${SERVER_URL}/api/favor/check`;
     const params = {
       restaurantId: rNo,
@@ -223,19 +225,19 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
             </Col>
             <Col span={8}></Col>
             <Col span={2}>
-              <div className="share">
+              <div className="share" onClick={handleShareClick}>
                 <ShareAltOutlined style={{ fontSize: '40px' }} />
                 <p>공유하기</p>
               </div>
             </Col>
             <Col span={2}>
-              <div className="review" onClick={handleWriteClick}>
+              <div className="review" onClick={handleReviewWriteClick}>
                 <EditOutlined style={{ fontSize: '40px' }} />
                 <p>리뷰쓰기</p>
               </div>
             </Col>
             <Col span={2}>
-              {isFavor === false 
+              {isFavor === false || !localStorage.getItem('member')
               ? (<div className="like" onClick={handleLikeClick}>
                 <HeartOutlined style={{ fontSize: '40px' }} />
                 <p>가고싶다</p>

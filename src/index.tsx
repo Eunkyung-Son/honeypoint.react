@@ -7,6 +7,8 @@ import { ConfigProvider } from 'antd';
 import koKR from "antd/lib/locale/ko_KR";
 import StoreContextProvider from './hooks/StoreContextProvider';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
+require('dotenv').config();
+
 
 ReactDOM.render(
   <React.StrictMode>
