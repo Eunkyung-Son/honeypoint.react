@@ -293,7 +293,6 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
                 </Descriptions.Item>
               </Descriptions>
             </Col>
-            <Col></Col>
           </Row>
           <hr className="detail-hr" />
           <div style={{ marginBottom: "20px" }} />
@@ -312,7 +311,7 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
           />
         </div>
       </Spin>
-      <ReviewAddModal modalStore={reviewAddModalStore} />
+      <ReviewAddModal modalStore={reviewAddModalStore} rNo={rNo}/>
       <RestaurantShareModal modalStore={restaurantShareModalStore} />
     </>
   )
