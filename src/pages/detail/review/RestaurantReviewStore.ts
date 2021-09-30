@@ -15,7 +15,7 @@ export default class RestaurantReviewStore {
   }
 
   @action.bound
-  fetch = async (rNo: string, score?: number) => {
+  fetchReviews = async (rNo: string, score?: number) => {
     const URL = `${SERVER_URL}/api/reviews/${rNo}`;
     const params = {
       ...(score && { filterType: score }),

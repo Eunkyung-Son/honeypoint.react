@@ -196,7 +196,6 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
 
   const handleShareClick = async () => {
     restaurantShareModalStore.setVisible(true);
-
   }
 
   return (
@@ -311,7 +310,7 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
           />
         </div>
       </Spin>
-      <ReviewAddModal modalStore={reviewAddModalStore} rNo={rNo}/>
+      <ReviewAddModal modalStore={reviewAddModalStore} rNo={rNo} />
       <RestaurantShareModal modalStore={restaurantShareModalStore} />
     </>
   )

@@ -4,6 +4,8 @@ import { Avatar, Button, Col, List, message, Row, Space, Spin } from "antd";
 import { FrownOutlined, MehOutlined, SmileOutlined } from '@ant-design/icons';
 import InfiniteScroll from 'react-infinite-scroller';
 import Review from "../../../models/Review";
+import ReviewEditModal from '../modal/ReviewEditModal';
+import ReviewEditModalStore from '../modal/ReviewEditModalStore';
 import RestaurantReviewStore from "./RestaurantReviewStore";
 import './RestaurantReview.scss';
 
@@ -12,13 +14,14 @@ type Props = {
 }
 
 const RestaurantReview: React.FC<Props> = observer(({rNo}: Props) => {
+  const reviewEditModalStore = new ReviewEditModalStore();
+  const [restaurantReviewStore] = useState(() => new RestaurantReviewStore());
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [restaurantReviewStore] = useState(() => new RestaurantReviewStore());
 
   const fetchReview = async (score?: number) => {
     try {
-      await restaurantReviewStore.fetch(rNo, score);
+      await restaurantReviewStore.fetchReviews(rNo, score);
     } catch (error) {
       alert(error);
     }
@@ -27,11 +30,17 @@ const RestaurantReview: React.FC<Props> = observer(({rNo}: Props) => {
   const handleReviewDelete = async (reviewId: number) => {
     const { deleteReview } = restaurantReviewStore;
     await deleteReview(reviewId);
-    await restaurantReviewStore.fetch(rNo);
+    await restaurantReviewStore.fetchReviews(rNo);
+  }
+
+  const handleReviewEdit = async (review: Review) => {
+    console.log(review);
+    reviewEditModalStore.setReviewData(review);
+    reviewEditModalStore.setVisible(true);
   }
 
   const handleInfiniteOnload = () => {
-    const { setReviewList, fetch } = restaurantReviewStore;
+    const { setReviewList } = restaurantReviewStore;
     let { reviewList } = restaurantReviewStore;
     setLoading(true);
     if (reviewList.length > 14) {
@@ -90,7 +99,7 @@ const RestaurantReview: React.FC<Props> = observer(({rNo}: Props) => {
                       {`${item.gnrlMember.mnickname} | ${item.revDate}`}
                       {JSON.parse(localStorage.getItem('member')!).mNo === item.mNo && (
                         <>
-                          <Button>수정</Button>
+                          <Button onClick={() => handleReviewEdit(item)}>수정</Button>
                           <Button onClick={() => handleReviewDelete(item.revNo)}>삭제</Button>
                         </>
                       )}
@@ -128,6 +137,11 @@ const RestaurantReview: React.FC<Props> = observer(({rNo}: Props) => {
           </List>
         </InfiniteScroll>
       </div>
+      <ReviewEditModal 
+        modalStore={reviewEditModalStore}
+        restaurantReviewStore={restaurantReviewStore}
+        rNo={rNo} 
+      />
     </>
   )
 });
