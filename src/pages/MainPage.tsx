@@ -6,11 +6,12 @@ import { Col, Dropdown, Layout, Menu, Row } from 'antd';
 import MyInfoPage from "./mypage/MyInfoPage";
 import ProtectedRoute from "../components/ProtectedRoute";
 import { useRootStore } from "../hooks/StoreContextProvider";
-import './MainPage.scss';
 import MainContentPage from "./content/MainContentPage";
 import RestaurantMorePage from "./more/RestaurantMorePage";
 import RestaurantDetailPage from "./detail/RestaurantDetailPage";
 import SearchPage from "./search/SearchPage";
+import BoardPage from "./board/BoardPage";
+import './MainPage.scss';
 
 type Props = {
 
@@ -44,16 +45,24 @@ const MainPage: React.FC<Props> = observer((props: Props) => {
           <h2><a href="/" className="main-title">HONEYPOINT</a></h2>
         </div>
         <Row justify="end">
+          <Col span={3}>
+            <Link to="/board" className="menu-a" style={{fontSize: "20px"}}>
+              community
+            </Link>
+          </Col>
           {authStore.isLoggedIn === true
-            ? <Dropdown className="profileDropdown"  trigger={['click']} overlay={menu}>
-                <div className="ant-dropdown-link" style={{ cursor: 'pointer' }}>
-                  <SmileTwoTone style={{fontSize: "20px"}}/>
-                  <span className="ant-dropdown-username">
-                    {authStore.member?.mName}({authStore.member?.mId})님, 환영합니다.
-                  </span>
-                  <CaretDownOutlined style={{fontSize: "20px"}}/>
-                </div>
-              </Dropdown>
+            ?
+            <Col>  
+              <Dropdown className="profileDropdown"  trigger={['click']} overlay={menu}>
+                  <div className="ant-dropdown-link" style={{ cursor: 'pointer' }}>
+                    <SmileTwoTone style={{fontSize: "20px"}}/>
+                    <span className="ant-dropdown-username">
+                      {authStore.member?.mName}({authStore.member?.mId})님, 환영합니다.
+                    </span>
+                    <CaretDownOutlined style={{fontSize: "20px"}}/>
+                  </div>
+                </Dropdown>
+              </Col>
             : <>
                 <Col span={2} offset={12} className="menu">
                   <Link to="/login" className="menu-a">
@@ -73,6 +82,7 @@ const MainPage: React.FC<Props> = observer((props: Props) => {
         <Switch>
           <ProtectedRoute exact path='/mypage' component={MyInfoPage} />
           <Route exact path='/' component={MainContentPage} />
+          <Route exact path='/board' component={BoardPage} />
           <Route exact path='/more/:type' component={RestaurantMorePage} />
           <Route exact path='/detail/:rNo' component={RestaurantDetailPage} />
           <Route exact path='/search/:keyword' component={SearchPage} />

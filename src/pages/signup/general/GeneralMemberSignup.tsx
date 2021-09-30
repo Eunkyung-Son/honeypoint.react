@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios, { AxiosResponse } from "axios";
-import { Moment } from "moment";
 import { Button, DatePicker, Form, FormInstance, Input, Space } from "antd";
 import { observer } from "mobx-react";
 import { SERVER_URL } from "../../../config/config";
@@ -94,7 +93,7 @@ const GeneralMemberSignup: React.FC = () => {
   };
 
   
-  return (      
+  return (
     <>
       <Form
         ref={formRef}
