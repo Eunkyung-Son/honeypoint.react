@@ -1,7 +1,10 @@
 import { observer } from "mobx-react";
 import { Table, Tabs } from 'antd';
 import Search from "antd/lib/input/Search";
-
+import { useEffect, useState } from "react";
+import { SERVER_URL } from "../../config/config";
+import axios, { AxiosResponse } from "axios";
+import BoardPageStore from "./BoardPageStore";
 
 type Props = {
 
@@ -9,6 +12,7 @@ type Props = {
 
 const BoardPage:React.FC<Props> = (props: Props) => {
 
+  const [boardPageStore] = useState(() => new BoardPageStore());
   const { TabPane } = Tabs;
 
   const callback = (key: any) => {
@@ -19,43 +23,50 @@ const BoardPage:React.FC<Props> = (props: Props) => {
 
   }
 
-  const dataSource = [
-    {
-      key: '1',
-      category: 'Mike',
-      title: 32,
-      author: '10 Downing Street',
-      date: '10/10'
-    },
-    {
-      key: '2',
-      category: 'John',
-      title: 42,
-      author: '10 Downing Street',
-      date: '10/20'
-    },
-  ];
+  const fetchBoards = async (boardType?: number) => {
+    const URL = `${SERVER_URL}/api/boards`;
+    const params = {
+      ...(boardType && { boardType: boardType })
+    }
+    await axios
+      .get(URL, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        params: {
+          ...params
+        }
+      }).then((response: AxiosResponse) => {
+        console.log(response);
+        boardPageStore.setBoardList(response.data.boards);
+        console.log(boardPageStore.boardList);
+      })
+  }
+
+  useEffect(() => {
+    fetchBoards(1);
+  }, [])
   
   const columns = [
     {
       title: '카테고리',
-      dataIndex: 'category',
-      key: 'category',
+      dataIndex: 'bCategory',
+      key: 'bCategory',
     },
     {
       title: '제목',
-      dataIndex: 'title',
-      key: 'title',
+      dataIndex: 'bTitle',
+      key: 'bTitle',
     },
     {
       title: '작성자',
-      dataIndex: 'author',
-      key: 'author',
+      dataIndex: 'mNickname',
+      key: 'mNickname',
     },
     {
       title: '날짜',
-      dataIndex: 'date',
-      key: 'date'
+      dataIndex: 'bEnrollDate',
+      key: 'bEnrollDate'
     }
   ];
 
@@ -68,7 +79,7 @@ const BoardPage:React.FC<Props> = (props: Props) => {
           <Search placeholder="input search text" onSearch={onSearch} enterButton />
           <Table 
             columns={columns} 
-            dataSource={dataSource} 
+            dataSource={boardPageStore.boardList} 
           />
     
         </TabPane>
