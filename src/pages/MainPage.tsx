@@ -9,6 +9,7 @@ import { useRootStore } from "../hooks/StoreContextProvider";
 import MainContentPage from "./content/MainContentPage";
 import RestaurantMorePage from "./more/RestaurantMorePage";
 import RestaurantDetailPage from "./detail/RestaurantDetailPage";
+import PasswordChangePage from "./mypage/password/PasswordChangePage";
 import SearchPage from "./search/SearchPage";
 import BoardPage from "./board/BoardPage";
 import './MainPage.scss';
@@ -81,6 +82,7 @@ const MainPage: React.FC<Props> = observer((props: Props) => {
       <Content>
         <Switch>
           <ProtectedRoute exact path='/mypage' component={MyInfoPage} />
+          <ProtectedRoute exact path="/mypage/password" component={PasswordChangePage} />
           <Route exact path='/' component={MainContentPage} />
           <Route exact path='/board' component={BoardPage} />
           <Route exact path='/more/:type' component={RestaurantMorePage} />
