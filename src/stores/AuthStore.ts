@@ -7,8 +7,8 @@ import RootStore from "./RootStore";
 export default class AuthStore {
   root: RootStore;
   @observable isLoggedIn = false;
-  @observable member?: Member;
-  
+  @observable member = JSON.parse(localStorage.getItem('member')!);
+
   constructor(root: RootStore) {
     makeObservable(this);
     this.root = root;

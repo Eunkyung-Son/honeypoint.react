@@ -3,7 +3,8 @@ import { Link, Route, Switch } from "react-router-dom";
 import { observer } from "mobx-react";
 import { CaretDownOutlined, SmileTwoTone } from '@ant-design/icons';
 import { Col, Dropdown, Layout, Menu, Row } from 'antd';
-import MyInfoPage from "./mypage/MyInfoPage";
+import MyInfoPage from "./mypage/general/MyInfoPage";
+import RestaurantMyInfoPage from "./mypage/restaurant/RestaurantMyInfoPage";
 import ProtectedRoute from "../components/ProtectedRoute";
 import { useRootStore } from "../hooks/StoreContextProvider";
 import MainContentPage from "./content/MainContentPage";
@@ -30,7 +31,7 @@ const MainPage: React.FC<Props> = observer((props: Props) => {
   const menu = (
     <Menu style={{ cursor: 'pointer' }}>
       <Menu.Item key="0">
-        <Link to="/mypage">마이페이지</Link>
+        {authStore.member?.mSortNo === 1 ? <Link to="/mypage/general">마이페이지</Link> : <Link to="/mypage/restaurant">마이페이지</Link>}
       </Menu.Item>
       <Menu.Item key="1">
         <Link to="/" onClick={logout}>로그아웃</Link>
@@ -81,7 +82,8 @@ const MainPage: React.FC<Props> = observer((props: Props) => {
       </Header>
       <Content>
         <Switch>
-          <ProtectedRoute exact path='/mypage' component={MyInfoPage} />
+          <ProtectedRoute exact path='/mypage/general' component={MyInfoPage} />
+          <ProtectedRoute exact path='/mypage/restaurant' component={RestaurantMyInfoPage} />
           <ProtectedRoute exact path="/mypage/password" component={PasswordChangePage} />
           <Route exact path='/' component={MainContentPage} />
           <Route exact path='/board' component={BoardPage} />

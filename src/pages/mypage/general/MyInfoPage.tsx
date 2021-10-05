@@ -1,7 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { Button, Card, Col, Row } from "antd";
-import { useRootStore } from "../../hooks/StoreContextProvider";
+import { useRootStore } from "../../../hooks/StoreContextProvider";
 import './MyInfoPage.scss';
 import { Link } from "react-router-dom";
 
@@ -21,6 +21,7 @@ const MyInfoPage: React.FC = observer(() => {
             <p>{authStore.member?.mEmail}</p>
             <p>{authStore.member?.mPhone}</p>
             <Button type="primary">수정</Button>
+            
           </Card>
         </Col>
         <Col span={9}>
