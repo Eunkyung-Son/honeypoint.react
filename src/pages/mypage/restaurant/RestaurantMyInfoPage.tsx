@@ -1,11 +1,12 @@
-import { Button, Form, Upload } from "antd";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { UploadOutlined } from '@ant-design/icons';
-
-import { useRootStore } from "../../../hooks/StoreContextProvider";
-import { SERVER_URL } from "../../../config/config";
 import axios, { AxiosResponse } from "axios";
-import { useEffect } from "react";
+import { Button, message, Upload } from "antd";
+import { UploadOutlined } from '@ant-design/icons';
+import { SERVER_URL } from "../../../config/config";
+import { useRootStore } from "../../../hooks/StoreContextProvider";
+import RestaurantMyInfoStore from "./RestaurantMyInfoStore";
+import { RcFile } from "antd/lib/upload";
 
 type Props = {
 
@@ -13,6 +14,9 @@ type Props = {
 
 const RestaurantMyInfoPage: React.FC<Props> = observer((props: Props) => {
   const { authStore } = useRootStore();
+  const [restaurantMyInfoStore] = useState(() => new RestaurantMyInfoStore());
+  const [fileList, setFileList] = useState<RcFile[]>([]);
+  const [uploading, setUploading] = useState(false);
   console.log(authStore.member)
 
   useEffect(() => {
@@ -35,83 +39,77 @@ const RestaurantMyInfoPage: React.FC<Props> = observer((props: Props) => {
       )
       .then((response: AxiosResponse) => {
         console.log(response);
+        restaurantMyInfoStore.setRestaurantData(response.data.restaurant);
+        console.log(restaurantMyInfoStore.restaurantData);
       })
   }
-  
-  const onFinish = async (values: any) => {
-    const URL = `${SERVER_URL}/api/file/restaurant/`;
+
+  const handleUpload = async () => {
+    const formData = new FormData();
+    fileList.forEach(file => {
+      formData.append('files', file);
+    });
+
+    console.log(formData);
+
+    setUploading(true);
+
+    const URL = `${SERVER_URL}/api/file/restaurant/${restaurantMyInfoStore.restaurantData?.rNo}`;
+    console.log(formData);
       await axios
         .post(URL,
-          {
-          },
-          {
+          
+          formData
+          ,{
             headers: {
-              'Content-Type': 'application/json'
+              'content-type': 'multipart/form-data'
             },
           }
         )
         .then((response: AxiosResponse) => {
           console.log(response);
+          setFileList([]);
+          setUploading(false);
+          message.success('upload successfully.');
+        }).catch((error) => {
+          message.error('upload failed.');
         })
+
   }
-
-  const formItemLayout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 14 },
-  };
-
-  const normFile = (e: any) => {
-    console.log('Upload event:', e);
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
+  
+  const uploadProps = {
+    onRemove: (file: any) => {
+      const index = fileList.indexOf(file);
+      const newFileList = fileList.slice();
+      newFileList.splice(index, 1);
+      return setFileList(newFileList);
+    },
+    beforeUpload: (file: RcFile, inputFileList: RcFile[]) => {
+      if (inputFileList.length) {
+        setFileList([...fileList, ...inputFileList]);
+      } else {
+        setFileList([...fileList, file]);
+      }
+      return false;
+    },
+    fileList,
+    multiple: true,
   };
 
   return (
     <>
-      <Form
-        name="validate_other"
-        {...formItemLayout}
-        onFinish={onFinish}
-      >
-        <Form.Item
-          name="upload"
-          label="Upload"
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
-          extra="longgggggggggggggggggggggggggggggggggg"
-        >
-          <Upload name="logo" action="/upload.do" listType="picture">
-            <Button icon={<UploadOutlined />}>Click to upload</Button>
-          </Upload>
-
-{/* 
-          <Upload
-        name="file"
-        accept="image/png"
-        action="http://localhost:8082/api/file/restaurant/4"
-        onChange= {(info) => {
-          if (info.file.status !== 'uploading') {
-            console.log(info.file, info.fileList);
-          }
-          if (info.file.status === 'done') {
-            message.success(`${info.file.name} file uploaded successfully`);
-          } else if (info.file.status === 'error') {
-            message.error(`${info.file.name} file upload failed.`);
-          }
-        }}
-      >
-        <Button>click</Button>
+      <Upload {...uploadProps}>
+        <Button icon={<UploadOutlined />}>Select File</Button>
       </Upload>
-      <img src="http://localhost:8082/api/file/restaurant/4/6ed6f651-d9a6-4a31-8d69-1053651d6efb.png"/> */}
-        </Form.Item>
-        <Form.Item wrapperCol={{ span: 12, offset: 6 }}>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
-      </Form>
+      <Button
+        type="primary"
+        onClick={handleUpload}
+        disabled={fileList.length === 0}
+        loading={uploading}
+        style={{ marginTop: 16 }}
+      >
+        {uploading ? 'Uploading' : 'Start Upload'}
+      </Button>
     </>
   )
 })
