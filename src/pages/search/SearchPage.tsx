@@ -1,8 +1,12 @@
-import React from "react";
-import { Card, Avatar, Space } from 'antd';
+import React, { useEffect, useState } from "react";
+import { Card, Avatar, Space, Row } from 'antd';
 import './SearchPage.scss';
 import { observer } from "mobx-react";
 import { RouteComponentProps, useParams } from "react-router-dom";
+import { SERVER_URL } from "../../config/config";
+import axios, { AxiosResponse } from "axios";
+import CustomCard from "../../components/CustomCard";
+import SearchStore from "./SearchStore";
 
 type RouteProps = {
   keyword: string
@@ -14,60 +18,60 @@ interface Props extends RouteComponentProps<RouteProps> {
 
 const SearchPage: React.FC<Props> = observer((props: Props) => {
   const { keyword } = useParams<RouteProps>();
+  const [searchStore] = useState(() => new SearchStore());
+  const [total, setTotal] = useState(0);
+
+
+  useEffect(() => {
+    fecthRestaurantSearchList();
+  }, [])
+
+  const fecthRestaurantSearchList = async () => {
+    const URL = `${SERVER_URL}/api/searchRestaurants`;
+    const params = {
+      keyword: keyword
+    }
+    await axios
+      .get(URL, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        params: {
+          ...params
+        }
+      }).then((response: AxiosResponse) => {
+        console.log(response);
+        searchStore.setRestaurantData(response.data.restaurants);
+        setTotal(response.data.total);
+      })
+  }
+
+  const handleClick = (rNo: number) => {
+    props.history.push(`/detail/${rNo}`)
+  }
+
   const { Meta } = Card;
   return (
     <>
-      {`"${keyword}"로 검색한 결과입니다.`}
       <div className="content-area">
-        <Space>
-          <Card
-            style={{ width: 300 }}
-            cover={
-              <img
-                alt="example"
-                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-              />
-            }
-          >
-            <Meta
-              avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-              title="Card title"
-              description="This is the description"
+      <h2 style={{textAlign: "left", color: "#1890ff", marginLeft: "23px"}}>{`"${keyword}" 로 검색한 결과(${total})`}</h2>
+      <Row justify="space-around" align="top">
+        {searchStore.restaurantData?.length && searchStore.restaurantData?.reduce((total, data, idx) => {
+          // TODO: map으로 변경
+          // if (idx > 3) return total
+          const el = (
+            <CustomCard
+              onClick={() => handleClick(data.rNo)}
+              key={data.rNo}
+              title={data.rName}
+              description={data.rAddress}
             />
-          </Card>
-          <Card
-            style={{ width: 300 }}
-            cover={
-              <img
-                alt="example"
-                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-              />
-            }
-          >
-            <Meta
-              avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-              title="Card title"
-              description="This is the description"
-            />
-          </Card>
-          <Card
-            style={{ width: 300 }}
-            cover={
-              <img
-                alt="example"
-                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-              />
-            }
-          >
-            <Meta
-              avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-              title="Card title"
-              description="This is the description"
-            />
-          </Card>
-        </Space>    
-      </div>  
-    </>  
+          )
+          return [...total, el];
+        }, [] as React.ReactNode[])}
+      </Row>
+    </div>
+  </>  
   )
 })
 
