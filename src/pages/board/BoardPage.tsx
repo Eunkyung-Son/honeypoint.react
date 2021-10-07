@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { SERVER_URL } from "../../config/config";
 import axios, { AxiosResponse } from "axios";
 import BoardPageStore from "./BoardPageStore";
+import { useRootStore } from "../../hooks/StoreContextProvider";
 
 type Props = {
 
@@ -12,17 +13,20 @@ type Props = {
 
 const BoardPage:React.FC<Props> = (props: Props) => {
   const [boardPageStore] = useState(() => new BoardPageStore());
-  const [searchCondition, setSearchCondition] = useState('');
+  const { routing } = useRootStore();
+  const [searchCondition, setSearchCondition] = useState('all');
+  const [boardType, setBoardType] = useState(1);
   const { TabPane } = Tabs;
 
   const handleKeyChange = (key: string) => {
     fetchBoards(Number(key));
+    setBoardType(Number(key));
   }
 
   const onSearch = async (values: any) => {
     console.log(values);
     console.log(searchCondition);
-    const URL = `${SERVER_URL}/api/searchBoards/1`;
+    const URL = `${SERVER_URL}/api/searchBoards/${boardType}`;
     const params = {
       searchOption: {
         condition: searchCondition,
@@ -40,7 +44,7 @@ const BoardPage:React.FC<Props> = (props: Props) => {
           ...params
         }
       }).then((response: AxiosResponse) => {
-        console.log(response);
+        boardPageStore.setBoardList(response.data.boards);
       })
   }
 
@@ -98,7 +102,7 @@ const BoardPage:React.FC<Props> = (props: Props) => {
 
   const { Option } = Select;
 
-  const operations = (          
+  const operations = (
     <Row>
       <Col span={24}>
         <Space>
@@ -109,7 +113,7 @@ const BoardPage:React.FC<Props> = (props: Props) => {
             <Option value="content">내용</Option>
           </Select>
           <Search 
-            placeholder="검색할 내용을 입력하세요" 
+            placeholder="검색할 내용을 입력하세요"
             onSearch={onSearch} 
             enterButton
             style={{width: "50px;"}}
@@ -128,19 +132,40 @@ const BoardPage:React.FC<Props> = (props: Props) => {
         <TabPane tab="지역별" key="1">
           <Table 
             columns={columns} 
-            dataSource={boardPageStore.boardList} 
+            dataSource={boardPageStore.boardList}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: event => {
+                  routing.push(`/board/${record.bNo}`
+                )},
+              };
+            }}
           />
         </TabPane>
         <TabPane tab="주제별" key="2">
           <Table 
             columns={columns} 
-            dataSource={boardPageStore.boardList} 
+            dataSource={boardPageStore.boardList}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: event => {
+                  routing.push(`/board/${record.bNo}`
+                )},
+              };
+            }}
           />
         </TabPane>
         <TabPane tab="자유게시판" key="3">
           <Table 
             columns={columns} 
-            dataSource={boardPageStore.boardList} 
+            dataSource={boardPageStore.boardList}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: event => {
+                  routing.push(`/board/${record.bNo}`
+                )},
+              };
+            }}
           />
         </TabPane>
       </Tabs>
