@@ -36,6 +36,17 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
   // FIXME: useState 확인
   const [loading, setLoading] = useState(false);
   const [isFavor, setIsFavor] = useState(null);
+
+  useEffect(() => {
+    async function initialize() {
+      restLikeInfo();
+      await restDetailInfo();
+      await fetchMap();
+    }
+    initialize();
+  }, [])
+
+  const menuData: { title: string; content: string; }[] | undefined = [];
   
   const restDetailInfo = async () => {
     const URL = `${SERVER_URL}/api/restaurant/${rNo}`;
@@ -90,44 +101,35 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
       })
   }
 
-  useEffect(() => {
-    async function initialize() {
-      restLikeInfo();
-      await restDetailInfo();
+  const fetchMap = async () => {
+    var geocoder = new window.kakao.maps.services.Geocoder();
 
-      var geocoder = new window.kakao.maps.services.Geocoder();
+    if (!restaurantDetailStore.restaurantData) return;
+    const geoAddress = restaurantDetailStore.restaurantData.rAddress.substr(6);
+    geocoder.addressSearch(geoAddress, (result: any, status: any) => {
 
-      if (!restaurantDetailStore.restaurantData) return;
-      const geoAddress = restaurantDetailStore.restaurantData.rAddress.substr(6);
-      geocoder.addressSearch(geoAddress, (result: any, status: any) => {
+      if (status === window.kakao.maps.services.Status.OK) {
+        var coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
+        let options = { 
+          center: coords,
+          level: 3 
+        };
+        let container = document.getElementById('map'); 
+        let map = new window.kakao.maps.Map(container, options);
+        var marker = new window.kakao.maps.Marker({
+          map: map,
+          position: coords
+        });
 
-        if (status === window.kakao.maps.services.Status.OK) {
-          var coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
-          let options = { 
-            center: coords,
-            level: 3 
-          };
-          let container = document.getElementById('map'); 
-          let map = new window.kakao.maps.Map(container, options);
-          var marker = new window.kakao.maps.Marker({
-            map: map,
-            position: coords
-          });
+        var infowindow = new window.kakao.maps.InfoWindow({
+          content: `<div style="width:150px;text-align:center;padding:6px 0;">${restaurantDetailStore.restaurantData?.rName}</div>`
+        });
+        infowindow.open(map, marker);
 
-          var infowindow = new window.kakao.maps.InfoWindow({
-            content: `<div style="width:150px;text-align:center;padding:6px 0;">${restaurantDetailStore.restaurantData?.rName}</div>`
-          });
-          infowindow.open(map, marker);
-
-          map.setCenter(coords);
-        }
-      })
-    }
-
-    initialize();
-  }, [])
-
-  const menuData: { title: string; content: string; }[] | undefined = [];
+        map.setCenter(coords);
+      }
+    })
+  }
 
   restaurantDetailStore.menuList?.map((data: Menu) => (
     menuData.push({

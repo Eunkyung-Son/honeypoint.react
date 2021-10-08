@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
+import { Link } from "react-router-dom";
 import { observer } from "mobx-react";
 import { RouterStore } from "mobx-react-router";
 import { Col, Row, Divider, Input, Button } from 'antd';
+import food from '../../images/food1.jpg';
+import { SERVER_URL } from "../../config/config";
 import CustomCard from "../../components/CustomCard";
 import CustomCarousel from "../../components/CustomCarousel";
-import { SERVER_URL } from "../../config/config";
-import food from '../../images/food1.jpg';
 import MainContentStore from "./MainContentStore";
 import { useRootStore } from "../../hooks/StoreContextProvider";
 import './MainContentPage.scss';
-import { Link } from "react-router-dom";
 
 type Props = {
   routing: RouterStore;

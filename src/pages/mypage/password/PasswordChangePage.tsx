@@ -1,5 +1,7 @@
 import { observer } from "mobx-react";
 import { Form, Input, Button, Card } from 'antd';
+import { SERVER_URL } from "../../../config/config";
+import axios from "axios";
 
 type Props = {
 
@@ -10,6 +12,11 @@ const PasswordChangePage: React.FC<Props> = (props: Props) => {
 
   const onPasswordChange = (values: any) => {
     console.log('Received values of form: ', values);
+    const URL =`${SERVER_URL}/updatePwd`;
+    // await axios
+    //   .put(URL, {
+
+    //   })
   };
 
   const formItemLayout = {

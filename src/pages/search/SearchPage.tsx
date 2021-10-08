@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Avatar, Space, Row } from 'antd';
+import { Row } from 'antd';
 import './SearchPage.scss';
 import { observer } from "mobx-react";
 import { RouteComponentProps, useParams } from "react-router-dom";
@@ -50,13 +50,12 @@ const SearchPage: React.FC<Props> = observer((props: Props) => {
     props.history.push(`/detail/${rNo}`)
   }
 
-  const { Meta } = Card;
   return (
     <>
       <div className="content-area">
       <h2 style={{textAlign: "left", color: "#1890ff", marginLeft: "23px"}}>{`"${keyword}" 로 검색한 결과(${total})`}</h2>
       <Row justify="space-around" align="top">
-        {searchStore.restaurantData?.length && searchStore.restaurantData?.reduce((total, data, idx) => {
+        {total !== 0 && searchStore.restaurantData?.length && searchStore.restaurantData?.reduce((total, data, idx) => {
           // TODO: map으로 변경
           // if (idx > 3) return total
           const el = (

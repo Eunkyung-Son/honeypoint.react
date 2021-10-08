@@ -1,26 +1,31 @@
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
+import axios, { AxiosResponse } from "axios";
 import { Col, Row, Select, Space, Table, Tabs } from 'antd';
 import Search from "antd/lib/input/Search";
-import { useEffect, useState } from "react";
 import { SERVER_URL } from "../../config/config";
-import axios, { AxiosResponse } from "axios";
-import BoardPageStore from "./BoardPageStore";
 import { useRootStore } from "../../hooks/StoreContextProvider";
+import BoardPageStore from "./BoardPageStore";
 
-type Props = {
-
-}
-
-const BoardPage:React.FC<Props> = (props: Props) => {
+const BoardPage:React.FC = () => {
   const [boardPageStore] = useState(() => new BoardPageStore());
   const { routing } = useRootStore();
   const [searchCondition, setSearchCondition] = useState('all');
   const [boardType, setBoardType] = useState(1);
   const { TabPane } = Tabs;
 
+  useEffect(() => {
+    fetchBoards(1);
+  }, [])
+
   const handleKeyChange = (key: string) => {
     fetchBoards(Number(key));
     setBoardType(Number(key));
+  }
+
+  const handleSearchConditionChange = (value: string) => {
+    console.log(`selected ${value}`);
+    setSearchCondition(value);
   }
 
   const onSearch = async (values: any) => {
@@ -33,8 +38,6 @@ const BoardPage:React.FC<Props> = (props: Props) => {
         value: values
       }
     };
-
-    console.log(params);
     await axios
       .get(URL, {
         headers: {
@@ -67,10 +70,6 @@ const BoardPage:React.FC<Props> = (props: Props) => {
         console.log(boardPageStore.boardList);
       })
   }
-
-  useEffect(() => {
-    fetchBoards(1);
-  }, [])
   
   const columns = [
     {
@@ -95,11 +94,6 @@ const BoardPage:React.FC<Props> = (props: Props) => {
     }
   ];
 
-  const handleSearchConditionChange = (value: string) => {
-    console.log(`selected ${value}`);
-    setSearchCondition(value);
-  }
-
   const { Option } = Select;
 
   const operations = (
@@ -122,7 +116,6 @@ const BoardPage:React.FC<Props> = (props: Props) => {
       </Col>
     </Row>
   );
-
 
   return (
     <div style={{margin: "2%"}}>

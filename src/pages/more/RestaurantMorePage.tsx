@@ -15,7 +15,7 @@ interface Props extends RouteComponentProps<RouteProps> {
 
 }
 
-const RestaurantMorePage: React.FC<Props> = observer((props: Props) => {
+const RestaurantMorePage: React.FC<Props> = (props: Props) => {
 
   const { type } = useParams<RouteProps>();
   const [restaurantMoreStore] = useState(() => new RestaurantMoreStore());
@@ -25,7 +25,6 @@ const RestaurantMorePage: React.FC<Props> = observer((props: Props) => {
     const params = {
       restaurantType: type
     }
-
     return await axios
       .get(URL, {
         headers: {
@@ -69,6 +68,6 @@ const RestaurantMorePage: React.FC<Props> = observer((props: Props) => {
       </Row>
     </div>
   )
-})
+}
 
-export default RestaurantMorePage;
+export default observer(RestaurantMorePage);

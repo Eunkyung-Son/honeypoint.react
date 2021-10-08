@@ -1,3 +1,4 @@
+import { observer } from "mobx-react";
 import { useParams } from "react-router-dom";
 
 type RouteProps = {
@@ -13,4 +14,4 @@ const BoardDetailPage:React.FC = () => {
   )
 }
 
-export default BoardDetailPage
+export default observer(BoardDetailPage)
