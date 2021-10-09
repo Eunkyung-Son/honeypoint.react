@@ -20,7 +20,9 @@ const MyInfoPage: React.FC = observer(() => {
             <p>{authStore.member?.mName}</p>
             <p>{authStore.member?.mEmail}</p>
             <p>{authStore.member?.mPhone}</p>
-            <Button type="primary">수정</Button>
+            <Link to="/mypage/general/edit">
+              <Button type="primary">수정</Button>
+            </Link>
             
           </Card>
         </Col>

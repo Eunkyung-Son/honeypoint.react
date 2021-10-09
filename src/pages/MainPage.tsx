@@ -3,10 +3,11 @@ import { Link, Route, Switch } from "react-router-dom";
 import { observer } from "mobx-react";
 import { CaretDownOutlined, SmileTwoTone } from '@ant-design/icons';
 import { Col, Dropdown, Layout, Menu, Row } from 'antd';
-import MyInfoPage from "./mypage/general/MyInfoPage";
-import RestaurantMyInfoPage from "./mypage/restaurant/RestaurantMyInfoPage";
-import ProtectedRoute from "../components/ProtectedRoute";
 import { useRootStore } from "../hooks/StoreContextProvider";
+import ProtectedRoute from "../components/ProtectedRoute";
+import MyInfoPage from "./mypage/general/MyInfoPage";
+import MyInfoEditPage from "./mypage/general/edit/MyInfoEditPage";
+import RestaurantMyInfoPage from "./mypage/restaurant/RestaurantMyInfoPage";
 import MainContentPage from "./content/MainContentPage";
 import RestaurantMorePage from "./more/RestaurantMorePage";
 import RestaurantDetailPage from "./detail/RestaurantDetailPage";
@@ -86,6 +87,7 @@ const MainPage: React.FC<Props> = observer((props: Props) => {
           <ProtectedRoute exact path='/mypage/general' component={MyInfoPage} />
           <ProtectedRoute exact path='/mypage/restaurant' component={RestaurantMyInfoPage} />
           <ProtectedRoute exact path="/mypage/password" component={PasswordChangePage} />
+          <ProtectedRoute exact path="/mypage/general/edit" component={MyInfoEditPage} />
           <Route exact path='/' component={MainContentPage} />
           <Route exact path='/board' component={BoardPage} />
           <Route exact path='/board/:bNo' component={BoardDetailPage} />
