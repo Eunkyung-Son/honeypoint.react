@@ -9,6 +9,7 @@ import Comment from "../../../models/Comment";
 import BoardDetailStore from "./BoardDetailStore";
 import './BoardDetailPage.scss';
 import { Link } from "react-router-dom";
+import { useRootStore } from "../../../hooks/StoreContextProvider";
 
 type Props = {
   bNo: string
@@ -16,7 +17,9 @@ type Props = {
 }
 
 const BoardDetailPage:React.FC<Props> = ({bNo, boardDetailInfo}: Props) => {
+  const [form] = Form.useForm();
   const [boardDetailStore] = useState(() => new BoardDetailStore());
+  const { authStore } = useRootStore();
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   
@@ -60,8 +63,33 @@ const BoardDetailPage:React.FC<Props> = ({bNo, boardDetailInfo}: Props) => {
 
   }
 
-  const onFinish = () => {
-    
+  const handleCommentWrite = async (values: {
+    cmtContent: string
+  }) => {
+    if (!authStore.isLoggedIn) {
+      alert('로그인 후 이용해주세요.');
+      return;
+    }
+
+    const URL = `${SERVER_URL}/api/comment/insert`;
+
+    await axios
+      .post(URL,
+        {
+          mNo: authStore.member.mNo,
+          bNo: bNo,
+          cmtContent: values.cmtContent,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        }
+      )
+      .then((response: AxiosResponse) => {
+        fecthComments();
+      })
+    form.resetFields();
   }
 
   return (
@@ -85,8 +113,8 @@ const BoardDetailPage:React.FC<Props> = ({bNo, boardDetailInfo}: Props) => {
           <>
             <p style={{padding: '20px'}}>{boardDetailInfo.bContent}</p>
             <hr style={{border: "1px solid #f0f0f0" }}/>
-            <Form name="nest-messages" layout="inline" onFinish={onFinish}>
-              <Form.Item name={['']} style={{ width: '87%', margin: '0 8px' }}>
+            <Form name="nest-messages" form={form} layout="inline" onFinish={handleCommentWrite}>
+              <Form.Item name={['cmtContent']} style={{ width: '87%', margin: '0 8px' }}>
                 <Input.TextArea placeholder="로그인 후 이용할 수 있습니다."/>
               </Form.Item>
               <Form.Item>
