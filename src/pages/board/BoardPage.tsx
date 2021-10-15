@@ -6,6 +6,7 @@ import Search from "antd/lib/input/Search";
 import { SERVER_URL } from "../../config/config";
 import { useRootStore } from "../../hooks/StoreContextProvider";
 import BoardPageStore from "./BoardPageStore";
+import BoardDetailPage from "./detail/BoardDetailPage";
 
 const BoardPage:React.FC = () => {
   const [boardPageStore] = useState(() => new BoardPageStore());
@@ -19,6 +20,8 @@ const BoardPage:React.FC = () => {
   }, [])
 
   const handleKeyChange = (key: string) => {
+    boardPageStore.setBoardDetail(false);
+    console.log()
     fetchBoards(Number(key));
     setBoardType(Number(key));
   }
@@ -123,43 +126,58 @@ const BoardPage:React.FC = () => {
 
       <Tabs defaultActiveKey="1" onChange={handleKeyChange} tabBarExtraContent={operations}>
         <TabPane tab="지역별" key="1">
-          <Table 
-            columns={columns} 
-            dataSource={boardPageStore.boardList}
-            onRow={(record, rowIndex) => {
-              return {
-                onClick: event => {
-                  routing.push(`/board/${record.bNo}`
-                )},
-              };
-            }}
-          />
+          {!boardPageStore.isBoardDetail ?
+            <Table 
+              columns={columns} 
+              dataSource={boardPageStore.boardList}
+              onRow={(record, rowIndex) => {
+                return {
+                  onClick: event => {
+                    boardPageStore.setBNo(String(record.bNo));
+                    boardPageStore.setBoardDetailInfo(record);
+                    boardPageStore.setBoardDetail(true);
+                  },
+                };
+              }}
+            />
+            : <BoardDetailPage bNo={boardPageStore.bNo!} boardDetailInfo={boardPageStore.boardDetailInfo!} />
+          }
         </TabPane>
         <TabPane tab="주제별" key="2">
-          <Table 
-            columns={columns} 
-            dataSource={boardPageStore.boardList}
-            onRow={(record, rowIndex) => {
-              return {
-                onClick: event => {
-                  routing.push(`/board/${record.bNo}`
-                )},
-              };
-            }}
-          />
+          {!boardPageStore.isBoardDetail ?
+            <Table 
+              columns={columns} 
+              dataSource={boardPageStore.boardList}
+              onRow={(record, rowIndex) => {
+                return {
+                  onClick: event => {
+                    boardPageStore.setBNo(String(record.bNo));
+                    boardPageStore.setBoardDetailInfo(record);
+                    boardPageStore.setBoardDetail(true);
+                  },
+                };
+              }}
+            />
+            : <BoardDetailPage bNo={boardPageStore.bNo!} boardDetailInfo={boardPageStore.boardDetailInfo!} />
+          }
         </TabPane>
         <TabPane tab="자유게시판" key="3">
+        {!boardPageStore.isBoardDetail ?
           <Table 
             columns={columns} 
             dataSource={boardPageStore.boardList}
             onRow={(record, rowIndex) => {
               return {
                 onClick: event => {
-                  routing.push(`/board/${record.bNo}`
-                )},
+                  boardPageStore.setBNo(String(record.bNo));
+                  boardPageStore.setBoardDetailInfo(record);
+                  boardPageStore.setBoardDetail(true);
+                },
               };
             }}
           />
+          : <BoardDetailPage bNo={boardPageStore.bNo!} boardDetailInfo={boardPageStore.boardDetailInfo!} />
+        }
         </TabPane>
       </Tabs>
     </div>
