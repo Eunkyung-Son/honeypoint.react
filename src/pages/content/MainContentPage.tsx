@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react";
-import { RouterStore } from "mobx-react-router";
 import { Col, Row, Divider, Input, Button } from 'antd';
 import food from '../../images/food1.jpg';
 import { SERVER_URL } from "../../config/config";
@@ -12,11 +11,7 @@ import MainContentStore from "./MainContentStore";
 import { useRootStore } from "../../hooks/StoreContextProvider";
 import './MainContentPage.scss';
 
-type Props = {
-  routing: RouterStore;
-}
-
-const MainContentPage: React.FC<Props> = observer((props: Props) => {
+const MainContentPage: React.FC = () => {
   const { routing } = useRootStore();
   const [mainContentStore] = useState(() => new MainContentStore());
 
@@ -161,6 +156,6 @@ const MainContentPage: React.FC<Props> = observer((props: Props) => {
       </Row>
     </>
   )
-})
+}
 
-export default MainContentPage
+export default observer(MainContentPage)
