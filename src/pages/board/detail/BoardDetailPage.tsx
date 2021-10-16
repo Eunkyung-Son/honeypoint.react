@@ -1,34 +1,49 @@
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { observer } from "mobx-react";
 import { Avatar, Button, Card, Form, Input, List, message, Space, Spin } from "antd";
 import axios, { AxiosResponse } from "axios";
-import { observer } from "mobx-react";
-import { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroller";
 import { SERVER_URL } from "../../../config/config";
-import Board from "../../../models/Board";
 import Comment from "../../../models/Comment";
 import BoardDetailStore from "./BoardDetailStore";
-import './BoardDetailPage.scss';
-import { Link } from "react-router-dom";
 import { useRootStore } from "../../../hooks/StoreContextProvider";
+import './BoardDetailPage.scss';
 
-type Props = {
-  bNo: string
-  boardDetailInfo: Board;
+
+type RouteProps = {
+  bNo: string;
 }
 
-const BoardDetailPage:React.FC<Props> = ({bNo, boardDetailInfo}: Props) => {
+const BoardDetailPage: React.FC = () => {
+  const { bNo } = useParams<RouteProps>();
   const [form] = Form.useForm();
   const [boardDetailStore] = useState(() => new BoardDetailStore());
   const { authStore } = useRootStore();
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  
+
   useEffect(() => {
+    // async function
+    fetchBoard();
     fecthComments();
   }, [])
 
+  const fetchBoard = async () => {
+    const URL = `${SERVER_URL}/api/board/${bNo}`;
+    await axios
+      .get(URL, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then((response: AxiosResponse) => {
+        console.log(response.data.board);
+        boardDetailStore.setBoardDetailInfo(response.data.board);
+      })
+  }
+
   const fecthComments = async () => {
-    const URL = `${SERVER_URL}/api/comment/${bNo}`
+    const URL = `${SERVER_URL}/api/comment/${bNo}`;
     await axios
       .get(URL, {
         headers: {
@@ -55,18 +70,45 @@ const BoardDetailPage:React.FC<Props> = ({bNo, boardDetailInfo}: Props) => {
     setLoading(false);
   }
 
-  const handleReviewDelete = async (bNo: number) => {
+  const handleCommentDelete = async (bNo: number) => {
+    const URL = `${SERVER_URL}/api/comment/${bNo}`
 
+    await axios
+      .post(URL, {},
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        }).then((response: AxiosResponse) => {
+          console.log(response);
+          fecthComments();
+          alert("댓글이 삭제되었습니다.");
+        })
   }
 
-  const handleReviewEdit = async (comment: Comment) => {
+  const handleBoardDelete = async (bNo: number) => {
+    const URL = `${SERVER_URL}/api/board/${bNo}`
+
+    await axios
+      .post(URL, {},
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        }).then((response: AxiosResponse) => {
+          console.log(response);
+          alert("게시글이 삭제되었습니다.");
+        })
+  }
+
+  const handleCommentEdit = async (comment: Comment) => {
 
   }
 
   const handleCommentWrite = async (values: {
     cmtContent: string
   }) => {
-    if (!authStore.isLoggedIn) {
+    if (!authStore.isLoggedIn || !authStore.member) {
       alert('로그인 후 이용해주세요.');
       return;
     }
@@ -93,29 +135,29 @@ const BoardDetailPage:React.FC<Props> = ({bNo, boardDetailInfo}: Props) => {
   }
 
   return (
-    <>
-      <Card 
+    <div className="BoardDetailPage">
+      <Card
         title={
           <>
-            [{boardDetailInfo.bCategory}] {boardDetailInfo.bTitle}
+            [{boardDetailStore.boardDetailInfo?.bCategory}] {boardDetailStore.boardDetailInfo?.bTitle}
             <br />
-            {boardDetailInfo.mNickname} | {boardDetailInfo.bEnrollDate} | {boardDetailInfo.bCount}
+            {boardDetailStore.boardDetailInfo?.mNickname} | {boardDetailStore.boardDetailInfo?.bEnrollDate} | {boardDetailStore.boardDetailInfo?.bCount}
           </>
         }
-        extra={JSON.parse(localStorage.getItem('member')!).mNo === boardDetailInfo.mNo && (
+        extra={authStore.member && authStore.member.mNo === boardDetailStore.boardDetailInfo?.mNo && (
           <>
             <Link to="/board">수정 </Link>
-            <Link to="/board">삭제</Link>
+            <Link to="/board" onClick={() => handleBoardDelete(Number(bNo))}>삭제</Link>
           </>
         )}
         style={{ width: '100%' }}
         cover={[
           <>
-            <p style={{padding: '20px'}}>{boardDetailInfo.bContent}</p>
-            <hr style={{border: "1px solid #f0f0f0" }}/>
+            <p style={{ padding: '20px' }}>{boardDetailStore.boardDetailInfo?.bContent}</p>
+            <hr style={{ border: "1px solid #f0f0f0" }} />
             <Form name="nest-messages" form={form} layout="inline" onFinish={handleCommentWrite}>
               <Form.Item name={['cmtContent']} style={{ width: '87%', margin: '0 8px' }}>
-                <Input.TextArea placeholder="로그인 후 이용할 수 있습니다."/>
+                <Input.TextArea placeholder="로그인 후 이용할 수 있습니다." />
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="submit">
@@ -156,10 +198,10 @@ const BoardDetailPage:React.FC<Props> = ({bNo, boardDetailInfo}: Props) => {
                   title={(
                     <Space>
                       {`${item.mNickname} | ${item.cmtEnrollDate}`}
-                      {JSON.parse(localStorage.getItem('member')!).mNo === item.mNo && (
+                      {authStore.member && authStore.member.mNo === item.mNo && (
                         <>
-                          <Button onClick={() => handleReviewEdit(item)}>수정</Button>
-                          <Button onClick={() => handleReviewDelete(item.cmtNo)}>삭제</Button>
+                          <Button onClick={() => handleCommentEdit(item)}>수정</Button>
+                          <Button onClick={() => handleCommentDelete(item.cmtNo)}>삭제</Button>
                         </>
                       )}
                     </Space>
@@ -177,8 +219,9 @@ const BoardDetailPage:React.FC<Props> = ({bNo, boardDetailInfo}: Props) => {
             )}
           </List>
         </InfiniteScroll>
-      </div>
-    </>
+    </div>
+    </div>
+
   )
 }
 

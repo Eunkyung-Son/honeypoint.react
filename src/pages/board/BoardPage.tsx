@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import axios, { AxiosResponse } from "axios";
 import { Col, Row, Select, Space, Table, Tabs } from 'antd';
@@ -7,97 +7,39 @@ import { SERVER_URL } from "../../config/config";
 import { useRootStore } from "../../hooks/StoreContextProvider";
 import BoardPageStore from "./BoardPageStore";
 import BoardDetailPage from "./detail/BoardDetailPage";
+import { Route, Switch } from "react-router";
+import BoardPageTable from "./components/BoardPageTable";
+import { autorun } from "mobx";
 
-const BoardPage:React.FC = () => {
-  const [boardPageStore] = useState(() => new BoardPageStore());
-  const { routing } = useRootStore();
+const { Option } = Select;
+const { TabPane } = Tabs;
+
+const BoardPage: React.FC = () => {
+  const { routing, boardStore } = useRootStore();
   const [searchCondition, setSearchCondition] = useState('all');
-  const [boardType, setBoardType] = useState(1);
-  const { TabPane } = Tabs;
-
+  const [searchValue, setSearchValue] = useState('');
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setSearchValue(inputValue);
+  }
   useEffect(() => {
-    fetchBoards(1);
-  }, [])
+    autorun(() => {
+      setSearchValue('');
+    })
+  }, [boardStore.boardType]);
 
   const handleKeyChange = (key: string) => {
-    boardPageStore.setBoardDetail(false);
-    console.log()
-    fetchBoards(Number(key));
-    setBoardType(Number(key));
+    routing.push('/board');
+    boardStore.setBoardType(Number(key));
   }
 
   const handleSearchConditionChange = (value: string) => {
-    console.log(`selected ${value}`);
     setSearchCondition(value);
   }
 
   const onSearch = async (values: any) => {
-    console.log(values);
-    console.log(searchCondition);
-    const URL = `${SERVER_URL}/api/searchBoards/${boardType}`;
-    const params = {
-      searchOption: {
-        condition: searchCondition,
-        value: values
-      }
-    };
-    await axios
-      .get(URL, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        params: {
-          ...params
-        }
-      }).then((response: AxiosResponse) => {
-        boardPageStore.setBoardList(response.data.boards);
-      })
+    await boardStore.searchBoards(searchCondition, values);
   }
-
-  const fetchBoards = async (boardType?: number) => {
-    const URL = `${SERVER_URL}/api/boards`;
-    const params = {
-      ...(boardType && { boardType: boardType })
-    }
-    await axios
-      .get(URL, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        params: {
-          ...params
-        }
-      }).then((response: AxiosResponse) => {
-        console.log(response);
-        boardPageStore.setBoardList(response.data.boards);
-        console.log(boardPageStore.boardList);
-      })
-  }
-  
-  const columns = [
-    {
-      title: '카테고리',
-      dataIndex: 'bCategory',
-      key: 'bCategory',
-    },
-    {
-      title: '제목',
-      dataIndex: 'bTitle',
-      key: 'bTitle',
-    },
-    {
-      title: '작성자',
-      dataIndex: 'mNickname',
-      key: 'mNickname',
-    },
-    {
-      title: '날짜',
-      dataIndex: 'bEnrollDate',
-      key: 'bEnrollDate'
-    }
-  ];
-
-  const { Option } = Select;
 
   const operations = (
     <Row>
@@ -109,11 +51,13 @@ const BoardPage:React.FC = () => {
             <Option value="title">제목</Option>
             <Option value="content">내용</Option>
           </Select>
-          <Search 
+          <Search
             placeholder="검색할 내용을 입력하세요"
-            onSearch={onSearch} 
+            value={searchValue}
+            onChange={handleChange}
+            onSearch={(values, e) => onSearch(values)}
             enterButton
-            style={{width: "50px;"}}
+            style={{ width: "50px;" }}
           />
         </Space>
       </Col>
@@ -121,65 +65,17 @@ const BoardPage:React.FC = () => {
   );
 
   return (
-    <div style={{margin: "2%"}}>
+    <div style={{ margin: "2%" }}>
       <h1>커뮤니티 게시판</h1>
-
       <Tabs defaultActiveKey="1" onChange={handleKeyChange} tabBarExtraContent={operations}>
-        <TabPane tab="지역별" key="1">
-          {!boardPageStore.isBoardDetail ?
-            <Table 
-              columns={columns} 
-              dataSource={boardPageStore.boardList}
-              onRow={(record, rowIndex) => {
-                return {
-                  onClick: event => {
-                    boardPageStore.setBNo(String(record.bNo));
-                    boardPageStore.setBoardDetailInfo(record);
-                    boardPageStore.setBoardDetail(true);
-                  },
-                };
-              }}
-            />
-            : <BoardDetailPage bNo={boardPageStore.bNo!} boardDetailInfo={boardPageStore.boardDetailInfo!} />
-          }
-        </TabPane>
-        <TabPane tab="주제별" key="2">
-          {!boardPageStore.isBoardDetail ?
-            <Table 
-              columns={columns} 
-              dataSource={boardPageStore.boardList}
-              onRow={(record, rowIndex) => {
-                return {
-                  onClick: event => {
-                    boardPageStore.setBNo(String(record.bNo));
-                    boardPageStore.setBoardDetailInfo(record);
-                    boardPageStore.setBoardDetail(true);
-                  },
-                };
-              }}
-            />
-            : <BoardDetailPage bNo={boardPageStore.bNo!} boardDetailInfo={boardPageStore.boardDetailInfo!} />
-          }
-        </TabPane>
-        <TabPane tab="자유게시판" key="3">
-        {!boardPageStore.isBoardDetail ?
-          <Table 
-            columns={columns} 
-            dataSource={boardPageStore.boardList}
-            onRow={(record, rowIndex) => {
-              return {
-                onClick: event => {
-                  boardPageStore.setBNo(String(record.bNo));
-                  boardPageStore.setBoardDetailInfo(record);
-                  boardPageStore.setBoardDetail(true);
-                },
-              };
-            }}
-          />
-          : <BoardDetailPage bNo={boardPageStore.bNo!} boardDetailInfo={boardPageStore.boardDetailInfo!} />
-        }
-        </TabPane>
+        <TabPane key="1" tab="지역별"/>
+        <TabPane key="2" tab="주제별"/>
+        <TabPane key="3" tab="자유게시판"/>
       </Tabs>
+      <Switch>
+        <Route exact path="/board" component={BoardPageTable}/>
+        <Route exact path="/board/:bNo" component={BoardDetailPage} />
+      </Switch>
     </div>
   )
 }

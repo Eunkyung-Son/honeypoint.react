@@ -1,4 +1,6 @@
+import axios, { AxiosResponse } from "axios";
 import { action, computed, makeObservable, observable } from "mobx";
+import { SERVER_URL } from "../../config/config";
 import Board from "../../models/Board";
 export default class BoardPageStore {
   @observable private _boardList: Array<Board> = [];
@@ -6,8 +8,54 @@ export default class BoardPageStore {
   @observable private _isBoardDetail = false;
   @observable private _bNo?: string;
 
+  @observable private _boardType = 1;
+
   constructor() {
     makeObservable(this);
+  }
+
+  @action.bound
+  async fetchBoards() {
+    const { _boardType: boardType } = this
+    const URL = `${SERVER_URL}/api/boards`;
+    const params = {
+      ...(boardType && { boardType: boardType })
+    }
+    await axios
+      .get(URL, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        params: {
+          ...params
+        }
+      }).then((response: AxiosResponse) => {
+        console.log(response);
+        this.setBoardList(response.data.boards);
+      })
+  }
+
+  @action.bound
+  async searchBoards (searchCondition: string, searchValues: string) {
+    console.log(this._boardType);
+    const URL = `${SERVER_URL}/api/searchBoards/${this._boardType}`;
+    const params = {
+      searchOption: {
+        condition: searchCondition,
+        value: searchValues
+      }
+    };
+    await axios
+      .get(URL, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        params: {
+          ...params
+        }
+      }).then((response: AxiosResponse) => {
+        this.setBoardList(response.data.boards);
+      })
   }
 
   @action.bound
@@ -30,6 +78,11 @@ export default class BoardPageStore {
     this._bNo = bNo;
   }
 
+  @action.bound
+  setBoardType = (boardType: number) => {
+    this._boardType = boardType;
+  }
+
   @computed
   get bNo() {
     return this._bNo;
@@ -48,5 +101,10 @@ export default class BoardPageStore {
   @computed
   get boardDetailInfo() {
     return this._boardDetailInfo;
+  }
+
+  @computed
+  get boardType() {
+    return this._boardType;
   }
 }

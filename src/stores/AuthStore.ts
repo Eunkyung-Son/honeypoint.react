@@ -7,7 +7,7 @@ import RootStore from "./RootStore";
 export default class AuthStore {
   root: RootStore;
   @observable isLoggedIn = false;
-  @observable member = JSON.parse(localStorage.getItem('member')!);
+  @observable member?: Member = JSON.parse(localStorage.getItem('member')!);
 
   constructor(root: RootStore) {
     makeObservable(this);
@@ -60,7 +60,7 @@ export default class AuthStore {
   };
 
   @action.bound
-  setMember = (member: Member) => {
+  setMember = (member?: Member) => {
     this.member = member;
   }
 

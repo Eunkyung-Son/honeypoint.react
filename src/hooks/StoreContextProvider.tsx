@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBrowserHistory } from 'history';
 import { syncHistoryWithStore } from 'mobx-react-router';
-import { Router } from 'react-router-dom';
+import { Router } from 'react-router';
 import RootStore from '../stores/RootStore';
 
 const rootStore = new RootStore();
