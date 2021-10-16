@@ -21,7 +21,7 @@ const MyInfoPage: React.FC = observer(() => {
             <p>{authStore.member?.mEmail}</p>
             <p>{authStore.member?.mPhone}</p>
             <Link to="/mypage/general/edit">
-              <Button type="primary">수정</Button>
+              <p>수정하기</p>
             </Link>
             
           </Card>
@@ -40,17 +40,15 @@ const MyInfoPage: React.FC = observer(() => {
         <Col span={3}></Col>
         <Col span={9}>
         <Card title="내 활동 내역" bordered={false}>
-          <p>Card content</p>
-          <p>Card content</p>
-          <p>Card content</p>
+          <p>HONEYPOINT 내에서 중요한 활동 기록을 확인할 수 있습니다.</p>
+          <Link to="/mypage/activities"><p>확인하기</p></Link>
         </Card>
         </Col>
 
         <Col span={9}>
         <Card title="회원 탈퇴" bordered={false}>
-          <p>Card content</p>
-          <p>Card content</p>
-          <p>Card content</p>
+          <p>HONEYPOINT 회원을 탈퇴합니다.</p>
+          <Link to="/mypage/withdrawal"><p>탈퇴하기</p></Link>
         </Card>
         </Col>
         <Col span={3}></Col>

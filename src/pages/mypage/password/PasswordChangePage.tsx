@@ -1,7 +1,8 @@
 import { observer } from "mobx-react";
 import { Form, Input, Button, Card } from 'antd';
 import { SERVER_URL } from "../../../config/config";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
+import { useRootStore } from "../../../hooks/StoreContextProvider";
 
 type Props = {
 
@@ -9,14 +10,34 @@ type Props = {
 
 const PasswordChangePage: React.FC<Props> = (props: Props) => {
   const [form] = Form.useForm();
+  const { authStore } = useRootStore();
 
-  const onPasswordChange = (values: any) => {
+  const onPasswordChange = async (values: any) => {
+
+    // FIXME: undefined check!!
     console.log('Received values of form: ', values);
-    const URL =`${SERVER_URL}/updatePwd`;
-    // await axios
-    //   .put(URL, {
-
-    //   })
+    const params = {
+      oldPassword: values.oldpassword,
+      newPassword: values.password,
+      mId: authStore.member?.mId
+    }
+    console.log(params);
+    const URL =`${SERVER_URL}/resetPwd`;
+    await axios
+      .post(URL,{
+        ...params
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      }).then((response: AxiosResponse) => {
+        if (response.data.error) {
+          alert('asd')
+        } else {
+          alert("비밀번호 변경 성공!");
+        }
+      })
   };
 
   const formItemLayout = {
@@ -52,7 +73,7 @@ const PasswordChangePage: React.FC<Props> = (props: Props) => {
         onFinish={onPasswordChange}
         scrollToFirstError
       >
-        {/* <Form.Item
+        <Form.Item
           name="oldpassword"
           label="기존 비밀번호"
           rules={[
@@ -60,19 +81,11 @@ const PasswordChangePage: React.FC<Props> = (props: Props) => {
               required: true,
               message: 'Please input your password!',
             },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('oldpassword') === localStorage.getItem('member').mPwd) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error('입력하신 비밀번호와 일치하지 않습니다.'));
-              },
-            }),
           ]}
           hasFeedback
         >
           <Input.Password />
-        </Form.Item> */}
+        </Form.Item>
 
         <Form.Item
           name="password"
