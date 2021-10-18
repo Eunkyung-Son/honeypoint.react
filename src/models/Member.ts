@@ -5,7 +5,7 @@ type Member = {
     bTitle: string;
     bType: string;
     mAddress: string;
-    bBirthday: Date;
+    mBirthday: Date;
     mEmail: string;
     mEnrollDate: Date;
     mGrad: string;

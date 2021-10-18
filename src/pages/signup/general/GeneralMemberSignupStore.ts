@@ -6,7 +6,9 @@ import GeneralSignupData from "../../../models/GeneralSignupData";
 
 export default class GerneralMemberSignupStore {
   @observable private _id = '';
-  @observable private _isDuplicated = false;
+  @observable private _email = '';
+  @observable private _isIdDuplicated = false;
+  @observable private _isEmailDuplicated = false;
 
   constructor() {
     makeObservable(this);
@@ -36,9 +38,7 @@ export default class GerneralMemberSignupStore {
           }
         )
         .then((response: AxiosResponse) => {
-          // alert('회원가입이 완료되었습니다.');
-          // return response;
-          // routing.push('/login');
+          alert('회원가입이 완료되었습니다.');
         })
     } catch (e) {
       throw e;
@@ -53,8 +53,18 @@ export default class GerneralMemberSignupStore {
   }
 
   @action.bound
-  setIsDuplicated = (isDuplicated: boolean) => {
-    this._isDuplicated = isDuplicated;
+  setIsIdDuplicated = (isDuplicated: boolean) => {
+    this._isIdDuplicated = isDuplicated;
+  }
+
+  @action.bound
+  setEmail = (email: string) => {
+    this._email = email;
+  }
+
+  @action.bound
+  setEmailDuplicated = (isDuplicated: boolean) => {
+    this._isEmailDuplicated = isDuplicated;
   }
 
   @computed
@@ -63,7 +73,17 @@ export default class GerneralMemberSignupStore {
   }
 
   @computed
-  get isDuplicated() {
-    return this._isDuplicated;
+  get isIdDuplicated() {
+    return this._isIdDuplicated;
+  }
+
+  @computed
+  get email() {
+    return this._email;
+  }
+
+  @computed
+  get isEmailDuplicated() {
+    return this._isEmailDuplicated;
   }
 }

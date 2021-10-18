@@ -12,7 +12,6 @@ import RestaurantSignupData from "../../../models/RestaurantSignupData";
 import AddressModal, { AddressResponse } from "../modal/AddressModal";
 import AddressModalStore from "../modal/AddressModalStore";
 import RestaurantMemberSignupStore from "./RestaurantMemberSignupStore";
-// import { useForm } from "react-hook-form";
 
 type Props = {
   routing?: RouterStore,
@@ -21,11 +20,9 @@ type Props = {
 const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
   const addressModalStore = new AddressModalStore();
   const [restaurantMemberSignupStore] = useState(() => new RestaurantMemberSignupStore());
-  // const { } = useForm();
   const [isShowTagInput, setIsShowTagInput] = useState(false);
 
   const input = useRef<Input | null>(null);
-  // FIXME: useForm로 바꾸기
   const formRef = React.createRef<FormInstance>();
   const timeFormat = 'hh:mm';
   
@@ -52,8 +49,35 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
       })
   }
 
+  const onEmailValidation = async () => {
+    const { email, setEmailDuplicated } = restaurantMemberSignupStore;
+    const URL = `${SERVER_URL}/emailCheck`;
+    const params = {
+      email: email,
+    }
+    await axios
+      .get(URL, {
+        params: {
+          ...params
+        }
+      })
+      .then((response: AxiosResponse) => {
+        if (response.data) {
+          alert('사용 가능한 이메일 입니다.')
+          setEmailDuplicated(false);
+          return;
+        }
+        alert('중복된 이메일이 존재합니다.')
+        setEmailDuplicated(true);
+      })
+  }
+
   const onIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     restaurantMemberSignupStore.setId(e.target.value);
+  }
+
+  const onEmailChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+    restaurantMemberSignupStore.setEmail(e.target.value);
   }
 
   const showModal = () => {
@@ -261,9 +285,20 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
             {
               required: true,
               message: '이메일을 입력해주세요.'
-            }
+            },
+            () => ({
+              validator: (_, value) => {
+                if (!restaurantMemberSignupStore.isEmailDuplicated) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error('중복된 이메일이 존재합니다.'));
+              },
+            }),
           ]}>
-          <Input />
+          <Space>
+            <Input onChange={onEmailChange} />
+            <Button onClick={onEmailValidation}>중복확인</Button>
+          </Space>        
         </Form.Item>
         <Form.Item
           name={['rName']}

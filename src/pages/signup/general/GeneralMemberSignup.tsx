@@ -20,8 +20,12 @@ const GeneralMemberSignup: React.FC = () => {
     generalMemberSignupStore.setId(e.target.value);
   }
 
+  const onEmailChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+    generalMemberSignupStore.setEmail(e.target.value);
+  }
+
   const onIdValidation = async () => {
-    const { id, setIsDuplicated } = generalMemberSignupStore;
+    const { id, setIsIdDuplicated } = generalMemberSignupStore;
     const URL = `${SERVER_URL}/idCheck`;
     const params = {
       id: id,
@@ -35,11 +39,34 @@ const GeneralMemberSignup: React.FC = () => {
       .then((response: AxiosResponse) => {
         if (response.data) {
           alert('사용 가능한 아이디 입니다.')
-          setIsDuplicated(false);
+          setIsIdDuplicated(false);
           return;
         }
         alert('중복된 아이디가 존재합니다.')
-        setIsDuplicated(true);
+        setIsIdDuplicated(true);
+      })
+  }
+
+  const onEmailValidation = async () => {
+    const { email, setEmailDuplicated } = generalMemberSignupStore;
+    const URL = `${SERVER_URL}/emailCheck`;
+    const params = {
+      email: email,
+    }
+    await axios
+      .get(URL, {
+        params: {
+          ...params
+        }
+      })
+      .then((response: AxiosResponse) => {
+        if (response.data) {
+          alert('사용 가능한 이메일 입니다.')
+          setEmailDuplicated(false);
+          return;
+        }
+        alert('중복된 이메일이 존재합니다.')
+        setEmailDuplicated(true);
       })
   }
 
@@ -112,7 +139,7 @@ const GeneralMemberSignup: React.FC = () => {
             },
             () => ({
               validator: (_, value) => {
-                if (!generalMemberSignupStore.isDuplicated) {
+                if (!generalMemberSignupStore.isIdDuplicated) {
                   return Promise.resolve();
                 }
                 return Promise.reject(new Error('중복된 아이디가 존재합니다.'));
@@ -209,9 +236,20 @@ const GeneralMemberSignup: React.FC = () => {
             {
               required: true,
               message: '이메일을 입력해주세요.'
-            }
+            },
+            () => ({
+              validator: (_, value) => {
+                if (!generalMemberSignupStore.isEmailDuplicated) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error('중복된 이메일이 존재합니다.'));
+              },
+            }),
           ]}>
-          <Input />
+          <Space>
+            <Input onChange={onEmailChange} />
+            <Button onClick={onEmailValidation}>중복확인</Button>
+          </Space>        
         </Form.Item>
         <Form.Item
           name={['mPhone']}
