@@ -14,6 +14,8 @@ type Props = {
   rNo: string;
 }
 
+// FIXME: reviewController에서 put 요청임
+// 다시 확인하기
 const ReviewEditModal: React.FC<Props> = ({modalStore, restaurantReviewStore, rNo}: Props) => {
   const { isVisible, onCancel } = modalStore;
   
@@ -22,7 +24,7 @@ const ReviewEditModal: React.FC<Props> = ({modalStore, restaurantReviewStore, rN
     revCn: string,
   }) => {
     console.log(values);
-    const URL = `${SERVER_URL}/api/review/${modalStore.reviewData?.revNo}`;
+    const URL = `${SERVER_URL}/api/review/update`;
     await axios
       .post(URL,
         {
