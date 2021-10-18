@@ -8,6 +8,9 @@ export default class AuthStore {
   root: RootStore;
   @observable isLoggedIn = false;
   @observable member?: Member = JSON.parse(localStorage.getItem('member')!);
+  @observable mPostNumber = '';
+  @observable mRoadAddress = '';
+  @observable mDetailAddress = '';
 
   constructor(root: RootStore) {
     makeObservable(this);
@@ -44,8 +47,13 @@ export default class AuthStore {
       )
       .then((response: AxiosResponse) => {
         // TODO:아이디나 비밀번호가 틀릴 때 처리하기
-        console.log(response)
-        return response.data as Member;
+        console.log("login response", response);
+        if (response.data.error) {
+          console.log(response.data.error);
+          alert("비밀번호가 틀립니다.");
+          return;
+        }
+        return response.data.member as Member;
       })
       .catch((error) => {
       });
@@ -55,6 +63,7 @@ export default class AuthStore {
       localStorage.setItem('member', JSON.stringify(memberInfo))
       this.setIsLoggedIn(true);
       this.setMember(memberInfo);
+      this.setAddressData();
       this.root.routing.history.push('/');
     }
   };
@@ -67,6 +76,33 @@ export default class AuthStore {
   @action.bound
   setIsLoggedIn = (isLoggedIn: boolean) => {
     this.isLoggedIn = isLoggedIn;
+  }
+
+  @action.bound
+  setAddressData = () => {
+    var fullAddress = this.member?.mAddress;
+    var splitAddress = fullAddress?.split(', ');
+    if (!splitAddress) return;
+    var mergeAddress = (`${splitAddress[1]}` + `, ${splitAddress[2]}`);
+    if (!splitAddress) return;
+    this.setPostNumber(splitAddress[0]);
+    this.setRoadAddress(mergeAddress);
+    this.setDetailAddress(splitAddress[3]);
+  }
+
+  @action.bound
+  setPostNumber = (mPostNumber: string) => {
+    this.mPostNumber = mPostNumber;
+  }
+
+  @action.bound
+  setRoadAddress = (mRoadAddress: string) => {
+    this.mRoadAddress = mRoadAddress;
+  }
+
+  @action.bound
+  setDetailAddress = (mDetailAddress: string) => {
+    this.mDetailAddress = mDetailAddress;
   }
 
 }

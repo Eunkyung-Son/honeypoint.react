@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { Button, Card, Col, Row } from "antd";
+import { Card, Col, Row } from "antd";
 import { useRootStore } from "../../../hooks/StoreContextProvider";
 import './MyInfoPage.scss';
 import { Link } from "react-router-dom";
@@ -8,18 +8,16 @@ import { Link } from "react-router-dom";
 
 const MyInfoPage: React.FC = observer(() => {
   const { authStore } = useRootStore();
-  console.log(authStore.member)
 
   return (
     <div className="content-area">
-      {console.log(authStore.member?.mPhone)}
       <Row gutter={[24, 10]}>
         <Col span={3}></Col>
         <Col span={9}>
           <Card title="기본 정보 변경" bordered={false}>
-            <p>{authStore.member?.mName}</p>
-            <p>{authStore.member?.mEmail}</p>
-            <p>{authStore.member?.mPhone}</p>
+            <p>이름 : {authStore.member?.mName}</p>
+            <p>이메일 : {authStore.member?.mEmail}</p>
+            <p>핸드폰번호: {authStore.member?.mPhone}</p>
             <Link to="/mypage/general/edit">
               <p>수정하기</p>
             </Link>
@@ -48,7 +46,7 @@ const MyInfoPage: React.FC = observer(() => {
         <Col span={9}>
         <Card title="회원 탈퇴" bordered={false}>
           <p>HONEYPOINT 회원을 탈퇴합니다.</p>
-          <Link to="/mypage/withdrawal"><p>탈퇴하기</p></Link>
+          <Link to="/mypage/general/withdrawal"><p>탈퇴하기</p></Link>
         </Card>
         </Col>
         <Col span={3}></Col>

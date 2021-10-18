@@ -15,6 +15,7 @@ import PasswordChangePage from "./mypage/password/PasswordChangePage";
 import SearchPage from "./search/SearchPage";
 import BoardPage from "./board/BoardPage";
 import './MainPage.scss';
+import WithdrawalPage from "./mypage/general/withdrawal/WithdrawalPage";
 
 type Props = {
 
@@ -88,6 +89,7 @@ const MainPage: React.FC<Props> = observer((props: Props) => {
           <ProtectedRoute exact path='/mypage/restaurant' component={RestaurantMyInfoPage} />
           <ProtectedRoute exact path="/mypage/password" component={PasswordChangePage} />
           <ProtectedRoute exact path="/mypage/general/edit" component={MyInfoEditPage} />
+          <ProtectedRoute exact path="/mypage/general/withdrawal" component={WithdrawalPage} />
           <Route exact path='/' component={MainContentPage} />
           <Route path='/board' component={BoardPage} />
           <Route exact path='/more/:type' component={RestaurantMorePage} />
