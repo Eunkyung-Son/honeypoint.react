@@ -7,7 +7,9 @@ import InfiniteScroll from "react-infinite-scroller";
 import { SERVER_URL } from "../../../config/config";
 import Comment from "../../../models/Comment";
 import BoardDetailStore from "./BoardDetailStore";
+import CommentEditModalStore from "../edit/comment/CommentEditModalStore";
 import { useRootStore } from "../../../hooks/StoreContextProvider";
+import CommentEditModal from "../edit/comment/CommentEditModal";
 import './BoardDetailPage.scss';
 
 
@@ -19,6 +21,7 @@ const BoardDetailPage: React.FC = () => {
   const { bNo } = useParams<RouteProps>();
   const [form] = Form.useForm();
   const [boardDetailStore] = useState(() => new BoardDetailStore());
+  const [commentEditModalStore] = useState(() => new CommentEditModalStore());
   const { authStore } = useRootStore();
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -43,16 +46,7 @@ const BoardDetailPage: React.FC = () => {
   }
 
   const fecthComments = async () => {
-    const URL = `${SERVER_URL}/api/comment/${bNo}`;
-    await axios
-      .get(URL, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then((response: AxiosResponse) => {
-        console.log(response.data.comments);
-        boardDetailStore.setCommentList(response.data.comments);
-      })
+    boardDetailStore.fetchComments(Number(bNo));
   }
 
   const handleInfiniteOnload = () => {
@@ -102,7 +96,8 @@ const BoardDetailPage: React.FC = () => {
   }
 
   const handleCommentEdit = async (comment: Comment) => {
-
+    commentEditModalStore.setVisible(true);
+    commentEditModalStore.setCommentData(comment);
   }
 
   const handleCommentWrite = async (values: {
@@ -219,7 +214,8 @@ const BoardDetailPage: React.FC = () => {
             )}
           </List>
         </InfiniteScroll>
-    </div>
+      </div>
+        <CommentEditModal modalStore={commentEditModalStore} boardDetailStore={boardDetailStore} />
     </div>
 
   )
