@@ -97,7 +97,6 @@ const WithdrawalPage: React.FC = () => {
       <Form
         {...formItemLayout}
         name="register"
-        // onFinish={onFinish}
         scrollToFirstError
       >
         <Form.Item
