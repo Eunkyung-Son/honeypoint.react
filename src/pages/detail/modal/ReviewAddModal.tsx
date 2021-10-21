@@ -7,13 +7,17 @@ import { FrownOutlined, MehOutlined, SmileOutlined } from '@ant-design/icons';
 import './ReviewAddModal.scss';
 import { SERVER_URL } from "../../../config/config";
 import axios, { AxiosResponse } from "axios";
+import RestaurantReviewStore from "../review/RestaurantReviewStore";
+import { useRootStore } from "../../../hooks/StoreContextProvider";
 
 type Props = {
   modalStore: ReviewAddModalStore;
+  restaurantReviewStore: RestaurantReviewStore,
   rNo: string;
 }
 
-const ReviewAddModal: React.FC<Props> = ({modalStore, rNo}: Props) => {
+const ReviewAddModal: React.FC<Props> = ({modalStore, rNo, restaurantReviewStore}: Props) => {
+  const { authStore } = useRootStore();
   const { isVisible, onCancel } = modalStore;
 
   const onReviewWrite = async (values: {
@@ -21,10 +25,12 @@ const ReviewAddModal: React.FC<Props> = ({modalStore, rNo}: Props) => {
     revCn: string,
   }) => {
     console.log(values);
-    const URL = `${SERVER_URL}/api/review/${rNo}`;
+    const URL = `${SERVER_URL}/api/review/insert`;
     await axios
       .post(URL,
         {
+          rNo: rNo,
+          mNo: authStore.member?.mNo,
           score: values.score,
           revCn: values.revCn
         },
@@ -34,8 +40,11 @@ const ReviewAddModal: React.FC<Props> = ({modalStore, rNo}: Props) => {
           },
         }
       )
-      .then((response: AxiosResponse) => {
+      .then(async (response: AxiosResponse) => {
         console.log(response);
+        // FIXME: 리뷰 새로 페치 받기 안되는거 수정하기
+        await restaurantReviewStore.fetchReviews(rNo);
+        modalStore.setVisible(false);
       })
   }
 
