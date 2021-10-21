@@ -1,13 +1,16 @@
-import React, { useState } from "react";
-import moment from "moment";
+import React, { useEffect, useState } from "react";
+import moment, { Moment } from "moment";
 import { observer } from "mobx-react";
 import { Button, Card, DatePicker, Form, FormInstance, Input, Space } from "antd";
 import AddressModal, { AddressResponse } from "../../../signup/modal/AddressModal";
 import { useRootStore } from "../../../../hooks/StoreContextProvider";
 import AddressModalStore from "../../../signup/modal/AddressModalStore";
+import { SERVER_URL } from "../../../../config/config";
+import axios, { AxiosResponse } from "axios";
+import { useForm } from "antd/lib/form/Form";
 
 const MyInfoEditPage:React.FC = () => {
-
+  const [form] = useForm();
   const dateFormat = 'YYYY/MM/DD';
   const formItemLayout = {
     labelCol: {
@@ -31,12 +34,67 @@ const MyInfoEditPage:React.FC = () => {
       },
     },
   };
-  const formRef = React.createRef<FormInstance>();
+  // const formRef = React.createRef<FormInstance>();
   const { authStore } = useRootStore();
   const [addressModalStore] = useState(() => new AddressModalStore());
 
-  const onFinish = (values: any) => {
+  useEffect(() => {
+    authStore.setAddressData();
+    console.log(authStore.member);
+    const { mPostNumber, mDetailAddress, mRoadAddress } = authStore;
+    form.setFieldsValue({
+      ...authStore.member,
+      mPostNumber: mPostNumber,
+      mDetailAddress: mDetailAddress,
+      mRoadAddress: mRoadAddress,
+      mBirthday: moment(authStore.member?.mBirthday)
+    });
+    console.log(form.getFieldsValue());
+
+  }, []);
+  // FIXME: 주소 
+  const onFinish = async (values: {
+    mName: string,
+    mNickname: string,
+    mBirthday: any,
+    mPostNumber: string,
+    mRoadAddress: string,
+    mDetailAddress: string,
+    mAddress: string,
+    mPhone: string,
+    mEmail: string
+  }) => {
+    const { mName, mNickname, mBirthday, mPostNumber, mRoadAddress, mDetailAddress, mPhone, mEmail } = values;
     console.log(values);
+    console.log(mBirthday);
+    console.log(form.getFieldsValue());
+    const URL = `${SERVER_URL}/api/member/general/update/${authStore.member?.mNo}`;
+    console.log(moment(mBirthday).format("YYYYMMDD"));
+    await axios
+      .post(URL,
+        {
+          ...authStore.member,
+          mName: mName,
+          mNickname: mNickname,
+          mBirthday: moment(mBirthday).format('YYYYMMDD'),
+          mAddress: `${mPostNumber}, ${mRoadAddress}, ${mDetailAddress}`,
+          mPhone: mPhone,
+          mEmail: mEmail,
+          // mNo: authStore.member?.mNo
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+        .then((response: AxiosResponse) => {
+          console.log(response.data.member);
+          if (!response.data.error) {
+            localStorage.setItem('member', JSON.stringify(response.data.member));
+            authStore.setMember(response.data.member);
+          }
+        })
+
   }
 
   const showModal = () => {
@@ -46,11 +104,11 @@ const MyInfoEditPage:React.FC = () => {
   const setAddressData = (data: AddressResponse) => {
     console.log(data);
     const { zoneCode, address } = data;
-    formRef.current?.setFieldsValue({
+    form.setFieldsValue({
       mPostNumber: zoneCode,
       mRoadAddress: address,
     })
-    console.log(formRef.current?.getFieldValue(['mPostNumber']))
+    console.log(form.getFieldValue(['mPostNumber']))
 
   }
 
@@ -61,52 +119,11 @@ const MyInfoEditPage:React.FC = () => {
       <p style={{color: "gray"}}>회원정보를 변경할 수 있습니다.</p>
       <Form
         {...formItemLayout}
-        name="register"
+        name="update"
         onFinish={onFinish}
-        scrollToFirstError
+        // ref={formRef}
+        form={form}
       >
-        <Form.Item
-          name={['mId']}
-          label="아이디"
-          initialValue={authStore.member?.mId}
-        >
-          <Input disabled/>
-        </Form.Item>
-        <Form.Item
-          name={["mPwd"]}
-          label="비밀번호"
-          rules={[
-            {
-              required: true,
-              message: '비밀번호를 입력해주세요.',
-            },
-          ]}
-          hasFeedback
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item
-          name={["confirm"]}
-          label="비밀번호 확인"
-          dependencies={['mPwd']}
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: '비밀번호 확인을 입력해주세요.',
-            },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('mPwd') === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error('비밀번호와 일치하지 않습니다.'));
-              },
-            }),
-          ]}
-        >
-          <Input.Password />
-        </Form.Item>
         <Form.Item
           name={['mName']}
           label="이름"
@@ -136,16 +153,17 @@ const MyInfoEditPage:React.FC = () => {
         <Form.Item
           name={['mBirthday']}
           label="생년월일"
-          rules={[
-            {
-              required: true,
-              message: '생년월일을 입력해주세요.'
-            }
-          ]}
+          // rules={[
+          //   {
+          //     required: true,
+          //     message: '생년월일을 입력해주세요.'
+          //   }
+          // ]}
         >
+          {/* {console.log(moment(authStore.member?.mBirthday, dateFormat))} */}
           <DatePicker
             format={dateFormat}
-            defaultValue={moment(authStore.member?.mBirthday, dateFormat)}
+            // defaultValue={moment(authStore.member?.mBirthday, dateFormat)}
           />
         </Form.Item>
         <Form.Item
@@ -196,7 +214,7 @@ const MyInfoEditPage:React.FC = () => {
                 }
               ]}
               style={{margin: 0}}
-              initialValue={authStore.mPostNumber}
+              // initialValue={authStore.mPostNumber}
             >
               <Input readOnly/>
             </Form.Item>
@@ -214,7 +232,7 @@ const MyInfoEditPage:React.FC = () => {
               message: '도로명주소를 입력해주세요.'
             }
           ]}
-          initialValue={authStore.mRoadAddress}
+          // initialValue={authStore.mRoadAddress}
         >
           <Input readOnly/>
         </Form.Item>
@@ -227,7 +245,7 @@ const MyInfoEditPage:React.FC = () => {
               message: '상세주소를 입력해주세요.'
             }
           ]}
-          initialValue={authStore.mDetailAddress}
+          // initialValue={authStore.mDetailAddress}
         >
           <Input />
         </Form.Item>
