@@ -24,7 +24,7 @@ const PwdFindModal: React.FC<Props> = observer(({pwdFindModalStore}: Props) => {
     email: string
   }) => {
     const { id, email } = values;
-    const URL = `${SERVER_URL}/findPwd`;
+    const URL = `${SERVER_URL}/api/findPwd`;
     const params = {
       id: id,
       email: email
@@ -39,12 +39,7 @@ const PwdFindModal: React.FC<Props> = observer(({pwdFindModalStore}: Props) => {
         }
       })
       .then((response: AxiosResponse) => {
-        console.log(response);
-        if (response.data) {
-          alert(`등록된 비밀번호는 ${response.data} 입니다.`);
-          return
-        }
-        alert('없습니다.');
+        alert("등록하신 이메일로 임시 비밀번호가 발송되었습니다.");
       })
   }
 
