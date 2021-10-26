@@ -22,7 +22,7 @@ const PasswordChangePage: React.FC<Props> = (props: Props) => {
       mId: authStore.member?.mId
     }
     console.log(params);
-    const URL =`${SERVER_URL}/resetPwd`;
+    const URL =`${SERVER_URL}/api/resetPwd`;
     await axios
       .post(URL,{
         ...params

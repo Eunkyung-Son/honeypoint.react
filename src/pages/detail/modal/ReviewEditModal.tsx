@@ -9,9 +9,9 @@ import axios, { AxiosResponse } from "axios";
 import RestaurantReviewStore from "../review/RestaurantReviewStore";
 
 type Props = {
-  modalStore: ReviewEditModalStore;
-  restaurantReviewStore: RestaurantReviewStore;
-  rNo: string;
+  modalStore: ReviewEditModalStore,
+  restaurantReviewStore: RestaurantReviewStore,
+  rNo: string,
 }
 
 // FIXME: reviewController에서 put 요청임

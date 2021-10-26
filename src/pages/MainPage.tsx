@@ -16,12 +16,10 @@ import SearchPage from "./search/SearchPage";
 import BoardPage from "./board/BoardPage";
 import './MainPage.scss';
 import WithdrawalPage from "./mypage/general/withdrawal/WithdrawalPage";
+import BoardAddPage from "./board/add/BoardAddPage";
+import BoardEditPage from "./board/edit/board/BoardEditPage";
 
-type Props = {
-
-}
-
-const MainPage: React.FC<Props> = observer((props: Props) => {
+const MainPage: React.FC = () => {
   const { authStore } = useRootStore();
   
   const logout = () => {
@@ -45,31 +43,34 @@ const MainPage: React.FC<Props> = observer((props: Props) => {
   const { Header, Content, Footer } = Layout;
   return (
     <Layout className="layout">
+      
       <Header>
-        <div className="logo">
-          <h2><a href="/" className="main-title">HONEYPOINT</a></h2>
-        </div>
-        <Row justify="end">
-          <Col span={3}>
+        <Row justify="start">
+          <Col span={16}>
+            <div className="logo">
+              <h2><a href="/" className="main-title">HONEYPOINT</a></h2>
+            </div>
+          </Col>
+          <Col span={1}>
             <Link to="/board" className="menu-a" style={{fontSize: "20px"}}>
               community
             </Link>
           </Col>
           {authStore.isLoggedIn === true
             ?
-            <Col>  
+            <Col span={7}>  
               <Dropdown className="profileDropdown"  trigger={['click']} overlay={menu}>
-                  <div className="ant-dropdown-link" style={{ cursor: 'pointer' }}>
-                    <SmileTwoTone style={{fontSize: "20px"}}/>
-                    <span className="ant-dropdown-username">
-                      {authStore.member?.mName}({authStore.member?.mId})님, 환영합니다.
-                    </span>
-                    <CaretDownOutlined style={{fontSize: "20px"}}/>
-                  </div>
-                </Dropdown>
-              </Col>
+                <div className="ant-dropdown-link" style={{ cursor: 'pointer' }}>
+                  <SmileTwoTone style={{fontSize: "20px"}}/>
+                  <span className="ant-dropdown-username">
+                    {authStore.member?.mName}({authStore.member?.mId})님, 환영합니다.
+                  </span>
+                  <CaretDownOutlined style={{fontSize: "20px"}}/>
+                </div>
+              </Dropdown>
+            </Col>
             : <>
-                <Col span={2} offset={12} className="menu">
+                <Col span={2} offset={3} className="menu">
                   <Link to="/login" className="menu-a">
                     로그인
                   </Link>
@@ -91,6 +92,8 @@ const MainPage: React.FC<Props> = observer((props: Props) => {
           <ProtectedRoute exact path="/mypage/general/edit" component={MyInfoEditPage} />
           <ProtectedRoute exact path="/mypage/general/withdrawal" component={WithdrawalPage} />
           <Route exact path='/' component={MainContentPage} />
+          <Route exact path="/board/add" component={BoardAddPage} />
+          <Route exact path="/board/edit/:bNo" component={BoardEditPage} />
           <Route path='/board' component={BoardPage} />
           <Route exact path='/more/:type' component={RestaurantMorePage} />
           <Route exact path='/detail/:rNo' component={RestaurantDetailPage} />
@@ -100,6 +103,6 @@ const MainPage: React.FC<Props> = observer((props: Props) => {
       <Footer style={{ textAlign: 'center' }}>HoneyPoint ©2021 Created by Eunkyung Son</Footer>
     </Layout>
   )
-});
+};
 
-export default MainPage
+export default observer(MainPage)

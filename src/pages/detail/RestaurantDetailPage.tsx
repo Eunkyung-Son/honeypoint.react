@@ -16,6 +16,7 @@ import RestaurantDetailStore from "./RestaurantDetailStore";
 import RestaurantShareModalStore from './modal/RestaurantShareModalStore';
 import { useRootStore } from "../../hooks/StoreContextProvider";
 import './RestaurantDetailPage.scss';
+import RestaurantReviewStore from "./review/RestaurantReviewStore";
 
 declare global {
   interface Window {
@@ -33,6 +34,7 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
   const [restaurantDetailStore] = useState(() => new RestaurantDetailStore());
   const reviewAddModalStore = new ReviewAddModalStore();
   const restaurantShareModalStore = new RestaurantShareModalStore();
+  const restaurantReviewStore = new RestaurantReviewStore();
   // FIXME: useState 확인
   const [loading, setLoading] = useState(false);
   const [isFavor, setIsFavor] = useState(null);
@@ -312,7 +314,7 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
           />
         </div>
       </Spin>
-      <ReviewAddModal modalStore={reviewAddModalStore} rNo={rNo} />
+      <ReviewAddModal modalStore={reviewAddModalStore} rNo={rNo} restaurantReviewStore={restaurantReviewStore}/>
       <RestaurantShareModal modalStore={restaurantShareModalStore} />
     </>
   )

@@ -7,6 +7,7 @@ export default class BoardPageStore {
   @observable private _boardDetailInfo?: Board;
   @observable private _isBoardDetail = false;
   @observable private _bNo?: string;
+  @observable private _loading = false;
 
   @observable private _boardType = 1;
 
@@ -21,6 +22,7 @@ export default class BoardPageStore {
     const params = {
       ...(boardType && { boardType: boardType })
     }
+    this.setLoading(true);
     await axios
       .get(URL, {
         headers: {
@@ -32,6 +34,7 @@ export default class BoardPageStore {
       }).then((response: AxiosResponse) => {
         console.log(response);
         this.setBoardList(response.data.boards);
+        this.setLoading(false);
       })
   }
 
@@ -83,6 +86,11 @@ export default class BoardPageStore {
     this._boardType = boardType;
   }
 
+  @action.bound
+  setLoading = (loading: boolean) => {
+    this._loading = loading;
+  }
+
   @computed
   get bNo() {
     return this._bNo;
@@ -106,5 +114,10 @@ export default class BoardPageStore {
   @computed
   get boardType() {
     return this._boardType;
+  }
+
+  @computed
+  get loading() {
+    return this._loading;
   }
 }

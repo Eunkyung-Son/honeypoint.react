@@ -32,7 +32,7 @@ export default class AuthStore {
     mPwd: string,
   }) => {
     const { mId, mPwd } = values;
-    const URL = `${SERVER_URL}/login`;
+    const URL = `${SERVER_URL}/api/login`;
     const memberInfo = await axios
       .post(URL,
         {
@@ -53,7 +53,7 @@ export default class AuthStore {
           alert("비밀번호가 틀립니다.");
           return;
         }
-        return response.data.member as Member;
+        return response.data.member;
       })
       .catch((error) => {
       });
@@ -83,9 +83,8 @@ export default class AuthStore {
     var fullAddress = this.member?.mAddress;
     var splitAddress = fullAddress?.split(', ');
     if (!splitAddress) return;
-    var mergeAddress = (`${splitAddress[1]}` + `, ${splitAddress[2]}`);
-    if (!splitAddress) return;
     this.setPostNumber(splitAddress[0]);
+    var mergeAddress = (`${splitAddress[1]}, ${splitAddress[2]}`);
     this.setRoadAddress(mergeAddress);
     this.setDetailAddress(splitAddress[3]);
   }

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRootStore } from "../../../hooks/StoreContextProvider";
 import { observer } from "mobx-react";
 import { Table } from 'antd';
@@ -49,6 +49,7 @@ const BoardPageTable: React.FC<BoardPageTableProps> = () => {
   
   return (
     <Table
+      loading={boardStore.loading}
       columns={columns}
       dataSource={boardStore.boardList}
       onRow={(record, rowIndex) => {

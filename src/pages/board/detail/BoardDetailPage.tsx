@@ -24,6 +24,7 @@ const BoardDetailPage: React.FC = () => {
   const [commentEditModalStore] = useState(() => new CommentEditModalStore());
   const { authStore } = useRootStore();
   const [loading, setLoading] = useState(false);
+  const [boardLoading, setBoardLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
@@ -34,6 +35,7 @@ const BoardDetailPage: React.FC = () => {
 
   const fetchBoard = async () => {
     const URL = `${SERVER_URL}/api/board/${bNo}`;
+    setBoardLoading(true);
     await axios
       .get(URL, {
         headers: {
@@ -42,6 +44,7 @@ const BoardDetailPage: React.FC = () => {
       }).then((response: AxiosResponse) => {
         console.log(response.data.board);
         boardDetailStore.setBoardDetailInfo(response.data.board);
+        setBoardLoading(false);
       })
   }
 
@@ -65,7 +68,7 @@ const BoardDetailPage: React.FC = () => {
   }
 
   const handleCommentDelete = async (bNo: number) => {
-    const URL = `${SERVER_URL}/api/comment/${bNo}`
+    const URL = `${SERVER_URL}/api/comment/${bNo}`;
 
     await axios
       .post(URL, {},
@@ -81,7 +84,7 @@ const BoardDetailPage: React.FC = () => {
   }
 
   const handleBoardDelete = async (bNo: number) => {
-    const URL = `${SERVER_URL}/api/board/${bNo}`
+    const URL = `${SERVER_URL}/api/board/${bNo}`;
 
     await axios
       .post(URL, {},
@@ -121,11 +124,11 @@ const BoardDetailPage: React.FC = () => {
           headers: {
             'Content-Type': 'application/json'
           },
-        }
-      )
-      .then((response: AxiosResponse) => {
-        fecthComments();
-      })
+        })
+        .then((response: AxiosResponse) => {
+          fecthComments();
+        })
+
     form.resetFields();
   }
 
@@ -141,10 +144,11 @@ const BoardDetailPage: React.FC = () => {
         }
         extra={authStore.member && authStore.member.mNo === boardDetailStore.boardDetailInfo?.mNo && (
           <>
-            <Link to="/board">수정 </Link>
+            <Link to={`/board/edit/${bNo}`}>수정 </Link>
             <Link to="/board" onClick={() => handleBoardDelete(Number(bNo))}>삭제</Link>
           </>
         )}
+        loading={boardLoading}
         style={{ width: '100%' }}
         cover={[
           <>

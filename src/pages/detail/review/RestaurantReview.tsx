@@ -13,11 +13,15 @@ type Props = {
   rNo: string
 }
 
-const RestaurantReview: React.FC<Props> = observer(({rNo}: Props) => {
+const RestaurantReview: React.FC<Props> = ({rNo}: Props) => {
   const reviewEditModalStore = new ReviewEditModalStore();
   const [restaurantReviewStore] = useState(() => new RestaurantReviewStore());
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+
+  useEffect(() => {
+    fetchReview();
+  }, [])
 
   const fetchReview = async (score?: number) => {
     try {
@@ -53,10 +57,6 @@ const RestaurantReview: React.FC<Props> = observer(({rNo}: Props) => {
     setReviewList(reviewList);
     setLoading(false);
   }
-
-  useEffect(() => {
-    fetchReview();
-  }, [])
 
   return (
     <>
@@ -144,6 +144,6 @@ const RestaurantReview: React.FC<Props> = observer(({rNo}: Props) => {
       />
     </>
   )
-});
+};
 
-export default RestaurantReview;
+export default observer(RestaurantReview);

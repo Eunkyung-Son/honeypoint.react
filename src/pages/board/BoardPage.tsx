@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { observer } from "mobx-react";
-import axios, { AxiosResponse } from "axios";
-import { Col, Row, Select, Space, Table, Tabs } from 'antd';
-import Search from "antd/lib/input/Search";
-import { SERVER_URL } from "../../config/config";
-import { useRootStore } from "../../hooks/StoreContextProvider";
-import BoardPageStore from "./BoardPageStore";
-import BoardDetailPage from "./detail/BoardDetailPage";
 import { Route, Switch } from "react-router";
-import BoardPageTable from "./components/BoardPageTable";
 import { autorun } from "mobx";
+import { observer } from "mobx-react";
+import { Col, Row, Select, Space, Tabs } from 'antd';
+import Search from "antd/lib/input/Search";
+import BoardEditPage from "./edit/board/BoardEditPage";
+import BoardDetailPage from "./detail/BoardDetailPage";
+import BoardPageTable from "./components/BoardPageTable";
+import { useRootStore } from "../../hooks/StoreContextProvider";
+import { Link } from "react-router-dom";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -66,7 +65,14 @@ const BoardPage: React.FC = () => {
 
   return (
     <div style={{ margin: "2%" }}>
-      <h1>커뮤니티 게시판</h1>
+      <Row>
+        <Col span={12}>
+          <h1>커뮤니티 게시판</h1>
+        </Col>
+        <Col span={12}>
+        <p style={{textAlign: "right"}}><Link to="/board/add">게시물 등록</Link></p>
+        </Col>
+      </Row>
       <Tabs defaultActiveKey="1" onChange={handleKeyChange} tabBarExtraContent={operations}>
         <TabPane key="1" tab="지역별"/>
         <TabPane key="2" tab="주제별"/>
