@@ -15,6 +15,7 @@ import PasswordChangePage from "./mypage/password/PasswordChangePage";
 import SearchPage from "./search/SearchPage";
 import BoardPage from "./board/BoardPage";
 import WithdrawalPage from "./mypage/general/withdrawal/WithdrawalPage";
+import MyActivityPage from "./mypage/general/activities/MyActivityPage";
 import BoardAddPage from "./board/add/BoardAddPage";
 import BoardEditPage from "./board/edit/board/BoardEditPage";
 import './MainPage.scss';
@@ -91,6 +92,7 @@ const MainPage: React.FC = () => {
           <ProtectedRoute exact path="/mypage/password" component={PasswordChangePage} />
           <ProtectedRoute exact path="/mypage/general/edit" component={MyInfoEditPage} />
           <ProtectedRoute exact path="/mypage/general/withdrawal" component={WithdrawalPage} />
+          <ProtectedRoute exact path="/mypage/general/activities" component={MyActivityPage} />
           <Route exact path='/' component={MainContentPage} />
           <Route exact path="/board/add" component={BoardAddPage} />
           <Route exact path="/board/edit/:bNo" component={BoardEditPage} />

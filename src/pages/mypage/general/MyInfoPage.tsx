@@ -39,7 +39,7 @@ const MyInfoPage: React.FC = observer(() => {
         <Col span={9}>
         <Card title="내 활동 내역" bordered={false}>
           <p>HONEYPOINT 내에서 중요한 활동 기록을 확인할 수 있습니다.</p>
-          <Link to="/mypage/activities"><p>확인하기</p></Link>
+          <Link to="/mypage/general/activities"><p>확인하기</p></Link>
         </Card>
         </Col>
 
