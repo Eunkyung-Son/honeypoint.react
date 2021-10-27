@@ -4,7 +4,6 @@ import { autorun } from "mobx";
 import { observer } from "mobx-react";
 import { Col, Row, Select, Space, Tabs } from 'antd';
 import Search from "antd/lib/input/Search";
-import BoardEditPage from "./edit/board/BoardEditPage";
 import BoardDetailPage from "./detail/BoardDetailPage";
 import BoardPageTable from "./components/BoardPageTable";
 import { useRootStore } from "../../hooks/StoreContextProvider";

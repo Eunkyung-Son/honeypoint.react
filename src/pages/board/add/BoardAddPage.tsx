@@ -1,7 +1,8 @@
-import { Button, Col, Form, Input, Row, Radio, Select, RadioChangeEvent } from "antd";
-import axios, { AxiosResponse } from "axios";
-import { observer } from "mobx-react";
 import React, { useState } from "react";
+import { observer } from "mobx-react";
+import { Link } from "react-router-dom";
+import axios, { AxiosResponse } from "axios";
+import { Button, Col, Form, Input, Row, Radio, Select, RadioChangeEvent } from "antd";
 import { SERVER_URL } from "../../../config/config";
 import { useRootStore } from "../../../hooks/StoreContextProvider";
 
@@ -45,15 +46,13 @@ const BoardAddPage: React.FC = () => {
 
   const onRadioChange = (e: RadioChangeEvent) => {
     setRadioValue(e.target.value);
-    console.log(e.target.value);
-    console.log(radioValue)
   }
 
   return (
     <div style={{ margin: "2%" }}>
       <Row>
         <Col span={24}>
-          <h1>커뮤니티 게시판</h1>
+          <Link to="/board"><h1>커뮤니티 게시판</h1></Link>
         </Col>
       </Row>
       <Form
@@ -72,7 +71,7 @@ const BoardAddPage: React.FC = () => {
             <Radio.Button value="3">자유게시판</Radio.Button>
           </Radio.Group>
         </Form.Item>
-        {['1', '2'].includes(radioValue) && (
+        {['1', '2', '3'].includes(radioValue) && (
           <Form.Item
             name={["bCategory"]}
           >
@@ -91,7 +90,7 @@ const BoardAddPage: React.FC = () => {
         </Form.Item>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
           <Button type="primary" htmlType="submit">
-            글쓰기
+            게시물 등록
           </Button>
         </Form.Item>
       </Form>

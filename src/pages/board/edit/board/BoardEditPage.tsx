@@ -1,7 +1,9 @@
-import { Button, Col, Form, Input, Row, Radio, Select } from "antd";
-import axios, { AxiosResponse } from "axios";
-import { observer } from "mobx-react";
 import React, { useState } from "react";
+import { observer } from "mobx-react";
+import { useParams } from "react-router";
+import { Link } from "react-router-dom";
+import axios, { AxiosResponse } from "axios";
+import { Button, Col, Form, Input, Row, Radio, Select, RadioChangeEvent } from "antd";
 import { SERVER_URL } from "../../../../config/config";
 import { useRootStore } from "../../../../hooks/StoreContextProvider";
 
@@ -11,116 +13,92 @@ const layout = {
 
 const { Option } = Select;
 
+const selectOptions = [
+  ['서울', '경기', '인천', '강원', '경상', '전라', '충청', '제주', '해외'],
+  ['데이트', '먹방', '골목식당'],
+  ['잡담', '맛집공유', '일상', '만남']
+];
+
+
 const BoardEditPage: React.FC = () => {
   const [form] = Form.useForm();
-  const { authStore, routing } = useRootStore();
-  const [radioValue, setRadioValue] = useState<number | null>(1);
-  const [bCategory, setCategory] = useState<string | null>();
-  const onBoardWrite = async (values: any) => {
+  const { authStore, routing, boardStore } = useRootStore();
+  const [radioValue, setRadioValue] = useState<string>('1');
+  const onBoardEdit = async (values: any) => {
     console.log(values);
-    const URL = `${SERVER_URL}/api/board/insert`;
+    const URL = `${SERVER_URL}/api/board/update`;
     await axios
-    .post(URL, 
-      {
-        mNo: authStore.member?.mNo,
-        bType: "1",
-        bCategory: "경상",
-        bTitle: values.bTitle,
-        bContent: values.bContent
-      }, 
-      {
-        headers: {
-          'Content-Type': 'application/json'
+      .post(URL,
+        {
+          ...boardStore.boardDetailInfo,
+          mNo: authStore.member?.mNo,
+          bType: values.bType,
+          bCategory: values.bCategory || '',
+          bTitle: values.bTitle,
+          bContent: values.bContent
         },
-    })
-    .then((response: AxiosResponse) => {
-      routing.push("/board");
-    })
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+      .then((response: AxiosResponse) => {
+        routing.push("/board");
+      })
   }
 
-  const onSelectClick = (e: any) => {
-    console.log(e.target.value);
-    setCategory(e.target.value);
-  }
-
-  const select = (
-    <Select placeholder="카테고리" onClick={onSelectClick}>
-      <Option value="서울">서울</Option>
-      <Option value="경기">경기</Option>
-      <Option value="인천">인천</Option>
-      <Option value="강원">강원</Option>
-      <Option value="경상">경상</Option>
-      <Option value="전라">전라</Option>
-      <Option value="충청">충청</Option>
-      <Option value="제주">제주</Option>
-      <Option value="해외">해외</Option>
-    </Select>
-  );
-
-  const select1 = (
-    <Select placeholder="카테고리" onClick={onSelectClick}>
-      <Option value="데이트">데이트</Option>
-      <Option value="먹방">먹방</Option>
-      <Option value="골목식당">골목식당</Option>
-    </Select>
-  );
-
-  const select2 = (
-    <>
-    </>
-  )
-
-  const onRadioChange = (e: any) => {
-    console.log(radioValue, "@@");
+  const onRadioChange = (e: RadioChangeEvent) => {
     setRadioValue(e.target.value);
-    console.log(radioValue, "##");
   }
 
-  return ( 
+  return (
     <div style={{ margin: "2%" }}>
       <Row>
         <Col span={24}>
-          <h1>커뮤니티 게시판</h1>
-          게시물 수정
+          <Link to="/board"><h1>커뮤니티 게시판</h1></Link>
         </Col>
       </Row>
-      <Form 
-        {...layout} 
-        form={form} 
-        name="nest-messages" 
-        onFinish={onBoardWrite}
+      <Form
+        {...layout}
+        form={form}
+        name="nest-messages"
+        onFinish={onBoardEdit}
+        initialValues={boardStore.boardDetailInfo}
       >
         <Form.Item
-          name="bType"
+          initialValue="1"
+          name={["bType"]}
         >
-          <Radio.Group onChange={onRadioChange} defaultValue={"1"}>
+          <Radio.Group onChange={onRadioChange}>
             <Radio.Button value="1">지역별</Radio.Button>
             <Radio.Button value="2">주제별</Radio.Button>
             <Radio.Button value="3">자유게시판</Radio.Button>
           </Radio.Group>
         </Form.Item>
-        <Form.Item
-          name="bCategory"
-        >
-          {console.log(radioValue)}
-          {radioValue === 1 ?
-            select
-            : (radioValue === 2 ? select1 : select2)
-          }
-        </Form.Item>
+        {['1', '2', '3'].includes(radioValue) && (
+          <Form.Item
+            name={["bCategory"]}
+          >
+            <Select placeholder="카테고리">
+              {selectOptions[Number(radioValue) - 1] && selectOptions[Number(radioValue) - 1].map(option => (
+                <Option value={option}>{option}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+        )}
         <Form.Item name="bTitle">
-          <Input placeholder={"제목을 입력해주세요."}/>
+          <Input placeholder={"제목을 입력해주세요."} />
         </Form.Item>
         <Form.Item name="bContent">
           <Input.TextArea />
         </Form.Item>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
           <Button type="primary" htmlType="submit">
-            글쓰기
+            게시물 수정
           </Button>
         </Form.Item>
-      </Form> 
-    </div> 
+      </Form>
+    </div>
   )
 }
 

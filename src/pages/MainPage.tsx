@@ -14,10 +14,10 @@ import RestaurantDetailPage from "./detail/RestaurantDetailPage";
 import PasswordChangePage from "./mypage/password/PasswordChangePage";
 import SearchPage from "./search/SearchPage";
 import BoardPage from "./board/BoardPage";
-import './MainPage.scss';
 import WithdrawalPage from "./mypage/general/withdrawal/WithdrawalPage";
 import BoardAddPage from "./board/add/BoardAddPage";
 import BoardEditPage from "./board/edit/board/BoardEditPage";
+import './MainPage.scss';
 
 const MainPage: React.FC = () => {
   const { authStore } = useRootStore();

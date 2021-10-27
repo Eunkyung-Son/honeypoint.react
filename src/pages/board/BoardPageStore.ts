@@ -8,7 +8,6 @@ export default class BoardPageStore {
   @observable private _isBoardDetail = false;
   @observable private _bNo?: string;
   @observable private _loading = false;
-
   @observable private _boardType = 1;
 
   constructor() {
