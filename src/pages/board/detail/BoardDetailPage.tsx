@@ -6,12 +6,11 @@ import axios, { AxiosResponse } from "axios";
 import InfiniteScroll from "react-infinite-scroller";
 import { SERVER_URL } from "../../../config/config";
 import Comment from "../../../models/Comment";
+import CommentEditModal from "../edit/comment/CommentEditModal";
 import BoardDetailStore from "./BoardDetailStore";
 import CommentEditModalStore from "../edit/comment/CommentEditModalStore";
 import { useRootStore } from "../../../hooks/StoreContextProvider";
-import CommentEditModal from "../edit/comment/CommentEditModal";
 import './BoardDetailPage.scss';
-
 
 type RouteProps = {
   bNo: string;
@@ -110,7 +109,6 @@ const BoardDetailPage: React.FC = () => {
       alert('로그인 후 이용해주세요.');
       return;
     }
-
     const URL = `${SERVER_URL}/api/comment/insert`;
 
     await axios
@@ -128,7 +126,6 @@ const BoardDetailPage: React.FC = () => {
         .then((response: AxiosResponse) => {
           fecthComments();
         })
-
     form.resetFields();
   }
 
@@ -219,7 +216,7 @@ const BoardDetailPage: React.FC = () => {
           </List>
         </InfiniteScroll>
       </div>
-        <CommentEditModal modalStore={commentEditModalStore} boardDetailStore={boardDetailStore} />
+      <CommentEditModal modalStore={commentEditModalStore} boardDetailStore={boardDetailStore} />
     </div>
 
   )

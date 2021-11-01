@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
 import { useRootStore } from "../../../hooks/StoreContextProvider";
 import { observer } from "mobx-react";
 import { Table } from 'antd';
-import { autorun } from 'mobx';
 
 const columns = [
   {
@@ -27,26 +25,9 @@ const columns = [
   }
 ];
 
-interface BoardPageTableProps {
 
-}
-
-const BoardPageTable: React.FC<BoardPageTableProps> = () => {
-  const { boardStore, routing } = useRootStore();
-  useEffect(() => {
-    const init = async () => {
-      boardStore.setBoardType(1);
-      await boardStore.fetchBoards();
-    }
-    init();
-  }, [])
-
-  useEffect(() => {
-    autorun(() => {
-      boardStore.fetchBoards();
-    })
-  }, [boardStore.boardType]);
-  
+const BoardPageTable: React.FC = () => {
+  const { boardStore, routing } = useRootStore();  
   return (
     <Table
       loading={boardStore.loading}

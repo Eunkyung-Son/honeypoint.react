@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Route, Switch } from "react-router";
-import { autorun } from "mobx";
+import { Link } from "react-router-dom";
 import { observer } from "mobx-react";
 import { Col, Row, Select, Space, Tabs } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
 import Search from "antd/lib/input/Search";
 import BoardDetailPage from "./detail/BoardDetailPage";
 import BoardPageTable from "./components/BoardPageTable";
 import { useRootStore } from "../../hooks/StoreContextProvider";
-import { Link } from "react-router-dom";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -20,23 +20,33 @@ const BoardPage: React.FC = () => {
     const inputValue = e.target.value;
     setSearchValue(inputValue);
   }
-  useEffect(() => {
-    autorun(() => {
-      setSearchValue('');
-    })
-  }, [boardStore.boardType]);
 
-  const handleKeyChange = (key: string) => {
-    routing.push('/board');
+  useEffect(() => {
+    const init = async () => {
+      boardStore.setBoardType(1);
+      await boardStore.fetchBoards();
+    };
+    init();
+  }, [])
+
+  const handleKeyChange = async (key: string) => {
+    if (routing.location.pathname !== '/board') {
+      routing.push('/board');
+    }
     boardStore.setBoardType(Number(key));
+    await boardStore.fetchBoards();
   }
 
   const handleSearchConditionChange = (value: string) => {
     setSearchCondition(value);
   }
 
-  const onSearch = async (values: any) => {
-    await boardStore.searchBoards(searchCondition, values);
+  const onSearch = async (values: string) => {
+    await boardStore.searchBoards(searchCondition, values)
+    .then((res) => {
+      console.log(res);
+      routing.push("/board");
+    });
   }
 
   const operations = (
@@ -69,7 +79,7 @@ const BoardPage: React.FC = () => {
           <h1>커뮤니티 게시판</h1>
         </Col>
         <Col span={12}>
-        <p style={{textAlign: "right"}}><Link to="/board/add">게시물 등록</Link></p>
+        <p style={{textAlign: "right"}}><Link to="/board/add">게시물 등록 <EditOutlined /></Link></p>
         </Col>
       </Row>
       <Tabs defaultActiveKey="1" onChange={handleKeyChange} tabBarExtraContent={operations}>
