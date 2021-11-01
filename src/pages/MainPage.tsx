@@ -2,7 +2,7 @@ import React from "react";
 import { Link, Route, Switch } from "react-router-dom";
 import { observer } from "mobx-react";
 import { CaretDownOutlined, SmileTwoTone } from '@ant-design/icons';
-import { Col, Dropdown, Layout, Menu, Row } from 'antd';
+import { Col, Dropdown, Layout, Menu, Row, Space } from 'antd';
 import { useRootStore } from "../hooks/StoreContextProvider";
 import ProtectedRoute from "../components/ProtectedRoute";
 import MyInfoPage from "./mypage/general/MyInfoPage";
@@ -18,18 +18,22 @@ import WithdrawalPage from "./mypage/general/withdrawal/WithdrawalPage";
 import MyActivityPage from "./mypage/general/activities/MyActivityPage";
 import BoardAddPage from "./board/add/BoardAddPage";
 import BoardEditPage from "./board/edit/board/BoardEditPage";
+import RestaurantFileAddPage from "./mypage/restaurant/file/RestaurantFileAddPage";
+import RestaurantInfoEditPage from "./mypage/restaurant/edit/RestaurantInfoEditPage";
 import './MainPage.scss';
+
+const { Header, Content, Footer } = Layout;
 
 const MainPage: React.FC = () => {
   const { authStore } = useRootStore();
-  
+
   const logout = () => {
     authStore.setIsLoggedIn(false);
     localStorage.removeItem('memberId');
     localStorage.removeItem('member');
     authStore.setMember();
   }
-  
+
   const menu = (
     <Menu style={{ cursor: 'pointer' }}>
       <Menu.Item key="0">
@@ -40,49 +44,44 @@ const MainPage: React.FC = () => {
       </Menu.Item>
     </Menu>
   );
+
   
-  const { Header, Content, Footer } = Layout;
   return (
-    <Layout className="layout">
-      
+    <Layout className="MainPage">
       <Header>
-        <Row justify="start">
-          <Col span={16}>
+        <Row justify="space-between">
+          <Col>
             <div className="logo">
-              <h2><a href="/" className="main-title">HONEYPOINT</a></h2>
+              <Link to="/" className="main-title">HONEYPOINT</Link>
             </div>
           </Col>
-          <Col span={1}>
-            <Link to="/board" className="menu-a" style={{fontSize: "20px"}}>
-              community
-            </Link>
-          </Col>
-          {authStore.isLoggedIn === true
-            ?
-            <Col span={7}>  
-              <Dropdown className="profileDropdown"  trigger={['click']} overlay={menu}>
-                <div className="ant-dropdown-link" style={{ cursor: 'pointer' }}>
-                  <SmileTwoTone style={{fontSize: "20px"}}/>
-                  <span className="ant-dropdown-username">
-                    {authStore.member?.mName}({authStore.member?.mId})님, 환영합니다.
-                  </span>
-                  <CaretDownOutlined style={{fontSize: "20px"}}/>
-                </div>
-              </Dropdown>
-            </Col>
-            : <>
-                <Col span={2} offset={3} className="menu">
-                  <Link to="/login" className="menu-a">
+          <Col>
+            <Space size={50}>
+              <Link to="/board" className="menu" style={{ fontSize: "20px" }}>
+                community
+              </Link>
+              {authStore.isLoggedIn === true
+                ?
+                <Dropdown className="profileDropdown" trigger={['click']} overlay={menu}>
+                  <div className="dropdown-link" style={{ cursor: 'pointer' }}>
+                    <SmileTwoTone style={{ fontSize: "20px" }} />
+                    <span className="dropdown-username">
+                      {authStore.member?.mName}({authStore.member?.mId})님, 환영합니다.
+                    </span>
+                    <CaretDownOutlined style={{ fontSize: "20px" }} />
+                  </div>
+                </Dropdown>
+                : <>
+                  <Link to="/login" className="menu">
                     로그인
                   </Link>
-                </Col>
-                <Col span={2} className="menu">
-                  <Link to="/signup" className="menu-a">
+                  <Link to="/signup" className="menu">
                     회원가입
                   </Link>
-                </Col>
-              </>
-          }
+                </>
+              }
+            </Space>
+          </Col>
         </Row>
       </Header>
       <Content>
@@ -91,8 +90,10 @@ const MainPage: React.FC = () => {
           <ProtectedRoute exact path='/mypage/restaurant' component={RestaurantMyInfoPage} />
           <ProtectedRoute exact path="/mypage/password" component={PasswordChangePage} />
           <ProtectedRoute exact path="/mypage/general/edit" component={MyInfoEditPage} />
-          <ProtectedRoute exact path="/mypage/general/withdrawal" component={WithdrawalPage} />
+          <ProtectedRoute exact path="/mypage/withdrawal" component={WithdrawalPage} />
           <ProtectedRoute exact path="/mypage/general/activities" component={MyActivityPage} />
+          <ProtectedRoute exact path="/mypage/restaurant/file" component={RestaurantFileAddPage} />
+          <ProtectedRoute exact path="/mypage/restaurant/edit" component={RestaurantInfoEditPage} />
           <Route exact path='/' component={MainContentPage} />
           <Route exact path="/board/add" component={BoardAddPage} />
           <Route exact path="/board/edit/:bNo" component={BoardEditPage} />

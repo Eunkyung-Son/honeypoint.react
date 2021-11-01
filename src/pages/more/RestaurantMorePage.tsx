@@ -1,4 +1,4 @@
-import { Row } from "antd";
+import { Col, Row } from "antd";
 import axios, { AxiosResponse } from "axios";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
@@ -6,6 +6,7 @@ import { RouteComponentProps, useParams } from "react-router-dom";
 import CustomCard from "../../components/CustomCard";
 import { SERVER_URL } from "../../config/config";
 import RestaurantMoreStore from "./RestaurantMoreStore";
+import './RestaurantMorePage.scss';
 
 type RouteProps = {
   type: string
@@ -49,19 +50,19 @@ const RestaurantMorePage: React.FC<Props> = (props: Props) => {
   }, [])
 
   return (
-    <div className="content-area">
+    <div className="RestaurantMorePage">
       <h2 style={{textAlign: "left", color: "#1890ff", marginLeft: "23px"}}>{`"${type}" 카테고리 전체`}</h2>
-      <Row justify="space-around" align="top">
+      <Row justify="start" align="top" gutter={[ 24, 24 ]}>
         {restaurantMoreStore.restaurantData?.length && restaurantMoreStore.restaurantData?.reduce((total, data, idx) => {
-          // TODO: map으로 변경
-          // if (idx > 3) return total
           const el = (
-            <CustomCard
-              onClick={() => handleClick(data.rNo)}
-              key={data.rNo}
-              title={data.rName}
-              description={data.rAddress}
-            />
+            <Col span={8}>
+              <CustomCard
+                onClick={() => handleClick(data.rNo)}
+                key={data.rNo}
+                title={data.rName}
+                description={data.rAddress}
+              />
+            </Col>
           )
           return [...total, el];
         }, [] as React.ReactNode[])}

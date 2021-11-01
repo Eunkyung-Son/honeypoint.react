@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, Avatar } from 'antd';
 import { observer } from "mobx-react";
+import './CustomCard.scss';
 
 type Props = {
   title: string,
@@ -13,9 +14,10 @@ const CustomCard: React.FC<Props> = observer(({ title, description, onClick }: P
 
   return (
     <Card
+      className="CustomCard"
       hoverable
       onClick={onClick}
-      style={{ width: 300 }}
+      // style={{ width: 300 }}
       cover={
         <img
           alt="example"
@@ -24,7 +26,7 @@ const CustomCard: React.FC<Props> = observer(({ title, description, onClick }: P
       }
     >
       <Meta
-        avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+        // avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
         title={title}
         description={description}
       />

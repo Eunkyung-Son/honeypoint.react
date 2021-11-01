@@ -7,6 +7,7 @@ import ReviewEditModalStore from './ReviewEditModalStore';
 import { SERVER_URL } from "../../../config/config";
 import axios, { AxiosResponse } from "axios";
 import RestaurantReviewStore from "../review/RestaurantReviewStore";
+import './ReviewEditModal.scss';
 
 type Props = {
   modalStore: ReviewEditModalStore,
@@ -49,6 +50,7 @@ const ReviewEditModal: React.FC<Props> = ({modalStore, restaurantReviewStore, rN
 
   return (
     <Modal
+      className="ReviewEditModal"
       visible={isVisible}
       onCancel={onCancel}
       destroyOnClose={true}

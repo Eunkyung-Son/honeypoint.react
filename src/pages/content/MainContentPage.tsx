@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react";
-import { Col, Row, Divider, Input, Button } from 'antd';
+import { Col, Row, Divider, Input, Button, Typography } from 'antd';
 import food from '../../images/food1.jpg';
 import { SERVER_URL } from "../../config/config";
 import CustomCard from "../../components/CustomCard";
@@ -10,6 +10,8 @@ import CustomCarousel from "../../components/CustomCarousel";
 import MainContentStore from "./MainContentStore";
 import { useRootStore } from "../../hooks/StoreContextProvider";
 import './MainContentPage.scss';
+
+const { Text, Title } = Typography;
 
 const MainContentPage: React.FC = () => {
   const { routing } = useRootStore();
@@ -62,99 +64,122 @@ const MainContentPage: React.FC = () => {
   const searchStyle = {
     display: 'inline-flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    width: '250px',
   }
 
   return (
-    <>
-      <Row justify="center" align="top">
+    <div className="MainContentPage">
+      <Row className="main-image-area" justify="center" align="top">
         <Col span={24}>
-          <div className="search-image-area">
-            <div>
-              <Search
-                className="search-bar"
-                placeholder="검색해서 맛집을 찾아보세요!"
-                size="large"
-                enterButton
-                style={searchStyle}
-                onSearch={handleSearch}
-              />
-            </div>
-          </div>
+          <Search
+            className="search-bar"
+            placeholder="검색해서 맛집을 찾아보세요!"
+            size="large"
+            enterButton
+            style={searchStyle}
+            onSearch={handleSearch}
+          />
+          {/* </div> */}
         </Col>
       </Row>
-      <Divider orientation="left">#요즘 뜨는 카페</Divider>
-      <CustomCarousel>
-        <div className="carousel-div">
-          <Link to="/detail/92">
+      <div className="main-content-list">
+        <Row className="list-row-header">
+          <Title level={4}>#요즘 뜨는 카페</Title>
+        </Row>
+        <CustomCarousel>
+          <div className="carousel-div">
+            <Link to="/detail/92">
+              <img src={food} style={{ width: '100%', height: '100%' }} />
+            </Link>
+          </div>
+          <div className="carousel-div">
             <img src={food} style={{ width: '100%', height: '100%' }} />
-          </Link>
-        </div>
-        <div className="carousel-div">
-          <img src={food} style={{ width: '100%', height: '100%' }} />
-        </div>
-        <div className="carousel-div">
-          <img src={food} style={{ width: '100%', height: '100%' }} />
-        </div>
-      </CustomCarousel>
-      <hr className="main-hr" />
-      <div className="content-div">
-        <p className="div-in-p">#요즘 뜨는 한식</p>
-        <Button className="div-in-button" shape="round"><Link to="/more/한식">더보기</Link></Button>
+          </div>
+          <div className="carousel-div">
+            <img src={"http://localhost:8082/api/file/restaurant/21/20051bfb-3633-4f75-8fc9-660ddaf8e069.png"} style={{ width: '100%', height: '100%' }} />
+          </div>
+          <div className="carousel-div">
+            <img src={"http://localhost:8082/api/file/restaurant/21/20051bfb-3633-4f75-8fc9-660ddaf8e069.png"} style={{ width: '100%', height: '100%' }} />
+          </div>
+        </CustomCarousel>
+        <hr className="main-hr" />
+        <Row className="list-row-header" justify="space-between">
+          <Col>
+            <Title level={4}>#요즘 뜨는 한식</Title>
+          </Col>
+          <Col>
+            <Button className="div-in-button" shape="round"><Link to="/more/한식">더보기</Link></Button>
+          </Col>
+        </Row>
+        <Row justify="space-between" className="list-row" gutter={[24, 24]}>
+          {mainContentStore.restaurantKoreanData?.length && mainContentStore.restaurantKoreanData?.reduce((total, data, idx) => {
+            if (idx > 3) return total;
+            const el = (
+              <Col span={6}>
+                <CustomCard
+                  onClick={() => handleClick(data.rNo)}
+                  key={data.rNo}
+                  title={data.rName}
+                  description={data.rAddress}
+                />
+              </Col>
+            )
+            return [...total, el];
+          }, [] as React.ReactNode[])}
+        </Row>
+        <hr className="main-hr" />
+        <Row className="list-row-header" justify="space-between">
+          <Col>
+            <Title level={4}>#요즘 뜨는 카페</Title>
+          </Col>
+          <Col>
+            <Button className="div-in-button" shape="round"><Link to="/more/카페">더보기</Link></Button>
+          </Col>
+        </Row>
+        <Row justify="space-around" align="top" className="list-row" gutter={[24, 24]}>
+          {mainContentStore.restaurantCafeData?.length && mainContentStore.restaurantCafeData?.reduce((total, data, idx) => {
+            if (idx > 3) return total;
+            const el = (
+              <Col span={6}>
+                <CustomCard
+                  onClick={() => handleClick(data.rNo)}
+                  key={data.rNo}
+                  title={data.rName}
+                  description={data.rAddress}
+                />
+              </Col>
+            )
+            return [...total, el];
+          }, [] as React.ReactNode[])}
+        </Row>
+        <hr className="main-hr" />
+        <Row className="list-row-header" justify="space-between">
+          <Col>
+            <Title level={4}>#요즘 뜨는 양식</Title>
+          </Col>
+          <Col>
+            <Button className="div-in-button" shape="round"><Link to="/more/양식">더보기</Link></Button>
+          </Col>
+        </Row>
+        <Row justify="space-around" align="top" className="list-row" gutter={[24, 24]}>
+          {mainContentStore.restaurantWesternData?.length && mainContentStore.restaurantWesternData?.reduce((total, data, idx) => {
+            if (idx > 3) return total;
+            const el = (
+              <Col span={6}>
+                <CustomCard
+                  onClick={() => handleClick(data.rNo)}
+                  key={data.rNo}
+                  title={data.rName}
+                  description={data.rAddress}
+                />
+              </Col>
+            )
+            return [...total, el];
+          }, [] as React.ReactNode[])}
+        </Row>
       </div>
-      <Row justify="space-around" align="top">
-        {mainContentStore.restaurantKoreanData?.length && mainContentStore.restaurantKoreanData?.reduce((total, data, idx) => {
-          if (idx > 3) return total;
-          const el = (
-            <CustomCard
-              onClick={() => handleClick(data.rNo)}
-              key={data.rNo}
-              title={data.rName}
-              description={data.rAddress}
-            />
-          )
-          return [...total, el];
-        }, [] as React.ReactNode[])}
-      </Row>
-      <hr className="main-hr" />
-      <div className="content-div">
-        <p className="div-in-p">#요즘 뜨는 카페</p>
-        <Button className="div-in-button" shape="round"><Link to="/more/카페">더보기</Link></Button>
-      </div>
-      <Row justify="space-around" align="top">
-        {mainContentStore.restaurantCafeData?.length && mainContentStore.restaurantCafeData?.reduce((total, data, idx) => {
-          if (idx > 3) return total;
-          const el = (
-            <CustomCard
-              onClick={() => handleClick(data.rNo)}
-              key={data.rNo}
-              title={data.rName}
-              description={data.rAddress}
-            />
-          )
-          return [...total, el];
-        }, [] as React.ReactNode[])}
-      </Row>
-      <hr className="main-hr" />
-      <div className="content-div">
-        <p className="div-in-p">#요즘 뜨는 양식</p>
-        <Button className="div-in-button" shape="round"><Link to="/more/양식">더보기</Link></Button>
-      </div>
-      <Row justify="space-around" align="top">
-        {mainContentStore.restaurantWesternData?.length && mainContentStore.restaurantWesternData?.reduce((total, data, idx) => {
-          if (idx > 3) return total;
-          const el = (
-            <CustomCard
-              onClick={() => handleClick(data.rNo)}
-              key={data.rNo}
-              title={data.rName}
-              description={data.rAddress}
-            />
-          )
-          return [...total, el];
-        }, [] as React.ReactNode[])}
-      </Row>
-    </>
+    </div>
   )
 }
 

@@ -1,4 +1,7 @@
-div.content-area {
-  margin: 50px 50px 50px 50px;
+@import "/src/App.scss";
+
+.RestaurantMorePage {
+  min-height: $content-min-height;
+  margin: 0 45vh 0;
   text-align: center;
 }

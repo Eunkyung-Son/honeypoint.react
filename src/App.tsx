@@ -5,7 +5,7 @@ import './pages/MainPage'
 import MainPage from './pages/MainPage';
 import LoginPage from './pages/login/LoginPage'
 import SignupPage from './pages/signup/SignupPage';
-import './App.css';
+import './App.scss';
 import './styles.css';
 
 const App: React.FC = () => {

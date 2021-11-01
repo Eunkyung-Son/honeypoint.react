@@ -1,4 +1,7 @@
-div.content-area {
-  margin: 15px 15px;
+@import "/src/App.scss";
+
+.SearchPage {
+  min-height: $content-min-height;
+  margin: 0 45vh 0;
   text-align: center;
 }
