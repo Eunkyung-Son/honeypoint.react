@@ -17,6 +17,7 @@ type RestaurantData = {
   rRestDay: string,     // 휴일
   rStatus: string,
   rCount: number,
+  fileIds: string[],
 }
 
 export default RestaurantData;
