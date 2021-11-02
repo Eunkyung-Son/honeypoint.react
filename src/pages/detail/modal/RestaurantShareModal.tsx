@@ -1,8 +1,10 @@
 import { observer } from "mobx-react";
 import { useEffect } from "react";
-import { Modal } from "antd";
+import { Button, Col, Modal, Row } from "antd";
+import { CopyOutlined } from '@ant-design/icons';
 import RestaurantShareModalStore from "./RestaurantShareModalStore";
 import kakao from "../../../images/kakao.png";
+import { FacebookShareButton, FacebookIcon } from "react-share";
 import "./RestaurantShareModal.scss";
 
 
@@ -31,7 +33,7 @@ const RestaurantShareModal: React.FC<Props> = ({modalStore}: Props) => {
       objectType: 'feed',
       content: {
         title: '맛집',
-        description: '#리액트 #카카오 #공유버튼',
+        description: '#허니포인트 #맛집검색',
         imageUrl: 'IMAGE_URL',
         link: {
           mobileWebUrl: window.location.href,
@@ -51,18 +53,39 @@ const RestaurantShareModal: React.FC<Props> = ({modalStore}: Props) => {
             webUrl: window.location.href,
           },
         },
-        {
-          title: '앱으로 보기',
-          link: {
-            mobileWebUrl: window.location.href,
-            webUrl: window.location.href,
-          },
-        },
       ],
     })
   }
 
+  const doCopy = (text: any) => {
+    // 흐름 1.
+    if (!document.queryCommandSupported("copy")) {
+      return alert("복사하기가 지원되지 않는 브라우저입니다.");
+    }
+
+    // 흐름 2.
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.top = '';
+    textarea.style.left = '';
+    textarea.style.position = "fixed";
+
+    // 흐름 3.
+    document.body.appendChild(textarea);
+    // focus() -> 사파리 브라우저 서포팅
+    textarea.focus();
+    // select() -> 사용자가 입력한 내용을 영역을 설정할 때 필요
+    textarea.select();
+    // 흐름 4.
+    document.execCommand("copy");
+    // 흐름 5.
+    document.body.removeChild(textarea);
+    alert("클립보드에 복사되었습니다.");
+  };
+
   const { isVisible, onCancel } = modalStore;
+
+  const currentUrl = window.location.href;
 
   return (
     <Modal
@@ -71,10 +94,32 @@ const RestaurantShareModal: React.FC<Props> = ({modalStore}: Props) => {
       destroyOnClose={true}
       title={'공유하기'}
     >
-      <div className="kakao-share-button" onClick={sendKakaoMessage}>
-        <img src={kakao} alt="kakao-share-icon" style={{width: "50px", height: "50px"}} />
-        <p style={{fontWeight: "bold"}}>카카오톡</p>
-      </div>
+      <Row>
+        <Col span={2} />
+        <Col span={4}>
+          <div onClick={sendKakaoMessage}>
+            <img src={kakao} alt="kakao-share-icon"  className="kakao-share-button" style={{width: "50px", height: "50px"}} />
+            <p style={{fontWeight: "bold", marginTop: "5px"}}>카카오톡</p>
+          </div>
+        </Col>
+        <Col span={2} />
+        <Col span={2} />
+        <Col span={4}>
+          <FacebookShareButton url={currentUrl}>
+            <FacebookIcon size={48} borderRadius={10}></FacebookIcon>
+            <p style={{fontWeight: "bold"}}>페이스북</p>
+          </FacebookShareButton>
+        </Col>
+        <Col span={2} />
+        <Col span={2} />
+        <Col span={4}>
+          <div onClick={() => doCopy(`${currentUrl}`)}>
+            <CopyOutlined style={{ fontSize: "50px"}}/>
+            <p style={{fontWeight: "bold", marginTop: "4px"}}>복사하기</p>
+          </div>
+        </Col>
+        <Col span={2} />
+      </Row>
     </Modal>
   )
 }
