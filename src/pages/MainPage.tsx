@@ -20,6 +20,7 @@ import BoardAddPage from "./board/add/BoardAddPage";
 import BoardEditPage from "./board/edit/board/BoardEditPage";
 import RestaurantFileAddPage from "./mypage/restaurant/file/RestaurantFileAddPage";
 import RestaurantInfoEditPage from "./mypage/restaurant/edit/RestaurantInfoEditPage";
+import RestaurantMenuEditPage from "./mypage/restaurant/menu/RestaurantMenuEditPage";
 import './MainPage.scss';
 
 const { Header, Content, Footer } = Layout;
@@ -94,6 +95,7 @@ const MainPage: React.FC = () => {
           <ProtectedRoute exact path="/mypage/general/activities" component={MyActivityPage} />
           <ProtectedRoute exact path="/mypage/restaurant/file" component={RestaurantFileAddPage} />
           <ProtectedRoute exact path="/mypage/restaurant/edit" component={RestaurantInfoEditPage} />
+          <ProtectedRoute exact path="/mypage/restaurant/menu" component={RestaurantMenuEditPage} />
           <Route exact path='/' component={MainContentPage} />
           <Route exact path="/board/add" component={BoardAddPage} />
           <Route exact path="/board/edit/:bNo" component={BoardEditPage} />
