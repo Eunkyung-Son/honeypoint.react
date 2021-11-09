@@ -1,3 +1,4 @@
+import { Modal } from "antd";
 import axios, { AxiosResponse } from "axios";
 import { action, computed, makeObservable, observable } from "mobx";
 import { Moment } from "moment";
@@ -47,7 +48,9 @@ export default class RestaurantMemberSignupStore {
           }
         )
         .then((response: AxiosResponse) => {
-          alert('회원가입이 완료되었습니다.');
+          Modal.success({
+            title: '회원가입이 완료되었습니다.'
+          })
       })
     } catch (e) {
       throw e;

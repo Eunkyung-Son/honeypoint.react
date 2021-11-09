@@ -1,0 +1,11 @@
+@import "/src/App.scss";
+
+.WithdrawalPage {
+  min-height: $content-min-height;
+
+  .card-body {
+    width: 50%;
+    margin: 0% 0% 25% 25%;
+  }
+  
+}

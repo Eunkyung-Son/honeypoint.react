@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios, { AxiosResponse } from "axios";
-import { Button, DatePicker, Form, FormInstance, Input, Space } from "antd";
+import { Button, DatePicker, Form, FormInstance, Input, Modal, Space } from "antd";
 import { observer } from "mobx-react";
 import { SERVER_URL } from "../../../config/config";
 import AddressModal, { AddressResponse } from "../modal/AddressModal";
@@ -38,11 +38,15 @@ const GeneralMemberSignup: React.FC = () => {
       })
       .then((response: AxiosResponse) => {
         if (response.data) {
-          alert('사용 가능한 아이디 입니다.')
+          Modal.success({
+            title: '사용 가능한 아이디 입니다.'
+          })
           setIsIdDuplicated(false);
           return;
         }
-        alert('중복된 아이디가 존재합니다.')
+        Modal.error({
+          title: '중복된 아이디가 존재합니다.'
+        })
         setIsIdDuplicated(true);
       })
   }
@@ -61,11 +65,15 @@ const GeneralMemberSignup: React.FC = () => {
       })
       .then((response: AxiosResponse) => {
         if (response.data) {
-          alert('사용 가능한 이메일 입니다.')
+          Modal.success({
+            title: '사용 가능한 이메일 입니다.'
+          })
           setEmailDuplicated(false);
           return;
         }
-        alert('중복된 이메일이 존재합니다.')
+        Modal.error({
+          title: '중복된 이메일이 존재합니다.'
+        })
         setEmailDuplicated(true);
       })
   }

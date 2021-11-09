@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { observer } from "mobx-react";
-import { Button, Checkbox, Col, Form, FormInstance, Input, Radio, Row, Select, Space, Tag, TimePicker } from "antd";
+import { Button, Checkbox, Col, Form, FormInstance, Input, Modal, Radio, Row, Select, Space, Tag, TimePicker } from "antd";
 import { PlusOutlined } from '@ant-design/icons';
 import TextArea from "antd/lib/input/TextArea";
 import { TweenOneGroup } from 'rc-tween-one';
@@ -57,11 +57,15 @@ const RestaurantMemberSignup: React.FC = () => {
       })
       .then((response: AxiosResponse) => {
         if (response.data) {
-          alert('사용 가능한 아이디 입니다.')
+          Modal.success({
+            title: '사용 가능한 아이디 입니다.'
+          })
           setIsDuplicated(false);
           return;
         }
-        alert('중복된 아이디가 존재합니다.')
+        Modal.error({
+          title: '중복된 아이디가 존재합니다.'
+        })
         setIsDuplicated(true);
       })
   }
@@ -80,11 +84,15 @@ const RestaurantMemberSignup: React.FC = () => {
       })
       .then((response: AxiosResponse) => {
         if (response.data) {
-          alert('사용 가능한 이메일 입니다.')
+          Modal.success({
+            title: '사용 가능한 이메일 입니다.'
+          })
           setEmailDuplicated(false);
           return;
         }
-        alert('중복된 이메일이 존재합니다.')
+        Modal.error({
+          title: '중복된 이메일이 존재합니다.'
+        })
         setEmailDuplicated(true);
       })
   }

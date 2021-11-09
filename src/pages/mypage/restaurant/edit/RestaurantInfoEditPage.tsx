@@ -5,7 +5,7 @@ import axios, { AxiosResponse } from "axios";
 import { useForm } from "antd/lib/form/Form";
 import TextArea from "antd/lib/input/TextArea";
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Col, Form, Input, Radio, Row, Select, Space, Tag, TimePicker } from "antd";
+import { Button, Checkbox, Col, Form, Input, Modal, Radio, Row, Select, Space, Tag, TimePicker } from "antd";
 import { TweenOneGroup } from "rc-tween-one";
 import { SERVER_URL } from "../../../../config/config";
 import AddressModal, { AddressResponse } from "../../../signup/modal/AddressModal";
@@ -179,7 +179,9 @@ const RestaurantInfoEditPage: React.FC = () => {
         }
       ).then((response: AxiosResponse) => {
         if (!response.data.error) {
-          alert('정보 변경에 성공하였습니다.');
+          Modal.success({
+            title: '정보 변경에 성공하였습니다.'
+          })
           localStorage.setItem('restaurant', JSON.stringify(response.data.restaurant))
           fetchRestaurantInfo();
         }

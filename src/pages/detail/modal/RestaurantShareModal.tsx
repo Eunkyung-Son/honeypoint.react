@@ -60,7 +60,9 @@ const RestaurantShareModal: React.FC<Props> = ({modalStore}: Props) => {
   const doCopy = (text: string) => {
     // 흐름 1.
     if (!document.queryCommandSupported("copy")) {
-      return alert("복사하기가 지원되지 않는 브라우저입니다.");
+      return Modal.error({
+        title: '복사하기가 지원되지 않는 브라우저입니다.'
+      })
     }
 
     // 흐름 2.
@@ -80,7 +82,9 @@ const RestaurantShareModal: React.FC<Props> = ({modalStore}: Props) => {
     document.execCommand("copy");
     // 흐름 5.
     document.body.removeChild(textarea);
-    alert("클립보드에 복사되었습니다.");
+    Modal.success({
+      title: '클립보드에 복사되었습니다.'
+    })
   };
 
   const { isVisible, onCancel } = modalStore;

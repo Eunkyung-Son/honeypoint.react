@@ -36,7 +36,7 @@ export default class AuthStore {
   }) => {
     const { mId, mPwd } = values;
     const URL = `${SERVER_URL}/api/login`;
-    const memberInfo = await axios
+    const response = await axios
       .post(URL,
         {
           mId,
@@ -51,27 +51,27 @@ export default class AuthStore {
       .then((response: AxiosResponse) => {
         console.log("login response", response);
 
-        if (response.data.error) {
-          console.log(response.data.error);
-          alert("비밀번호가 틀립니다.");
-          return;
-        }
-        return response.data.member;
+        // if (response.data.error) {
+        //   console.log(response.data.error);
+        //   alert("비밀번호가 틀립니다.");
+        //   return;
+        // }
+        return response;
       })
-      .catch((error) => {
-        if (error) {
-          alert('가입된 아이디가 없습니다.');
-        }
-      });
-      
+    // .catch((error) => {
+    //   if (error) {
+    //     alert('가입된 아이디가 없습니다.');
+    //   }
+    // });
+    const memberInfo = response.data.member;
     if (memberInfo) {
       localStorage.setItem('memberId', memberInfo.mId);
       localStorage.setItem('member', JSON.stringify(memberInfo))
       this.setIsLoggedIn(true);
       this.setMember(memberInfo);
       this.setAddressData();
-      this.root.routing.history.push('/');
     }
+    return response;
   };
 
   @action.bound

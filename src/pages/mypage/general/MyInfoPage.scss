@@ -1,7 +1,8 @@
 @import "/src/App.scss";
 
 .MyInfoPage {
-  margin: 50px 50px 50px 50px;
+  min-height: $content-min-height;
+  padding: 50px 50px 50px 50px;
 	.ant-layout-footer {
 		height: 70px;
 	}

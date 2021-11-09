@@ -39,7 +39,9 @@ const PwdFindModal: React.FC<Props> = ({pwdFindModalStore}: Props) => {
         }
       })
       .then((response: AxiosResponse) => {
-        alert("등록하신 이메일로 임시 비밀번호가 발송되었습니다.");
+        Modal.error({
+          title: '등록하신 이메일로 임시 비밀번호가 발송되었습니다.'
+        });
       })
   }
 

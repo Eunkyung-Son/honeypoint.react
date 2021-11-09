@@ -1,16 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react";
-import { Button, Col, Form, Input, Layout, Row } from "antd";
+import { Button, Col, Form, Input, Layout, Modal, Row } from "antd";
 import IdFindModal from "./find/IdFindModal";
 import PwdFindModal from "./find/PwdFindModal";
 import IdFindModalStore from "./find/IdFindModalStore";
 import PwdFindModalStore from "./find/PwdFindModalStore";
 import { useRootStore } from '../../hooks/StoreContextProvider';
 import './LoginPage.scss'
+import Member from "../../models/Member";
 
 const LoginPage: React.FC = observer(() => {
-  const { authStore } = useRootStore();
+  const { authStore, routing } = useRootStore();
   const idFindModalStore = new IdFindModalStore();
   const pwdFindModalStore = new PwdFindModalStore();
 
@@ -22,6 +23,26 @@ const LoginPage: React.FC = observer(() => {
     pwdFindModalStore.setVisible(true);
   }
 
+  const handleLogin = async ({ mId, mPwd }: Member) => {
+    const values = { mId, mPwd };
+    try {
+      const response = await authStore.onLogin(values);
+      if (response.data.error) {
+        Modal.error({
+          title: '비밀번호가 틀렸습니다.'
+        })
+        return;
+      }
+      routing.history.push('/');
+    } catch (error) {
+      console.log(error);
+      Modal.error({
+        title: '가입된 아이디가 없습니다.'
+      })
+    }
+  }
+
+
   return (
     <Layout className="LoginPage">
       <div className="backgroundBg">
@@ -32,7 +53,7 @@ const LoginPage: React.FC = observer(() => {
                 HONEYPOINT
               </div>
               <div className="form-cover">
-                <Form className="login-form" onFinish={authStore?.onLogin}>
+                <Form className="login-form" onFinish={handleLogin}>
                   <Form.Item name="mId" rules={[{ required: true }]}>
                     <Input />
                   </Form.Item>

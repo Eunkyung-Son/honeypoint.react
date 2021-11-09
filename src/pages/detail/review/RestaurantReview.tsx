@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { observer } from "mobx-react";
-import { Avatar, Button, Col, List, message, Row, Space, Spin } from "antd";
+import { Avatar, Button, Col, List, message, Modal, Row, Space, Spin } from "antd";
 import { FrownOutlined, MehOutlined, SmileOutlined } from '@ant-design/icons';
 import InfiniteScroll from 'react-infinite-scroller';
 import Review from "../../../models/Review";
@@ -27,7 +27,9 @@ const RestaurantReview: React.FC<Props> = ({rNo}: Props) => {
     try {
       await restaurantReviewStore.fetchReviews(rNo, score);
     } catch (error) {
-      alert(error);
+      Modal.error({
+        title: '리뷰 가져오기를 실패하였습니다.'
+      })
     }
   }
 

@@ -9,6 +9,7 @@ import { RcFile } from "antd/lib/upload";
 import { SERVER_URL } from "../../../../config/config";
 import { useRootStore } from "../../../../hooks/StoreContextProvider";
 import RestaurantFileAddStore from "./RestaurantFileAddStore";
+import './RestaurantFileAddPage.scss';
 
 const RestaurantFileAddPage: React.FC = () => {
   const { authStore } = useRootStore();

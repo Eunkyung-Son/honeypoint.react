@@ -1,9 +1,10 @@
-import { Card, Form, Input, message, Popconfirm } from "antd";
+import { Card, Form, Input, message, Modal, Popconfirm } from "antd";
 import axios, { AxiosResponse } from "axios";
 import { observer } from "mobx-react";
 import React, { useState } from "react";
 import { SERVER_URL } from "../../../../config/config";
 import { useRootStore } from "../../../../hooks/StoreContextProvider";
+import './WithdrawalPage.scss';
 
 const formItemLayout = {
   labelCol: {
@@ -51,7 +52,9 @@ const WithdrawalPage: React.FC = () => {
       )
       .then((response: AxiosResponse) => {
         if (!response.data.member) {
-          alert('비밀번호가 틀렸습니다');
+          Modal.error({
+            title: '비밀번호가 틀렸습니다.'
+          })
           return;
         }
         deleteMember();
@@ -91,43 +94,42 @@ const WithdrawalPage: React.FC = () => {
   }
 
   return (
-    <Card style={{ width: '50%', marginRight: '25%', marginLeft: '25%', marginTop: "3%"}}>
-    <h2>회원 탈퇴</h2>
-    <p style={{color: "gray"}}>회원탈퇴를 하시려면 비밀번호를 입력해주세요.</p>
-      <Form
-        {...formItemLayout}
-        name="register"
-        scrollToFirstError
-      >
-        <Form.Item
-          name="mPwd"
-          label="비밀번호"
-          rules={[
-            {
-              required: true,
-              message: '비밀번호를 입력해주세요.',
-            },
-          ]}
-          hasFeedback
+    <div className="WithdrawalPage">
+      <Card className="card-body">
+      <h2>회원 탈퇴</h2>
+      <p style={{color: "gray"}}>회원탈퇴를 하시려면 비밀번호를 입력해주세요.</p>
+        <Form
+          {...formItemLayout}
+          name="register"
+          scrollToFirstError
         >
-          <Input.Password onChange={onPasswordChange}/>
-        </Form.Item>
-        <Form.Item {...tailFormItemLayout}>
-          {/* <Button type="primary" htmlType="submit">
-            확인
-          </Button> */}
-            <Popconfirm
-              title="정말 탈퇴하시겠습니까?"
-              onConfirm={onLogin}
-              onCancel={cancel}
-              okText="Yes"
-              cancelText="No"
-            >
-              <a href="#">회원탈퇴</a>
-            </Popconfirm>
-        </Form.Item>
-      </Form>
-    </Card>
+          <Form.Item
+            name="mPwd"
+            label="비밀번호"
+            rules={[
+              {
+                required: true,
+                message: '비밀번호를 입력해주세요.',
+              },
+            ]}
+            hasFeedback
+          >
+            <Input.Password onChange={onPasswordChange}/>
+          </Form.Item>
+          <Form.Item {...tailFormItemLayout}>
+              <Popconfirm
+                title="정말 탈퇴하시겠습니까?"
+                onConfirm={onLogin}
+                onCancel={cancel}
+                okText="Yes"
+                cancelText="No"
+              >
+                <a href="#">회원탈퇴</a>
+              </Popconfirm>
+          </Form.Item>
+        </Form>
+      </Card>
+    </div>
   )
 }
 

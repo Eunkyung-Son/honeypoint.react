@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react";
-import { Col, Row,  Input, Button, Typography } from 'antd';
+import { Col, Row,  Input, Button, Typography, Modal } from 'antd';
 import food from '../../images/food1.jpg';
 import { SERVER_URL } from "../../config/config";
 import CustomCard from "../../components/CustomCard";
@@ -65,7 +65,9 @@ const MainContentPage: React.FC = () => {
 
   const handleSearch = (value: string) => {
     if (!value) {
-      alert('검색할 키워드를 입력해주세요');
+      Modal.error({
+        title: '검색할 키워드를 입력해주세요.'
+      });
       return;
     }
     console.log(value);
