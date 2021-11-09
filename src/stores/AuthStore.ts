@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { action, makeObservable, observable } from "mobx";
 import { SERVER_URL } from "../config/config";
 import Member from "../models/Member";
+import RestaurantData from "../models/RestaurantData";
 import RootStore from "./RootStore";
 
 export default class AuthStore {
@@ -11,6 +12,8 @@ export default class AuthStore {
   @observable mPostNumber = '';
   @observable mRoadAddress = '';
   @observable mDetailAddress = '';
+  @observable restaurant?: RestaurantData = JSON.parse(localStorage.getItem('restaurant')!) ?? '';
+
 
   constructor(root: RootStore) {
     makeObservable(this);
@@ -46,8 +49,8 @@ export default class AuthStore {
         }
       )
       .then((response: AxiosResponse) => {
-        // TODO:아이디나 비밀번호가 틀릴 때 처리하기
         console.log("login response", response);
+
         if (response.data.error) {
           console.log(response.data.error);
           alert("비밀번호가 틀립니다.");
@@ -56,6 +59,9 @@ export default class AuthStore {
         return response.data.member;
       })
       .catch((error) => {
+        if (error) {
+          alert('가입된 아이디가 없습니다.');
+        }
       });
       
     if (memberInfo) {
@@ -69,8 +75,32 @@ export default class AuthStore {
   };
 
   @action.bound
+  fetchRestaurantInfo = async () => {
+    if (!this.member) return;
+    const URL = `${SERVER_URL}/api/restaurantByMember/${this.member?.mNo}`;
+    return await axios
+      .get(URL,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        }
+      )
+      .then((response: AxiosResponse) => {
+        console.log(response);
+        localStorage.setItem('restaurant', JSON.stringify(response.data.restaurant))
+        this.setRestaurant(response.data.restaurant);
+      })
+  }
+
+  @action.bound
   setMember = (member?: Member) => {
     this.member = member;
+  }
+
+  @action.bound
+  setRestaurant = (restaurant?: RestaurantData) => {
+    this.restaurant = restaurant;
   }
 
   @action.bound
@@ -80,8 +110,8 @@ export default class AuthStore {
 
   @action.bound
   setAddressData = () => {
-    var fullAddress = this.member?.mAddress;
-    var splitAddress = fullAddress?.split(', ');
+    const fullAddress = this.member?.mAddress;
+    const splitAddress = fullAddress?.split(', ');
     if (!splitAddress) return;
     this.setPostNumber(splitAddress[0]);
     var mergeAddress = (`${splitAddress[1]}, ${splitAddress[2]}`);
