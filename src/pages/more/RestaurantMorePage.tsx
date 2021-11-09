@@ -2,23 +2,20 @@ import { Col, Row } from "antd";
 import axios, { AxiosResponse } from "axios";
 import { observer } from "mobx-react";
 import { useEffect, useState } from "react";
-import { RouteComponentProps, useParams } from "react-router-dom";
-import CustomCard from "../../components/CustomCard";
+import { useParams } from "react-router-dom";
 import { SERVER_URL } from "../../config/config";
+import CustomCard from "../../components/CustomCard";
 import RestaurantMoreStore from "./RestaurantMoreStore";
+import { useRootStore } from "../../hooks/StoreContextProvider";
 import './RestaurantMorePage.scss';
 
 type RouteProps = {
   type: string
 }
 
-interface Props extends RouteComponentProps<RouteProps> {
-
-}
-
-const RestaurantMorePage: React.FC<Props> = (props: Props) => {
-
+const RestaurantMorePage: React.FC = () => {
   const { type } = useParams<RouteProps>();
+  const { routing } = useRootStore();
   const [restaurantMoreStore] = useState(() => new RestaurantMoreStore());
 
   const getRestaurantInfo = async () => {
@@ -41,17 +38,17 @@ const RestaurantMorePage: React.FC<Props> = (props: Props) => {
       })
   };
 
-  const handleClick = (rNo: number) => {
-    props.history.push(`/detail/${rNo}`)
-  }
-
   useEffect(() => {
     getRestaurantInfo();
   }, [])
 
+  const handleClick = (rNo: number) => {
+    routing.history.push(`/detail/${rNo}`)
+  }
+
   return (
     <div className="RestaurantMorePage">
-      <h2 style={{textAlign: "left", color: "#1890ff", marginLeft: "23px"}}>{`"${type}" 카테고리 전체`}</h2>
+      <h2 className="rest-type-text">{`"${type}" 카테고리 전체`}</h2>
       <Row justify="start" align="top" gutter={[ 24, 24 ]}>
         {restaurantMoreStore.restaurantData?.length && restaurantMoreStore.restaurantData?.reduce((total, data, idx) => {
           const el = (
@@ -61,6 +58,7 @@ const RestaurantMorePage: React.FC<Props> = (props: Props) => {
                 key={data.rNo}
                 title={data.rName}
                 description={data.rAddress}
+                src={`${SERVER_URL}/api/file/restaurant/${data.rNo}/${data.fileIds[0]}`}
               />
             </Col>
           )

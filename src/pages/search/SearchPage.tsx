@@ -52,7 +52,7 @@ const SearchPage: React.FC<Props> = observer((props: Props) => {
 
   return (
     <div className="SearchPage">
-      <h2 style={{textAlign: "left", color: "#1890ff", marginLeft: "23px"}}>{`"${keyword}" 로 검색한 결과(${total})`}</h2>
+      <h2 className="rest-search-text">{`"${keyword}" 로 검색한 결과(${total})`}</h2>
       <Row justify="start" align="top" gutter={[ 24, 24 ]}>
         {total !== 0 && searchStore.restaurantData?.length && searchStore.restaurantData?.reduce((total, data, idx) => {
           const el = (
@@ -62,6 +62,7 @@ const SearchPage: React.FC<Props> = observer((props: Props) => {
                 key={data.rNo}
                 title={data.rName}
                 description={data.rAddress}
+                src={`${SERVER_URL}/api/file/restaurant/${data.rNo}/${data.fileIds[0]}`}
               />
             </Col>
           )

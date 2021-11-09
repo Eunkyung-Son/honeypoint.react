@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { Link } from "react-router-dom";
 import { observer } from "mobx-react";
-import { Col, Row, Divider, Input, Button, Typography } from 'antd';
+import { Col, Row,  Input, Button, Typography } from 'antd';
 import food from '../../images/food1.jpg';
 import { SERVER_URL } from "../../config/config";
 import CustomCard from "../../components/CustomCard";
@@ -10,14 +10,17 @@ import CustomCarousel from "../../components/CustomCarousel";
 import MainContentStore from "./MainContentStore";
 import { useRootStore } from "../../hooks/StoreContextProvider";
 import './MainContentPage.scss';
+import RestaurantData from "../../models/RestaurantData";
 
-const { Text, Title } = Typography;
+const { Title } = Typography;
+const { Search } = Input;
+
 
 const MainContentPage: React.FC = () => {
   const { routing } = useRootStore();
   const [mainContentStore] = useState(() => new MainContentStore());
 
-  const getRestaurantInfo = async (restType: string) => {
+  const getTypeOfRestaurantInfo = async (restType: string) => {
     const URL = `${SERVER_URL}/api/restaurants`;
     const params = {
       restaurantType: restType
@@ -34,15 +37,28 @@ const MainContentPage: React.FC = () => {
       })
   }
 
+  const getRestaurantInfo = async () => {
+    const URL = `${SERVER_URL}/api/restaurant/all`;
+    await axios
+      .get(URL, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      }).then((response: AxiosResponse) => {
+        mainContentStore.setAllRestaurantData(response.data.restaurants);
+      })
+  }
+
   useEffect(() => {
+    getRestaurantInfo();
     const { setRestaurantCafeData, setRestaurantKoreanData, setRestaurantWesternData } = mainContentStore;
-    getRestaurantInfo("한식").then((response: AxiosResponse) => {
+    getTypeOfRestaurantInfo("한식").then((response: AxiosResponse) => {
       setRestaurantKoreanData((response.data.restaurants));
     });
-    getRestaurantInfo("카페").then((response: AxiosResponse) => {
+    getTypeOfRestaurantInfo("카페").then((response: AxiosResponse) => {
       setRestaurantCafeData((response.data.restaurants));
     });
-    getRestaurantInfo("양식").then((response: AxiosResponse) => {
+    getTypeOfRestaurantInfo("양식").then((response: AxiosResponse) => {
       setRestaurantWesternData((response.data.restaurants));
     });
   }, [])
@@ -60,14 +76,6 @@ const MainContentPage: React.FC = () => {
     routing.push(`/detail/${rNo}`);
   }
 
-  const { Search } = Input;
-  const searchStyle = {
-    display: 'inline-flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '250px',
-  }
-
   return (
     <div className="MainContentPage">
       <Row className="main-image-area" justify="center" align="top">
@@ -77,31 +85,28 @@ const MainContentPage: React.FC = () => {
             placeholder="검색해서 맛집을 찾아보세요!"
             size="large"
             enterButton
-            style={searchStyle}
             onSearch={handleSearch}
           />
-          {/* </div> */}
         </Col>
       </Row>
       <div className="main-content-list">
         <Row className="list-row-header">
-          <Title level={4}>#요즘 뜨는 카페</Title>
+          <Title level={4}>#평점 높은 순</Title>
         </Row>
         <CustomCarousel>
-          <div className="carousel-div">
-            <Link to="/detail/92">
-              <img src={food} style={{ width: '100%', height: '100%' }} />
-            </Link>
-          </div>
-          <div className="carousel-div">
-            <img src={food} style={{ width: '100%', height: '100%' }} />
-          </div>
-          <div className="carousel-div">
-            <img src={"http://localhost:8082/api/file/restaurant/21/20051bfb-3633-4f75-8fc9-660ddaf8e069.png"} style={{ width: '100%', height: '100%' }} />
-          </div>
-          <div className="carousel-div">
-            <img src={"http://localhost:8082/api/file/restaurant/21/20051bfb-3633-4f75-8fc9-660ddaf8e069.png"} style={{ width: '100%', height: '100%' }} />
-          </div>
+        {mainContentStore.allRestaurantData?.map((data) => {
+            return (
+              <div carousel-div>
+                <Link to={`/detail/${data.rNo}`}>
+                  <img 
+                    src={`${SERVER_URL}/api/file/restaurant/${data.rNo}/${data.fileIds[0]}`} 
+                    style={{ width: "500px", height: "300px" }}
+                  />
+                </Link>
+              </div>
+            )
+           
+          })}
         </CustomCarousel>
         <hr className="main-hr" />
         <Row className="list-row-header" justify="space-between">
@@ -122,6 +127,7 @@ const MainContentPage: React.FC = () => {
                   key={data.rNo}
                   title={data.rName}
                   description={data.rAddress}
+                  src={`${SERVER_URL}/api/file/restaurant/${data.rNo}/${data.fileIds[0]}`}
                 />
               </Col>
             )
@@ -147,6 +153,7 @@ const MainContentPage: React.FC = () => {
                   key={data.rNo}
                   title={data.rName}
                   description={data.rAddress}
+                  src={`${SERVER_URL}/api/file/restaurant/${data.rNo}/${data.fileIds[0]}`}
                 />
               </Col>
             )
@@ -172,6 +179,7 @@ const MainContentPage: React.FC = () => {
                   key={data.rNo}
                   title={data.rName}
                   description={data.rAddress}
+                  src={`${SERVER_URL}/api/file/restaurant/${data.rNo}/${data.fileIds[0]}`}
                 />
               </Col>
             )

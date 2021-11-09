@@ -13,10 +13,10 @@ import RestaurantShareModal from './modal/RestaurantShareModal';
 import RestaurantReview from "./review/RestaurantReview";
 import ReviewAddModalStore from './modal/ReviewAddModalStore';
 import RestaurantDetailStore from "./RestaurantDetailStore";
+import RestaurantReviewStore from "./review/RestaurantReviewStore";
 import RestaurantShareModalStore from './modal/RestaurantShareModalStore';
 import { useRootStore } from "../../hooks/StoreContextProvider";
 import './RestaurantDetailPage.scss';
-import RestaurantReviewStore from "./review/RestaurantReviewStore";
 
 declare global {
   interface Window {
@@ -203,18 +203,17 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
   }
 
   return (
-    <>
+    <div>
       <Spin tip="Loading..." spinning={loading}>
         <CustomCarousel>
-          <div className="carousel-div">
-            <img src={food} style={{ width: '100%', height: '100%' }} />
-          </div>
-          <div className="carousel-div">
-            <img src={food} style={{ width: '100%', height: '100%' }} />
-          </div>
-          <div className="carousel-div">
-            <img src={food} style={{ width: '100%', height: '100%' }} />
-          </div>
+          { restaurantDetailStore.restaurantData?.fileIds.map((file: string) => {
+            return (
+              <div className="carousel-div">
+                <img src={`${SERVER_URL}/api/file/restaurant/${restaurantDetailStore.restaurantData?.rNo}/${file}`} 
+                style={{ width: '100%', height: '100%' }} />
+              </div>
+            )
+          })}
         </CustomCarousel>
         <div style={{ margin: "100px" }}>
           <Row>
@@ -316,7 +315,7 @@ const RestaurantDetailPage: React.FC<RouteProps> = (props: RouteProps) => {
       </Spin>
       <ReviewAddModal modalStore={reviewAddModalStore} rNo={rNo} restaurantReviewStore={restaurantReviewStore}/>
       <RestaurantShareModal modalStore={restaurantShareModalStore} />
-    </>
+    </div>
   )
 };
 
