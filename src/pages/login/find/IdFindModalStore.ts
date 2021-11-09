@@ -1,5 +1,4 @@
 import { action, computed, makeObservable, observable } from "mobx";
-
 export default class IdFindModalStore {
   @observable private _isVisible: boolean = false;
 

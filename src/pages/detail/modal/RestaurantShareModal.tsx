@@ -57,7 +57,7 @@ const RestaurantShareModal: React.FC<Props> = ({modalStore}: Props) => {
     })
   }
 
-  const doCopy = (text: any) => {
+  const doCopy = (text: string) => {
     // 흐름 1.
     if (!document.queryCommandSupported("copy")) {
       return alert("복사하기가 지원되지 않는 브라우저입니다.");

@@ -5,30 +5,47 @@ import { Button, Checkbox, Col, Form, FormInstance, Input, Radio, Row, Select, S
 import { PlusOutlined } from '@ant-design/icons';
 import TextArea from "antd/lib/input/TextArea";
 import { TweenOneGroup } from 'rc-tween-one';
-import { RouterStore } from "mobx-react-router";
-import { Moment } from "moment";
 import { SERVER_URL } from "../../../config/config";
 import RestaurantSignupData from "../../../models/RestaurantSignupData";
 import AddressModal, { AddressResponse } from "../modal/AddressModal";
 import AddressModalStore from "../modal/AddressModalStore";
 import RestaurantMemberSignupStore from "./RestaurantMemberSignupStore";
+import { useRootStore } from "../../../hooks/StoreContextProvider";
 
-type Props = {
-  routing?: RouterStore,
-}
+const validateMessages = {
+  required: '${label} is required!',
+  types: {
+    email: '${label} is not a valid email!',
+    number: '${label} is not a valid number!',
+  },
+  number: {
+    range: '${label} must be between ${min} and ${max}',
+  },
+};
 
-const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 5 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 12 },
+  },
+};
+
+const RestaurantMemberSignup: React.FC = () => {
   const addressModalStore = new AddressModalStore();
+  const { routing } = useRootStore();
   const [restaurantMemberSignupStore] = useState(() => new RestaurantMemberSignupStore());
   const [isShowTagInput, setIsShowTagInput] = useState(false);
 
   const input = useRef<Input | null>(null);
   const formRef = React.createRef<FormInstance>();
-  const timeFormat = 'hh:mm';
   
   const onIdValidation = async () => {
     const { setIsDuplicated, id } = restaurantMemberSignupStore;
-    const URL = `${SERVER_URL}/idCheck`;
+    const URL = `${SERVER_URL}/api/idCheck`;
     const params = {
       id: id,
     }
@@ -51,7 +68,7 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
 
   const onEmailValidation = async () => {
     const { email, setEmailDuplicated } = restaurantMemberSignupStore;
-    const URL = `${SERVER_URL}/emailCheck`;
+    const URL = `${SERVER_URL}/api/emailCheck`;
     const params = {
       email: email,
     }
@@ -92,55 +109,25 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
     })
   }
 
-  const onSignup = async (values:RestaurantSignupData) => {
-    // FIXME: rNo => 0으로 넘어오는 것 수정
-    console.log(values, "signup values");
-    const { tags } = restaurantMemberSignupStore;
-    const URL = `${SERVER_URL}/restaurantInsert`;
-    await axios
-      .post(URL,
-        {
-          mId: values.mId,
-          mPwd: values.mPwd,
-          mEmail: values.mEmail,
-          rName: values.rName,
-          rAddress: `${values.rPostNumber}, ${values.rAddress}`,
-          rOAddress: values.rOAddress,
-          rTel: values.rTel,
-          rType: values.rType,
-          rTag: tags.join(', '),
-          rPrice: values.rPrice,
-          rParking: values.rParking,
-          rStartTime: (values.rStartTime as Moment).format(timeFormat),
-          rEndTime: (values.rEndTime as Moment).format(timeFormat),
-          rRestDay: (values.rRestDay as string[]).join(', '),
-          rIntro: values.rIntro,
-          resveYn: values.resveYn,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        }
-      )
-      .then((response: AxiosResponse) => {
-        // FIXME: 회원가입 완료 시 alert or modal 추가해준 후 routing 걸기
-        props.routing?.push('/login');
+  const handleSignup = async (values:RestaurantSignupData) => {
+    try {
+      await restaurantMemberSignupStore.onSignup(values).then((res) => {
+        routing.push('/login');
       })
+    } catch (e) {
+
+    }
   } 
 
-  const handleClose = (removedTag: any) => {
-    // FIXME: removedTag 타입 잡기
+  const handleClose = (removedTag: string) => {
     const { setTags } = restaurantMemberSignupStore;
     const tags = restaurantMemberSignupStore.tags.filter(tag => tag !== removedTag);
     console.log(tags);
     setTags(tags)
   };
 
-  // FIXME: input ref 지정한게 null로 되는 이유 찾아봐야함
   const showTagInput = () => {
     setIsShowTagInput(true);
-    // restaurantMemberSignupStore.setInputVisible(true);
     input.current?.focus();
   }
   
@@ -158,11 +145,11 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
     setInputValue('');
   }
 
-  const onComplete = (e: any) => {
+  const onComplete = (e: { index: number, target: HTMLElement | any }) => {
     e.target.style = '';
   }
 
-  const forMap = (tag: any) => {
+  const forMap = (tag: string) => {
     const tagElem = (
       <Tag
         closable
@@ -181,28 +168,6 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
     );
   };
 
-  const validateMessages = {
-    required: '${label} is required!',
-    types: {
-      email: '${label} is not a valid email!',
-      number: '${label} is not a valid number!',
-    },
-    number: {
-      range: '${label} must be between ${min} and ${max}',
-    },
-  };
-
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 5 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 12 },
-    },
-  };
-
   const { tags, inputValue } = restaurantMemberSignupStore;
   const tagChild = tags.map(forMap);
   
@@ -213,7 +178,7 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
         {...formItemLayout}
         validateMessages={validateMessages}
         ref={formRef}
-        onFinish={onSignup}
+        onFinish={handleSignup}
       >
         <Form.Item
           name={['mId']}
@@ -368,10 +333,6 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
               required: true,
               message: '전화번호를 입력해주세요.'
             },
-            {
-              pattern: /^[0-9]{3}[-]+[0-9]{4}[-]+[0-9]{4}$/,
-              message: '("-")를 포함한 핸드폰 번호를 입력해 주세요.'
-            }
           ]}>
           <Input />
         </Form.Item>
@@ -568,6 +529,6 @@ const RestaurantMemberSignup: React.FC<Props> = observer((props: Props) => {
       />
     </>
   )
-})
+}
 
-export default RestaurantMemberSignup;
+export default observer(RestaurantMemberSignup);

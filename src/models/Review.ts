@@ -1,5 +1,13 @@
 type Review = {
-  gnrlMember: any,
+  gnrlMember:{
+    mNo: number,
+    mNickname: string,
+    mBirthday: number,
+    mPhone: number,
+    mAddress: string,
+    mGrad: number,
+    mPoint: number
+  },
   mNo: number,
   member: null,
   rNo: number,

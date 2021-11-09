@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import axios, { AxiosResponse } from "axios";
 import { Button, Col, Form, Input, Row, Radio, Select, RadioChangeEvent } from "antd";
@@ -19,23 +18,28 @@ const selectOptions = [
   ['잡담', '맛집공유', '일상', '만남']
 ];
 
-
 const BoardEditPage: React.FC = () => {
   const [form] = Form.useForm();
   const { authStore, routing, boardStore } = useRootStore();
   const [radioValue, setRadioValue] = useState<string>('1');
-  const onBoardEdit = async (values: any) => {
+  const onBoardEdit = async (values: {
+    bType: string,
+    bCategory: string,
+    bTitle: string,
+    bContent: string,
+  }) => {
     console.log(values);
+    const { bType, bCategory, bContent, bTitle } = values;
     const URL = `${SERVER_URL}/api/board/update`;
     await axios
       .post(URL,
         {
           ...boardStore.boardDetailInfo,
           mNo: authStore.member?.mNo,
-          bType: values.bType,
-          bCategory: values.bCategory || '',
-          bTitle: values.bTitle,
-          bContent: values.bContent
+          bType: bType,
+          bCategory: bCategory || '',
+          bTitle: bTitle,
+          bContent: bContent
         },
         {
           headers: {
@@ -90,7 +94,7 @@ const BoardEditPage: React.FC = () => {
           <Input placeholder={"제목을 입력해주세요."} />
         </Form.Item>
         <Form.Item name="bContent">
-          <Input.TextArea />
+          <Input.TextArea style={{ height: "330px"}}/>
         </Form.Item>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
           <Button type="primary" htmlType="submit">

@@ -1,9 +1,22 @@
+@import "/src/App.scss";
+
+.MyInfoPage {
+  margin: 50px 50px 50px 50px;
+	.ant-layout-footer {
+		height: 70px;
+	}
+  .card-row {
+    height: 30vh;
+    position: relative;
+    .card-text {
+      position: absolute; 
+      bottom: 0;
+      left: absolute;
+      text-align: center;
+    }
+  }
+}
 .site-card-border-less-wrapper {
   padding: 30px;
   background: #ececec;
-}
-
-div.content-area {
-  margin: 50px 50px 50px 50px;
-  text-align: center;
 }

@@ -1,7 +1,7 @@
-import { Button, Form, Input, Modal } from "antd";
-import axios, { AxiosResponse } from "axios";
-import { observer } from "mobx-react";
 import React from "react";
+import { observer } from "mobx-react";
+import axios, { AxiosResponse } from "axios";
+import { Button, Form, Input, Modal } from "antd";
 import { SERVER_URL } from "../../../config/config";
 import PwdFindModalStore from "./PwdFindModalStore";
 
@@ -9,7 +9,7 @@ type Props = {
   pwdFindModalStore: PwdFindModalStore
 }
 
-const PwdFindModal: React.FC<Props> = observer(({pwdFindModalStore}: Props) => {
+const PwdFindModal: React.FC<Props> = ({pwdFindModalStore}: Props) => {
 
   const handleOk = () => {
     pwdFindModalStore.setVisible(false);
@@ -79,6 +79,6 @@ const PwdFindModal: React.FC<Props> = observer(({pwdFindModalStore}: Props) => {
       </Form>
     </Modal>
   )
-})
+}
 
-export default PwdFindModal
+export default observer(PwdFindModal)

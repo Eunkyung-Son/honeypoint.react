@@ -6,10 +6,11 @@ import './CustomCard.scss';
 type Props = {
   title: string,
   description: string,
+  src: string,
   onClick: () => void,
 }
 
-const CustomCard: React.FC<Props> = observer(({ title, description, onClick }: Props) => {
+const CustomCard: React.FC<Props> = observer(({ src, title, description, onClick }: Props) => {
   const { Meta } = Card;
 
   return (
@@ -17,16 +18,15 @@ const CustomCard: React.FC<Props> = observer(({ title, description, onClick }: P
       className="CustomCard"
       hoverable
       onClick={onClick}
-      // style={{ width: 300 }}
       cover={
         <img
           alt="example"
-          src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+          src={src}
+          style={{ height: "280px" }}
         />
       }
     >
       <Meta
-        // avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
         title={title}
         description={description}
       />

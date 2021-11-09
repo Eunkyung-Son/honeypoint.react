@@ -22,17 +22,23 @@ const BoardAddPage: React.FC = () => {
   const [form] = Form.useForm();
   const { authStore, routing } = useRootStore();
   const [radioValue, setRadioValue] = useState<string>('1');
-  const onBoardWrite = async (values: any) => {
+  const onBoardWrite = async (values: {
+    bType: string,
+    bCategory: string,
+    bTitle: string,
+    bContent: string,
+  }) => {
     console.log(values);
+    const { bType, bCategory, bContent, bTitle } = values;
     const URL = `${SERVER_URL}/api/board/insert`;
     await axios
       .post(URL,
         {
           mNo: authStore.member?.mNo,
-          bType: values.bType,
-          bCategory: values.bCategory || '',
-          bTitle: values.bTitle,
-          bContent: values.bContent
+          bType: bType,
+          bCategory: bCategory || '',
+          bTitle: bTitle,
+          bContent: bContent
         },
         {
           headers: {
@@ -86,7 +92,7 @@ const BoardAddPage: React.FC = () => {
           <Input placeholder={"제목을 입력해주세요."} />
         </Form.Item>
         <Form.Item name="bContent">
-          <Input.TextArea />
+          <Input.TextArea style={{ height: "330px"}}/>
         </Form.Item>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
           <Button type="primary" htmlType="submit">

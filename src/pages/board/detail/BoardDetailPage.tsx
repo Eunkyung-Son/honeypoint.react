@@ -26,12 +26,6 @@ const BoardDetailPage: React.FC = () => {
   const [boardLoading, setBoardLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
-  useEffect(() => {
-    // async function
-    fetchBoard();
-    fecthComments();
-  }, [])
-
   const fetchBoard = async () => {
     const URL = `${SERVER_URL}/api/board/${bNo}`;
     setBoardLoading(true);
@@ -50,6 +44,12 @@ const BoardDetailPage: React.FC = () => {
   const fecthComments = async () => {
     boardDetailStore.fetchComments(Number(bNo));
   }
+
+  useEffect(() => {
+    // async function
+    fetchBoard();
+    fecthComments();
+  }, [])
 
   const handleInfiniteOnload = () => {
     const { setCommentList } = boardDetailStore;

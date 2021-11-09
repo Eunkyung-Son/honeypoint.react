@@ -1,4 +1,8 @@
+import axios, { AxiosResponse } from "axios";
 import { action, computed, makeObservable, observable } from "mobx";
+import { Moment } from "moment";
+import { SERVER_URL } from "../../../config/config";
+import RestaurantSignupData from "../../../models/RestaurantSignupData";
 export default class RestaurantMemberSignupStore {
   @observable private _id = '';
   @observable private _email = '';
@@ -9,6 +13,47 @@ export default class RestaurantMemberSignupStore {
 
   constructor() {
     makeObservable(this);
+  }
+
+  @action.bound
+  onSignup = async (values: RestaurantSignupData) => {
+    const URL = `${SERVER_URL}/api/restaurantInsert`;
+    const timeFormat = 'hh:mm';
+    try {
+      await axios
+        .post(URL,
+          {
+            mId: values.mId,
+            mPwd: values.mPwd,
+            mEmail: values.mEmail,
+            rName: values.rName,
+            rAddress: `${values.rPostNumber}, ${values.rAddress}`,
+            rOAddress: values.rOAddress,
+            rTel: values.rTel,
+            rType: values.rType,
+            rTag: this.tags.join(', '),
+            rPrice: values.rPrice,
+            rParking: values.rParking,
+            rStartTime: (values.rStartTime as Moment).format(timeFormat),
+            rEndTime: (values.rEndTime as Moment).format(timeFormat),
+            rRestDay: (values.rRestDay as string[]).join(', '),
+            rIntro: values.rIntro,
+            resveYn: values.resveYn,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          }
+        )
+        .then((response: AxiosResponse) => {
+          alert('회원가입이 완료되었습니다.');
+      })
+    } catch (e) {
+      throw e;
+    } finally {
+
+    }
   }
 
   @action.bound

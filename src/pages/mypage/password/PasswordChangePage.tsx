@@ -4,21 +4,43 @@ import { SERVER_URL } from "../../../config/config";
 import axios, { AxiosResponse } from "axios";
 import { useRootStore } from "../../../hooks/StoreContextProvider";
 
-type Props = {
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 16 },
+    sm: { span: 8 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 16 },
+  },
+};
+const tailFormItemLayout = {
+  wrapperCol: {
+    xs: {
+      span: 24,
+      offset: 0,
+    },
+    sm: {
+      span: 16,
+      offset: 8,
+    },
+  },
+};
 
-}
-
-const PasswordChangePage: React.FC<Props> = (props: Props) => {
+const PasswordChangePage: React.FC = () => {
   const [form] = Form.useForm();
   const { authStore } = useRootStore();
 
-  const onPasswordChange = async (values: any) => {
-
-    // FIXME: undefined check!!
+  const onPasswordChange = async (values: {
+    oldpassword: string,
+    password: string,
+    confirm: string
+  }) => {
+    const { oldpassword, password } = values;
     console.log('Received values of form: ', values);
     const params = {
-      oldPassword: values.oldpassword,
-      newPassword: values.password,
+      oldPassword: oldpassword,
+      newPassword: password,
       mId: authStore.member?.mId
     }
     console.log(params);
@@ -33,35 +55,13 @@ const PasswordChangePage: React.FC<Props> = (props: Props) => {
         },
       }).then((response: AxiosResponse) => {
         if (response.data.error) {
-          alert('asd')
+          alert('비밀번호 변경에 실패하였습니다.')
         } else {
           alert("비밀번호 변경 성공!");
         }
       })
   };
 
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 16 },
-      sm: { span: 8 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 },
-    },
-  };
-  const tailFormItemLayout = {
-    wrapperCol: {
-      xs: {
-        span: 24,
-        offset: 0,
-      },
-      sm: {
-        span: 16,
-        offset: 8,
-      },
-    },
-  };
   return (
     <Card style={{ width: '50%', marginRight: '25%', marginLeft: '25%', marginTop: "3%"}}>
       <h2>비밀번호 변경</h2>
@@ -79,7 +79,7 @@ const PasswordChangePage: React.FC<Props> = (props: Props) => {
           rules={[
             {
               required: true,
-              message: 'Please input your password!',
+              message: '기존 비밀번호를 입력해주세요.',
             },
           ]}
           hasFeedback
@@ -93,7 +93,7 @@ const PasswordChangePage: React.FC<Props> = (props: Props) => {
           rules={[
             {
               required: true,
-              message: 'Please input your password!',
+              message: '변경할 비밀번호를 입력해주세요.',
             },
           ]}
           hasFeedback
@@ -109,7 +109,7 @@ const PasswordChangePage: React.FC<Props> = (props: Props) => {
           rules={[
             {
               required: true,
-              message: 'Please confirm your password!',
+              message: '변경할 비밀번호 확인을 입력해주세요.',
             },
             ({ getFieldValue }) => ({
               validator(_, value) {

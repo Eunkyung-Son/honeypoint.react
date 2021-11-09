@@ -3,6 +3,7 @@ import { Card, Col, Row } from "antd";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { useRootStore } from "../../../hooks/StoreContextProvider";
+import './RestaurantMyInfoPage.scss';
 
 const RestaurantMyInfoPage: React.FC = () => {
 

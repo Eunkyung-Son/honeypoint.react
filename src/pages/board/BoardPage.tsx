@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Route, Switch } from "react-router";
-import { Link } from "react-router-dom";
 import { observer } from "mobx-react";
 import { Col, Row, Select, Space, Tabs } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
@@ -13,13 +12,9 @@ const { Option } = Select;
 const { TabPane } = Tabs;
 
 const BoardPage: React.FC = () => {
-  const { routing, boardStore } = useRootStore();
+  const { routing, boardStore, authStore } = useRootStore();
   const [searchCondition, setSearchCondition] = useState('all');
   const [searchValue, setSearchValue] = useState('');
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    setSearchValue(inputValue);
-  }
 
   useEffect(() => {
     const init = async () => {
@@ -28,6 +23,11 @@ const BoardPage: React.FC = () => {
     };
     init();
   }, [])
+
+  const handleSearchValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setSearchValue(inputValue);
+  }
 
   const handleKeyChange = async (key: string) => {
     if (routing.location.pathname !== '/board') {
@@ -41,10 +41,17 @@ const BoardPage: React.FC = () => {
     setSearchCondition(value);
   }
 
+  const handleBoardClick = () => {
+    if (!authStore.member) {
+      alert('로그인 후 이용하실 수 있습니다.');
+      return;
+    }
+    routing.push('/board/add');
+  }
+
   const onSearch = async (values: string) => {
     await boardStore.searchBoards(searchCondition, values)
     .then((res) => {
-      console.log(res);
       routing.push("/board");
     });
   }
@@ -62,7 +69,7 @@ const BoardPage: React.FC = () => {
           <Search
             placeholder="검색할 내용을 입력하세요"
             value={searchValue}
-            onChange={handleChange}
+            onChange={handleSearchValueChange}
             onSearch={(values, e) => onSearch(values)}
             enterButton
             style={{ width: "50px;" }}
@@ -79,7 +86,12 @@ const BoardPage: React.FC = () => {
           <h1>커뮤니티 게시판</h1>
         </Col>
         <Col span={12}>
-        <p style={{textAlign: "right"}}><Link to="/board/add">게시물 등록 <EditOutlined /></Link></p>
+          <p 
+            onClick={handleBoardClick} 
+            style={{textAlign: "right"}}
+          >
+            게시물 등록 <EditOutlined />
+          </p>
         </Col>
       </Row>
       <Tabs defaultActiveKey="1" onChange={handleKeyChange} tabBarExtraContent={operations}>

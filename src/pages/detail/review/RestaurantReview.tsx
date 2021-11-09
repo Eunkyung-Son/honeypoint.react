@@ -96,7 +96,7 @@ const RestaurantReview: React.FC<Props> = ({rNo}: Props) => {
                   }
                   title={(
                     <Space>
-                      {`${item.gnrlMember.mnickname} | ${item.revDate}`}
+                      {`${item.gnrlMember.mNickname} | ${item.revDate}`}
                       {JSON.parse(localStorage.getItem('member')!).mNo === item.mNo && (
                         <>
                           <Button onClick={() => handleReviewEdit(item)}>수정</Button>

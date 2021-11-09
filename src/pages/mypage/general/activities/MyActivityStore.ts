@@ -1,11 +1,12 @@
 import { action, computed, makeObservable, observable } from "mobx";
 import Board from "../../../../models/Board";
-import RestaurantData from "../../../../models/RestaurantData";
 import Review from "../../../../models/Review";
+import Comment from "../../../../models/Comment";
+import RestaurantData from "../../../../models/RestaurantData";
 
 export default class MyActivityStore {
-  @observable private _reviewList: any;
-  @observable private _commmentList: any;
+  @observable private _reviewList?: Array<Review>;
+  @observable private _commmentList?: Array<Comment>;
   @observable private _boardList?: Array<Board>;
   @observable private _favorRestaurantList?: Array<RestaurantData>
 
@@ -14,12 +15,12 @@ export default class MyActivityStore {
   }
   
   @action.bound
-  setReviewList = (reviewList: any) => {
+  setReviewList = (reviewList: Array<Review>) => {
     this._reviewList = reviewList;
   }
 
   @action.bound
-  setCommentList = (commentList: any) => {
+  setCommentList = (commentList: Array<Comment>) => {
     this._commmentList = commentList;
   }
 

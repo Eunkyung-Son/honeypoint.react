@@ -33,6 +33,9 @@ const MainPage: React.FC = () => {
     localStorage.removeItem('memberId');
     localStorage.removeItem('member');
     authStore.setMember();
+    if ((localStorage.getItem('restaurant'))) {
+      localStorage.removeItem('restaurant');
+    }
   }
 
   const menu = (

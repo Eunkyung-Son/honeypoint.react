@@ -26,7 +26,7 @@ const GeneralMemberSignup: React.FC = () => {
 
   const onIdValidation = async () => {
     const { id, setIsIdDuplicated } = generalMemberSignupStore;
-    const URL = `${SERVER_URL}/idCheck`;
+    const URL = `${SERVER_URL}/api/idCheck`;
     const params = {
       id: id,
     }
@@ -49,7 +49,7 @@ const GeneralMemberSignup: React.FC = () => {
 
   const onEmailValidation = async () => {
     const { email, setEmailDuplicated } = generalMemberSignupStore;
-    const URL = `${SERVER_URL}/emailCheck`;
+    const URL = `${SERVER_URL}/api/emailCheck`;
     const params = {
       email: email,
     }

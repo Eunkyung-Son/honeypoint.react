@@ -17,7 +17,7 @@ export default class GerneralMemberSignupStore {
   @action.bound
   onSignup = async (values: GeneralSignupData) => {
     console.log(values, "signup values");
-    const URL = `${SERVER_URL}/memberInsert`;
+    const URL = `${SERVER_URL}/api/memberInsert`;
     try {
       await axios
         .post(URL,

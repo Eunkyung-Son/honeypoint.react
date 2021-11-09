@@ -1,44 +1,43 @@
-import { Button, Card, Form, Input, message, Popconfirm } from "antd";
+import { Card, Form, Input, message, Popconfirm } from "antd";
 import axios, { AxiosResponse } from "axios";
 import { observer } from "mobx-react";
 import React, { useState } from "react";
 import { SERVER_URL } from "../../../../config/config";
 import { useRootStore } from "../../../../hooks/StoreContextProvider";
 
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 16 },
+    sm: { span: 8 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 16 },
+  },
+};
+const tailFormItemLayout = {
+  wrapperCol: {
+    xs: {
+      span: 24,
+      offset: 0,
+    },
+    sm: {
+      span: 16,
+      offset: 8,
+    },
+  },
+};
 
 const WithdrawalPage: React.FC = () => {
   const { authStore, routing } = useRootStore();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [mPwd, setmPwd] = useState('');
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 16 },
-      sm: { span: 8 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 },
-    },
-  };
-  const tailFormItemLayout = {
-    wrapperCol: {
-      xs: {
-        span: 24,
-        offset: 0,
-      },
-      sm: {
-        span: 16,
-        offset: 8,
-      },
-    },
-  };
 
   const onLogin = async () => {
     const params = {
       mId: authStore.member?.mId,
       mPwd: mPwd
     }
-    const URL = `${SERVER_URL}/login`;
+    const URL = `${SERVER_URL}/api/login`;
     await axios
       .post(URL,
         {
@@ -51,9 +50,11 @@ const WithdrawalPage: React.FC = () => {
         }
       )
       .then((response: AxiosResponse) => {
-        if (response.data.member) {
-          setIsLoggedIn(true);
+        if (!response.data.member) {
+          alert('비밀번호가 틀렸습니다');
+          return;
         }
+        deleteMember();
       })
   }
 
@@ -68,8 +69,14 @@ const WithdrawalPage: React.FC = () => {
         }
       )
       .then((response: AxiosResponse) => {
-        console.log(response.data);
         if(!response.data.error) {
+          authStore.setIsLoggedIn(false);
+          localStorage.removeItem('memberId');
+          localStorage.removeItem('member');
+          authStore.setMember();
+          if ((localStorage.getItem('restaurant'))) {
+            localStorage.removeItem('restaurant');
+          }
           routing.push("/login")
         }
       })
@@ -77,13 +84,6 @@ const WithdrawalPage: React.FC = () => {
 
   const onPasswordChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     setmPwd(e.target.value);
-  }
-
-  const confirm = () => {
-    onLogin();
-    if (isLoggedIn) {
-      deleteMember();
-    }
   }
 
   const cancel = () => {
@@ -118,7 +118,7 @@ const WithdrawalPage: React.FC = () => {
           </Button> */}
             <Popconfirm
               title="정말 탈퇴하시겠습니까?"
-              onConfirm={confirm}
+              onConfirm={onLogin}
               onCancel={cancel}
               okText="Yes"
               cancelText="No"

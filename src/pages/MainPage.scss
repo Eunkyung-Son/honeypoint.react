@@ -1,5 +1,5 @@
 // 공통 변수
-
+@import "/src/App.scss";
 
 .MainPage {
 	.ant-layout-header {
@@ -15,14 +15,6 @@
 		color: white;
 		font-weight: bold;
 		font-size: 20px;
-
-		// img {
-		// 	display: inline-block;
-		// 	vertical-align: middle;
-		// 	margin-top: 10px;
-		// 	width: 40px;
-		// 	height: 40px;
-		// }
 
 		.main-title {
 			display: inline-block;

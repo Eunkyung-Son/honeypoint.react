@@ -1,11 +1,11 @@
-import { Form, Input, Button, Space } from 'antd';
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { observer } from "mobx-react";
 import { useEffect, useState } from 'react';
-import { SERVER_URL } from '../../../../config/config';
+import { observer } from "mobx-react";
 import axios, { AxiosResponse } from 'axios';
-import { useRootStore } from '../../../../hooks/StoreContextProvider';
+import { Form, Input, Button, Space } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { SERVER_URL } from '../../../../config/config';
+import { useRootStore } from '../../../../hooks/StoreContextProvider';
 import RestaurantMenuEditStore from "./RestaurantMenuEditStore";
 
 const RestaurantMenuEditPage: React.FC = () => {
@@ -51,6 +51,7 @@ const RestaurantMenuEditPage: React.FC = () => {
         })
       })
   }
+  
   useEffect(() => {
     const init = async () => {
       await fetchRestaurantInfo();
@@ -59,16 +60,17 @@ const RestaurantMenuEditPage: React.FC = () => {
     init();
   }, [])
 
-  const onRestaurantMenuSave = async (values: any) => {
-    console.log(values);
-    const body = {
-      ...values
-    };
-    console.log(body);
+  const onRestaurantMenuSave = async (values: {
+    menuName: string,
+    menuPrice: string,
+    rNo: number,
+  }) => {
+    console.log(values, form.getFieldsValue());
     const URL = `${SERVER_URL}/api/menu/updateMenu/${restaurantMenuEditStore.restaurantData?.rNo}`;
     await axios
       .post(URL,
         {
+          ...form.getFieldsValue(),
           ...values
         },
         {
@@ -111,6 +113,13 @@ const RestaurantMenuEditPage: React.FC = () => {
                   <Input placeholder="메뉴 가격을 입력해주세요." />
                 </Form.Item>
                 <MinusCircleOutlined onClick={() => remove(name)} />
+                <Form.Item
+                  name={[name, 'rNo']}
+                  fieldKey={[fieldKey, 'rNo']}
+                  initialValue={restaurantMenuEditStore.restaurantData?.rNo}
+                >
+                  <Input type="hidden" value={restaurantMenuEditStore.restaurantData?.rNo} />
+                </Form.Item>
               </Space>
             ))}
             <Form.Item>

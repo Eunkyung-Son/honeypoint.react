@@ -1,7 +1,7 @@
-import { Button, Form, Input, Modal } from "antd";
-import axios, { AxiosResponse } from "axios";
-import { observer } from "mobx-react";
 import React from "react";
+import { observer } from "mobx-react";
+import axios, { AxiosResponse } from "axios";
+import { Button, Form, Input, Modal } from "antd";
 import { SERVER_URL } from "../../../config/config";
 import IdFindModalStore from "./IdFindModalStore";
 
@@ -9,7 +9,7 @@ type Props = {
   idFindModalStore: IdFindModalStore,
 }
 
-const IdFindModal: React.FC<Props> = observer(({ idFindModalStore }: Props) => {
+const IdFindModal: React.FC<Props> = ({ idFindModalStore }: Props) => {
 
   const handleOk = () => {
     idFindModalStore.setVisible(false);
@@ -22,8 +22,6 @@ const IdFindModal: React.FC<Props> = observer(({ idFindModalStore }: Props) => {
   const onFinish = async (values: {
     email: string
   }) => {
-    // FIXME: 같은 이메일이 여러개 있는 경우를 처리 하거나,
-    // 회원 가입 할 때 막기.
     const { email } = values;
     const URL = `${SERVER_URL}/api/findId`;
     const params = {
@@ -77,6 +75,6 @@ const IdFindModal: React.FC<Props> = observer(({ idFindModalStore }: Props) => {
       </Form>
     </Modal>
   )
-})
+}
 
-export default IdFindModal
+export default observer(IdFindModal)

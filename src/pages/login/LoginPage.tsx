@@ -23,13 +23,13 @@ const LoginPage: React.FC = observer(() => {
   }
 
   return (
-    <Layout className="LoginPage" style={{ minHeight: '100vh' }}>
+    <Layout className="LoginPage">
       <div className="backgroundBg">
         <Row justify="space-around" align="middle" style={{ height: '100vh' }}>
           <Col flex="true">
             <div className="cover">
               <div className="title">
-                HoneyPoint
+                HONEYPOINT
               </div>
               <div className="form-cover">
                 <Form className="login-form" onFinish={authStore?.onLogin}>
@@ -46,7 +46,6 @@ const LoginPage: React.FC = observer(() => {
                     <p className="search-info" onClick={showPwdSearchModal}>비밀번호찾기</p>
                   </Form.Item>
                 </Form>
-                {/* TODO: REACT PORTAL 알아보기 */}
                 <IdFindModal idFindModalStore={idFindModalStore} />
                 <PwdFindModal pwdFindModalStore={pwdFindModalStore} />
               </div>
