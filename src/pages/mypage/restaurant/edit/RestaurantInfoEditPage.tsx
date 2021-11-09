@@ -1,18 +1,18 @@
-import { observer } from "mobx-react"
 import { useEffect, useRef, useState } from "react"
+import { observer } from "mobx-react"
+import moment, { Moment } from "moment";
+import axios, { AxiosResponse } from "axios";
 import { useForm } from "antd/lib/form/Form";
-import { Button, Checkbox, Col, Form, Input, Radio, Row, Select, Space, Tag, TimePicker } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { PlusOutlined } from '@ant-design/icons';
-import axios, { AxiosResponse } from "axios";
+import { Button, Checkbox, Col, Form, Input, Radio, Row, Select, Space, Tag, TimePicker } from "antd";
 import { TweenOneGroup } from "rc-tween-one";
 import { SERVER_URL } from "../../../../config/config";
 import AddressModal, { AddressResponse } from "../../../signup/modal/AddressModal";
+import RestaurantData from "../../../../models/RestaurantData";
 import { useRootStore } from "../../../../hooks/StoreContextProvider";
 import RestaurantInfoEditStore from "./RestaurantInfoEditStore";
 import AddressModalStore from "../../../signup/modal/AddressModalStore";
-import moment, { Moment } from "moment";
-import RestaurantData from "../../../../models/RestaurantData";
 
 const formItemLayout = {
   labelCol: {
@@ -35,47 +35,42 @@ const RestaurantInfoEditPage: React.FC = () => {
   const [isShowTagInput, setIsShowTagInput] = useState(false);
   const addressModalStore = new AddressModalStore();
 
+  const fetchRestaurantInfo = async () => {
+    if (!authStore.member) return;
+    const URL = `${SERVER_URL}/api/restaurantByMember/${authStore.member?.mNo}`;
+    const restaurant = await axios
+      .get(URL,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        }
+      )
+      .then((response: AxiosResponse) => {
+        const restaurant = response.data.restaurant as RestaurantData;
+        return restaurant;
+      })
+    const [strHour, strMin] = restaurant.rStartTime.split(':');
+    const [endHour, endMin] = restaurant.rEndTime.split(':');
+    const strMoment = moment().minute(Number(strMin)).hour(Number(strHour));
+    const endMoment = moment().minute(Number(endMin)).hour(Number(endHour));
+    const fullAddress = restaurant.rAddress;
+    const splitAddress = fullAddress?.split(', ');
+    form.setFieldsValue({
+      ...restaurant,
+      rStartTime: strMoment,
+      rEndTime: endMoment,
+      rPostNumber: splitAddress[0],
+      rAddress: splitAddress[1]
+    })
+  }
+
   useEffect(() => {
     const init = async () => {
-      console.log(authStore.restaurant);
       restaurantInfoEditStore.setTags(authStore.restaurant?.rTag.split(',') || []);
-
-      if (!authStore.member) return;
-      const URL = `${SERVER_URL}/api/restaurantByMember/${authStore.member?.mNo}`;
-      const restaurant = await axios
-        .get(URL,
-          {
-            headers: {
-              'Content-Type': 'application/json'
-            },
-          }
-        )
-        .then((response: AxiosResponse) => {
-          const restaurant = response.data.restaurant as RestaurantData;
-          return restaurant;
-        })
-      const [strHour, strMin] = restaurant.rStartTime.split(':');
-      const [endHour, endMin] = restaurant.rEndTime.split(':');
-      const strMoment = moment().minute(Number(strMin)).hour(Number(strHour));
-      const endMoment = moment().minute(Number(endMin)).hour(Number(endHour));
-      const fullAddress = restaurant.rAddress;
-      const splitAddress = fullAddress?.split(', ');
-      console.log(splitAddress);
-      form.setFieldsValue({
-        ...restaurant,
-        rStartTime: strMoment,
-        rEndTime: endMoment,
-        rPostNumber: splitAddress[0],
-        rAddress: splitAddress[1]
-      })
+      await fetchRestaurantInfo();
     }
     init();
-
-    // form.setFieldsValue({
-    //   ...authStore.restaurant,
-    //   rStartTime: moment(authStore.restaurant?.rStartTime),
-    //   rEndTime: moment(authStore.restaurant?.rEndTime)
-    // })
   }, [])
 
   const showModal = () => {
@@ -90,15 +85,13 @@ const RestaurantInfoEditPage: React.FC = () => {
     })
   }
 
-  const handleClose = (removedTag: any) => {
-    // FIXME: removedTag 타입 잡기
+  const handleClose = (removedTag: string) => {
     const { setTags } = restaurantInfoEditStore;
     const tags = restaurantInfoEditStore.tags.filter(tag => tag !== removedTag);
     console.log(tags);
     setTags(tags)
   };
 
-  // FIXME: input ref 지정한게 null로 되는 이유 찾아봐야함
   const showTagInput = () => {
     setIsShowTagInput(true);
     input.current?.focus();
@@ -118,11 +111,11 @@ const RestaurantInfoEditPage: React.FC = () => {
     setInputValue('');
   }
 
-  const onComplete = (e: any) => {
+  const onComplete = (e: { index: number, target: HTMLElement | any }) => {
     e.target.style = '';
   }
 
-  const forMap = (tag: any) => {
+  const forMap = (tag: string) => {
     const tagElem = (
       <Tag
         closable
@@ -141,26 +134,43 @@ const RestaurantInfoEditPage: React.FC = () => {
     );
   };
 
-  const onRestaurantInfoEdit = async (values: any) => {
+  const onRestaurantInfoEdit = async (values: {
+    rName: string,
+    rTel: string,
+    rType: string,
+    rTag: string | string[],
+    rPrice: string,
+    rParking: string,
+    rStartTime: Moment,
+    rEndTime: Moment,
+    rPostNumber: string,
+    rAddress: string,
+    rOAddress: string,
+    rRestDay: string | string[],
+    rIntro: string,
+    resveYn: string,
+  }) => {
     console.log(values);
+    const { rName, rTel, rType, rPrice, rParking, rStartTime, rEndTime,
+            rPostNumber ,rAddress, rOAddress, rRestDay, rIntro, resveYn } = values;
     const URL = `${SERVER_URL}/api/restaurant/update`;
-    // console.log((values.rRestDay));
     await axios
       .post(URL,
         {
-          rName: values.rName,
-          rTel: values.rTel,
-          rType: values.rType,
+          ...authStore.restaurant,
+          rName: rName,
+          rTel: rTel,
+          rType: rType,
           rTag: tags.join(', '),
-          rPrice: values.rPrice,
-          rParking: values.rParking,
-          rStartTime: (values.rStartTime as Moment).format(timeFormat),
-          rEndTime: (values.rEndTime as Moment).format(timeFormat),
-          rAddress: `${values.rPostNumber}, ${values.rAddress}`,
-          rOAddress: values.rOAddress,
-          // rRestDay: (values.rRestDay).join(', '),
-          rIntro: values.rIntro,
-          resveYn: values.resveYn,
+          rPrice: rPrice,
+          rParking: rParking,
+          rStartTime: (rStartTime as Moment).format(timeFormat),
+          rEndTime: (rEndTime as Moment).format(timeFormat),
+          rAddress: `${rPostNumber}, ${rAddress}`,
+          rOAddress: rOAddress,
+          rRestDay: Array.isArray(rRestDay) ? (rRestDay).join(', ') : rRestDay,
+          rIntro: rIntro,
+          resveYn: resveYn,
         },
         {
           headers: {
@@ -168,7 +178,11 @@ const RestaurantInfoEditPage: React.FC = () => {
           },
         }
       ).then((response: AxiosResponse) => {
-        console.log(response);
+        if (!response.data.error) {
+          alert('정보 변경에 성공하였습니다.');
+          localStorage.setItem('restaurant', JSON.stringify(response.data.restaurant))
+          fetchRestaurantInfo();
+        }
       })
   }
 
@@ -186,12 +200,6 @@ const RestaurantInfoEditPage: React.FC = () => {
         <Form.Item
           name={['rName']}
           label="업체명"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: '업체명을 입력해주세요.'
-        //   }
-        // ]}
         >
           <Input />
         </Form.Item>
@@ -204,12 +212,6 @@ const RestaurantInfoEditPage: React.FC = () => {
           >
             <Form.Item
               name={['rPostNumber']}
-              // rules={[
-              //   {
-              //     required: true,
-              //     message: '우편번호를 입력해주세요.'
-              //   }
-              // ]}
               style={{ margin: 0 }}
             >
               <Input readOnly />
@@ -222,52 +224,24 @@ const RestaurantInfoEditPage: React.FC = () => {
         <Form.Item
           name={['rAddress']}
           label="주소"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: '주소를 입력해주세요.'
-        //   }
-        // ]}
         >
           <Input readOnly />
         </Form.Item>
         <Form.Item
           name={['rOAddress']}
           label="상세주소"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: '상세주소를 입력해주세요.'
-        //   }
-        // ]}
         >
           <Input />
         </Form.Item>
         <Form.Item
           name={['rTel']}
           label="전화번호"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: '전화번호를 입력해주세요.'
-        //   },
-        //   {
-        //     pattern: /^[0-9]{3}[-]+[0-9]{4}[-]+[0-9]{4}$/,
-        //     message: '("-")를 포함한 핸드폰 번호를 입력해 주세요.'
-        //   }
-        // ]}
         >
           <Input />
         </Form.Item>
         <Form.Item
           name={['rType']}
           label="업종카테고리"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: '업종카테고리를 선택해주세요.'
-        //   }
-        // ]}
         >
           <Select placeholder={"선택하기"}>
             <Select.Option value="한식">한식</Select.Option>
@@ -321,12 +295,6 @@ const RestaurantInfoEditPage: React.FC = () => {
         <Form.Item
           name={['rPrice']}
           label="가격대"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: '가격대를 선택해주세요.'
-        //   }
-        // ]}
         >
           <Select placeholder={"선택하기"}>
             <Select.Option value="10000">만원미만</Select.Option>
@@ -338,12 +306,6 @@ const RestaurantInfoEditPage: React.FC = () => {
         <Form.Item
           name={['rParking']}
           label="주차가능여부"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: '주차가능여부를 선택해주세요.'
-        //   }
-        // ]}
         >
           <Radio.Group>
             <Radio value={'Y'}>주차가능</Radio>
@@ -353,36 +315,18 @@ const RestaurantInfoEditPage: React.FC = () => {
         <Form.Item
           name={['rStartTime']}
           label="오픈시간"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: '오픈시간을 선택해주세요.'
-        //   }
-        // ]}
         >
           <TimePicker format="hh:mm" />
         </Form.Item>
         <Form.Item
           name={['rEndTime']}
           label="마감시간"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: '마감시간을 선택해주세요.'
-        //   }
-        // ]}
         >
           <TimePicker format="hh:mm" />
         </Form.Item>
         <Form.Item
           name={['rRestDay']}
           label="정기휴무"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: '정기휴무일을 선택해주세요.'
-        //   }
-        // ]}
         >
           <Checkbox.Group style={{ width: '100%' }}>
             <Row>
@@ -416,24 +360,12 @@ const RestaurantInfoEditPage: React.FC = () => {
         <Form.Item
           name={['rIntro']}
           label="업체소개"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: '업체소개를 입력해주세요.'
-        //   }
-        // ]}
         >
           <TextArea rows={4} />
         </Form.Item>
         <Form.Item
           label="예약가능여부"
           name={['resveYn']}
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: '예약여부를 선택해주세요.'
-        //   }
-        // ]}
         >
           <Radio.Group>
             <Radio value={'Y'}>예약가능</Radio>
